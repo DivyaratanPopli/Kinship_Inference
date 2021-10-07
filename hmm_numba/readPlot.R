@@ -43,8 +43,8 @@ bubbleplot_read <- function(overlap_table, relatable, out_rel, out_over) {
                       label=c("0","0-10","10-20","21-50","50-100","101-500","501-1000","1000-5000","5000-10000",">10000"))
   matr1$dist_thresh <- round(matr1$dist_thresh,1)
   #data[, c(1, 2)] <- as.data.frame(t(apply(data[, c(1, 2)], 1, sort)))data$V1 <- factor(data$V1, levels=c(“Fonds”,“Spy8",“Spy1”,“Spy94a”,“GoyetQ57-3”,“GoyetQ57-2",“GoyetQ57-1”,“GoyetQ305-4",“GoyetQ56-1”,“GoyetQ56-1-lowCov”,“Goyet374a-1”,“Goyet305-7",“GoyetQ55-4”,“Goyet1424-3D”,“GoyetC5-1”,“GoyetQ119-2",“GoyetQ376-25”))
-  matr1$lib2 <- factor(matr1$lib2, levels=c("Chagyrskaya01","Chagyrskaya06","Chagyrskaya14","Chagyrskaya12","Chagyrskaya41","Chagyrskaya20","Chagyrskaya1141","Chagyrskaya13","Chagyrskaya19","Chagyrskaya07","Chagyrskaya17","Chagyrskaya18","Chagyrskaya02","Chagyrskaya60","Okladnikov11","Okladnikov15"))#data$SP_V1 <- ifelse(data$V1 == “A29253”, “red”, “black”)
-  matr1$lib1 <- factor(matr1$lib1, levels=c("Chagyrskaya01","Chagyrskaya06","Chagyrskaya14","Chagyrskaya12","Chagyrskaya41","Chagyrskaya20","Chagyrskaya1141","Chagyrskaya13","Chagyrskaya19","Chagyrskaya07","Chagyrskaya17","Chagyrskaya18","Chagyrskaya02","Chagyrskaya60","Okladnikov11","Okladnikov15"))#data$SP_V1 <- ifelse(data$V1 == “A29253”, “red”, “black”)
+  matr1$lib2 <- factor(matr1$lib2, levels=c("Fonds","Spy1","Spy8","Spy-LowCov-deam","GoyetQ305-7","GoyetQ374a-1","Goyet-LowCov","GoyetQ56-1","GoyetQ305-4","GoyetQ57-1","GoyetQ57-2","GoyetQ57-3"))#data$SP_V1 <- ifelse(data$V1 == “A29253”, “red”, “black”)
+  matr1$lib1 <- factor(matr1$lib1, levels=c("Fonds","Spy1","Spy8","Spy-LowCov-deam","GoyetQ305-7","GoyetQ374a-1","Goyet-LowCov","GoyetQ56-1","GoyetQ305-4","GoyetQ57-1","GoyetQ57-2","GoyetQ57-3"))#data$SP_V1 <- ifelse(data$V1 == “A29253”, “red”, “black”)
 
   colors <- c("seagreen4","steelblue2","mediumblue","steelblue3","lightpink3","thistle3","gray45","lightsalmon3","darkred","firebrick","tan","black","gray70","lightcyan3","darkorchid","pink3","pink4")#data[, c(1, 2)] <- as.data.frame(t(apply(data[, c(1, 2)], 1, sort)))#Plot all the infered relatedness
 
@@ -65,7 +65,7 @@ bubbleplot_read <- function(overlap_table, relatable, out_rel, out_over) {
 
   gfig_rel=ggplot(matr1, aes(lib1, lib2), col= "white") +
     geom_tile(aes(fill=relatedness), col="white")  +
-    scale_fill_manual(values = c("khaki1","orangered3","mediumorchid4","gray80")) +
+    scale_fill_manual(values = c("Identical"="khaki1","First Degree"="orangered3","Unrelated"="gray80","Second Degree"="darkorchid1")) +
     labs(title = "relatedness", x = "lib_ID", y = "lib_ID")+
     theme(
       panel.border = element_blank(), panel.grid.major = element_blank(),panel.grid.minor = element_blank(),
