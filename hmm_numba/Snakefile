@@ -175,7 +175,7 @@ rule relatable_read:
 rule relatable_plot:
     input:
         over=datafolder + "overlap_fil1",
-        rel="filtered{Mfil}/relatable_allLikelihoods.csv"
+        rel="filtered{Mfil}/merged_relatable_allLikelihoods.csv"
     output:
         outfile_rel="allLikelihoods/fil{Mfil}/relatable_plot.png",
         outfile_over="allLikelihoods/fil{Mfil}/overlap_plot.png"
@@ -218,10 +218,10 @@ rule plot6_14:
 
 rule all:
     input:
-        tables=expand("filtered{Mfil}/relatable_{folder}.csv", Mfil=Mfilist, folder=["allLikelihoods"]),
-        #read=expand("filtered{Mfil}/read/READ_results", Mfil=Mfilist),
+        tables=expand("filtered{Mfil}/merged_relatable_{folder}.csv", Mfil=Mfilist, folder=["allLikelihoods"]),
+        read=expand("filtered{Mfil}/read/READ_results", Mfil=Mfilist),
         outfile_rel=expand("allLikelihoods/fil{Mfil}/relatable_plot.png", Mfil=Mfilist),
-        #outfile_read=expand("allread/fil{Mfil}/read_plot.png", Mfil=Mfilist),
+        outfile_read=expand("allread/fil{Mfil}/read_plot.png", Mfil=Mfilist),
         #plot6_14=expand("fil{Mfil}_diff_6_14.png", Mfil=Mfilist),
         #read_table=expand("filtered{Mfil}/read/output_table.csv", Mfil=Mfilist),
         #read_outplot=expand("filtered{Mfil}/read/READ_out.png", Mfil=Mfilist)
