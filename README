@@ -1,0 +1,67 @@
+#Steps to run the relatedness script
+
+#Make sure you have 5.* version of snakemake
+
+snakemake --version
+
+#go to your working directory
+
+cd working_directory
+
+#make new folders
+
+mkdir bamfiles
+
+mkdir bamfiles/stephane
+
+mkdir autosnake
+
+#clone KIn_snakemake repository
+
+#make a tab separated bed file with all snp positions as shown in example.bed
+
+#copy all your bamfiles to bamfiles/stephane
+
+#make a file called "targets.txt" with names of all bam files (without extension, and without special characters like '_')
+
+#make a file called "identical.txt" with names of bam files to be used to calculate 
+
+#prop. of differences for identical state (files with good coverage, low contam. If 
+
+#not sure, then keep it same as targets.txt).
+
+#same way, make a file called "unrelated.txt" with names of individuals that are
+
+#good for estimating differences for unrelated individuals.
+
+#make a contamination file (named contam_est). In this file keep 2 columns separated by tab: 'name' with names of samples and 'contamination (%)' 
+#It does not matter if the file has more columns.  
+
+#Finally, to run the script to get input files type on the command line:
+
+snakemake all --cores n    #where n is the number of cores you want to use
+# alternatively use "bash run_snakemake_eva.sh all" to run the pipeline on cluster
+# if you get an error, use a conda env with latest version of pybedtools and pysam
+
+
+#This will prepare the input files for the model
+
+#When it finishes, go to folder hmm_numba
+
+mkdir autosnake
+
+#Inside readPlot.R and kinPlot.R, change the names of the samples to your samples (in the order that you'd like to see in the plot).
+#You don't need conda env for this part
+#run this on command line:
+
+bash run_snakemake_eva.sh all 
+# you can run it on a number cruncher (instead of cluster) with  snakemake all --cores n ,here n is no. of cores
+
+#Our model uses python3 but READ uses python2, so make sure that if you use conda env, it allows both versions.
+
+#The output will be hmm_numba/filtered0/merged_relatable_allLikelihoods.csv in folder hmm_numba
+
+#No. of overlapping sites are in overlap_fil0.csv (or fil1.csv if you want only polymorphic sites)
+
+#results for READ are in hmm_numba/filtered0/read/READ_results
+
