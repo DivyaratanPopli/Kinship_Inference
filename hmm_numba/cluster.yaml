@@ -1,0 +1,44 @@
+__default__ :
+    time : 2:00:00
+    mem : 2G
+    cpus-per-task : 1
+    output : "autosnake/{{rule}}-\\$JOB_ID.out"
+    err : "autosnake/{{rule}}-\\$JOB_ID.err"
+    name : "{rule}"
+get_relatable : 
+    mem : 16G
+    time : 3:00:00
+run_read:
+    mem : 16G
+    time : 3:00:00
+match_pos:
+    mem : 12G
+    time : 1:00:00
+get_single_sample_homo_derived_sites:
+    mem : 8G
+shitty_phasing:
+    mem : 10G
+    time : 6:00:00
+shitty_phasing2:
+    mem : 8G
+    time : 6:00:00
+gatkref:
+    mem : 4G
+merge_lik : 
+    time : 24:00:00
+    mem : 10G
+
+pw_diff:
+    time : 24:00:00
+    mem : 2G
+hmm:
+    time : 24:00:00
+    mem : 10G
+
+READ_input:
+    time : 24:00:00
+    mem : 4G
+
+filterlowcov_read:
+    time : 24:00:00
+    mem : 4G
