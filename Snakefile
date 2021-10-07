@@ -245,10 +245,10 @@ rule merge_identicalchrm:
 
 rule contam_file:
     input:
-        cfile="contam_est_Chagyrskaya"
+        cfile="contam_est"
     output:
-        pairf="contam_est_Chagyrskaya_pairwise",
-        idfile="contam_est_Chagyrskaya2"
+        pairf="contam_est_pairwise",
+        idfile="contam_est_2"
     run:
         contamFile(infile=input.cfile, outfile=output.pairf, targets=libraries, idfile=output.idfile)
 
@@ -257,7 +257,7 @@ rule contam_all:
     input:
         dfile="mergedwin_fil{Mfil}/merged_wind.csv",
         tfile= "mergedwin_fil{Mfil}/merged_wint.csv",
-        contam_est="contam_est_Chagyrskaya_pairwise",
+        contam_est="contam_est_pairwise",
 
     output:
         difffile="mergedwin_contam_fil{Mfil}/contam_diff.csv",
@@ -270,7 +270,7 @@ rule contam_id:
     input:
         dfile="identicalmergedwin_fil{Mfil}/id_wind.csv",
         tfile="identicalmergedwin_fil{Mfil}/id_wint.csv",
-        contam_est="contam_est_Chagyrskaya2",
+        contam_est="contam_est_2",
     output:
         difffile="identicalmergedwin_contam_fil{Mfil}/id_diff.csv",
         totalfile="identicalmergedwin_contam_fil{Mfil}/id_total.csv",
