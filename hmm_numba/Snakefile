@@ -1,0 +1,227 @@
+
+import numpy as np
+import scipy
+import random
+import pandas as pd
+from scipy.stats import binom
+from math import isclose
+from scipy.special import gammaln
+from scipy import optimize
+import math
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+from scipy.special import loggamma
+from scipy.special import beta as Betaf
+from scipy.optimize import minimize
+from numpy.linalg import matrix_power
+from scipy.stats import chisquare
+from hmm_inbred_constVar_testing import *
+
+min_read1=500
+min_read0=5000
+
+folders=["allLikelihoods", "allpostprobs", "read"]
+
+readfolder="/mnt/diversity/divyaratan_popli/100arc/readscripts/"
+datafolder="../"
+paramfolder="/mnt/diversity/divyaratan_popli/100arc/inbreeding/fastsim_gz/transitions/"
+hbdfolder="../"
+
+with open(datafolder+"targets.txt") as f:
+    libraries = [line.strip() for line in f]
+
+listf=[]
+for i, l1 in enumerate(libraries):
+    for l2 in libraries[(i+1):]:
+        s = '%s_%s' %(str(l1).strip("['']"), str(l2).strip("['']"))
+        listf.append(s)
+"""
+with open(datafolder+"goodpairs_fil0.txt") as f:
+    listf = [line.strip() for line in f]
+"""
+
+interval=1e7
+instates=[0,1,2]
+
+totalch=list(range(1,23))
+
+Mfilist=[0,1]
+
+stateno=3
+
+allrel=['un','deg5','deg4','deg3','gr','hsib','avu','sib','pc','id']
+relno=len(allrel)
+stateno=3
+
+
+rule hmm:
+    input:
+        pfile=datafolder+"hmm_parameters_fil{Mfil}/p1_file",
+        dfile=datafolder+"mergedwin_remHighdiv_fil{Mfil}/pw_diff.csv",
+        tfile=datafolder+"mergedwin_remHighdiv_fil{Mfil}/pw_total.csv",
+        Afile=paramfolder+"transition_matrix_{rel}.csv",
+
+
+
+    output:
+        resfile="filtered{Mfil}/relation_{rel}_file/res/pw_{listind}.csv",
+        likfile="filtered{Mfil}/relation_{rel}_file/res/lik/pw_{listind}.csv",
+
+
+    run:
+        l=wildcards.listind
+        print(l)
+        i1=l.split('_')[0]
+        i2=l.split('_')[1]
+        print(i1,i2)
+
+        pairf1=hbdfolder+"hbd_win_fil%s/pw_%s.csv" %(str(wildcards.Mfil),i1)
+        pairf2=hbdfolder+"hbd_win_fil%s/pw_%s.csv" %(str(wildcards.Mfil),i2)
+
+        p1thresh=datafolder+"identicalmergedwin_remHighdiv_fil%s/id_total.csv" %(wildcards.Mfil)
+
+        hmm(difffile=input.dfile, totalfile=input.tfile, listind=wildcards.listind,
+                        listf=np.array(listf), targets=np.array(libraries),pfile=input.pfile,
+                        Afile=input.Afile, resfile=output.resfile, likfile=output.likfile,
+                        upA=wildcards.rel, pairf1=pairf1, pairf2=pairf2,
+                        p1thresh=p1thresh, thresh=10, instates=instates)
+
+
+
+rule merge_lik:
+    input:
+        liklist=expand("filtered{{Mfil}}/relation_{rel}_file/res/lik/pw_{{listind}}.csv",rel=allrel),
+    output:
+        likmerged="filtered{Mfil}/allLikelihoods/pw_{listind}.csv",
+    run:
+
+        mergestat(input.liklist, output.likmerged)
+
+
+
+rule get_relatable:
+    input:
+        likfile=expand("filtered{{Mfil}}/{{myfolder}}/pw_{listind}.csv", listind=listf),
+    output:
+        liktab="filtered{Mfil}/relatable_{myfolder}.csv"
+    run:
+        getRelatable(filist=input.likfile, relatable=output.liktab)
+
+rule merge_relatable:
+    input:
+        rel="filtered{Mfil}/relatable_{myfolder}.csv"
+    output:
+        merge="filtered{Mfil}/merged_relatable_{myfolder}.csv"
+    run:
+        mergeRelatable(relf=input.rel, mergef=output.merge)
+
+
+rule get_read:
+    input:
+        tped=datafolder+"readfiles_fil{Mfil}/allsamples.tped",
+        tfam=datafolder+"readfiles_fil{Mfil}/allsamples.tfam",
+        readpy=readfolder+"READ.py",
+        readR=readfolder+"READscript.R",
+
+    output:
+        read_py="filtered{Mfil}/read/READ.py",
+        read_R="filtered{Mfil}/read/READscript.R",
+        tpedout="filtered{Mfil}/read/read_allsamples.tped",
+        tfamout="filtered{Mfil}/read/read_allsamples.tfam"
+    shell:
+        """
+        (
+        #wget -O {output.read_py} https://bitbucket.org/tguenther/read/raw/fdcfe0f1eeea832b3e6bf890805a7138413fab5d/READ.py
+        #wget -O {output.read_R} https://bitbucket.org/tguenther/read/raw/fdcfe0f1eeea832b3e6bf890805a7138413fab5d/READscript.R
+        cp {input.readpy} {output.read_py}
+        cp {input.readR} {output.read_R}
+        cp {input.tped} {output.tpedout}
+        cp {input.tfam} {output.tfamout}
+        )
+        """
+
+rule run_read:
+    input:
+        tped="filtered{Mfil}/read/read_allsamples.tped",
+        tfam="filtered{Mfil}/read/read_allsamples.tfam"
+
+    output:
+        read_results="filtered{Mfil}/read/READ_results",
+        errorf="filtered{Mfil}/read/meansP0_AncientDNA_normalized"
+    shell:
+        """
+        (
+        cd filtered{wildcards.Mfil}/read
+        echo $PWD
+        python READ.py read_allsamples
+        cd ../../
+        echo $PWD
+        )
+        """
+
+
+rule relatable_read:
+    input:
+        over=datafolder + "overlap_fil1",
+        rel="filtered{Mfil}/read/READ_results",
+    output:
+        outfile_rel="allread/fil{Mfil}/read_plot.png",
+        outfile_over="allread/fil{Mfil}/read_overlap.png"
+    script:
+        "readPlot.R"
+
+
+rule relatable_plot:
+    input:
+        over=datafolder + "overlap_fil1",
+        rel="filtered{Mfil}/relatable_allLikelihoods.csv"
+    output:
+        outfile_rel="allLikelihoods/fil{Mfil}/relatable_plot.png",
+        outfile_over="allLikelihoods/fil{Mfil}/overlap_plot.png"
+    script: "kinPlot.R"
+
+
+
+
+rule READoutput_table:
+    input:
+        relf="filtered{Mfil}/read/READ_results",
+        errorf="filtered{Mfil}/read/meansP0_AncientDNA_normalized",
+        overf="../overlap_table_fil{Mfil}.csv"
+    output:
+        out="filtered{Mfil}/read/output_table.csv"
+    run:
+        readtable(relfile=input.relf,
+        errorfile=input.errorf,
+        overfile=input.overf,
+        fout=output.out)
+
+rule READoutput_plot:
+    input:
+        table="filtered{Mfil}/read/output_table.csv"
+    output:
+        png="filtered{Mfil}/read/READ_out.png"
+    script:
+        "READout_plot.R"
+
+
+rule plot6_14:
+    input:
+        phalf="../../noCh12/ch8libs_fil1/hmm_parameters_fil{Mfil}/p_all",
+        f6_14="../mergedwin_fil{Mfil}/pw_Chagyrskaya06_Chagyrskaya14.csv",
+        linesf="filtered{Mfil}/read/output_table.csv",
+    output:
+        fout="fil{Mfil}_diff_6_14.png"
+    script: "diff_6_14.R"
+
+
+rule all:
+    input:
+        tables=expand("filtered{Mfil}/relatable_{folder}.csv", Mfil=Mfilist, folder=["allLikelihoods"]),
+        #read=expand("filtered{Mfil}/read/READ_results", Mfil=Mfilist),
+        outfile_rel=expand("allLikelihoods/fil{Mfil}/relatable_plot.png", Mfil=Mfilist),
+        #outfile_read=expand("allread/fil{Mfil}/read_plot.png", Mfil=Mfilist),
+        #plot6_14=expand("fil{Mfil}_diff_6_14.png", Mfil=Mfilist),
+        #read_table=expand("filtered{Mfil}/read/output_table.csv", Mfil=Mfilist),
+        #read_outplot=expand("filtered{Mfil}/read/READ_out.png", Mfil=Mfilist)
