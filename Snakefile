@@ -9,8 +9,11 @@ from hbd_hmm_func_new import *
 interval=1e7
 #split_bams = "./bamfiles/stephane"
 
-HN_diff0=0.36
-HN_diff1=0.55
+#HN_diff0=0.36
+#HN_diff1=0.55
+HN_diff0=0.35
+HN_diff1=0.475
+
 HN_diff=[HN_diff0,HN_diff1]
 
 with open("targets.txt") as f:
@@ -43,7 +46,7 @@ Mfilist=[0,1]
 
 
 #run name_split.sh to first create right names in bamfiles/stephane
-"""
+
 rule index_bam:
     input: "{name}.bam"
     output: "{name}.bam.bai"
@@ -63,11 +66,11 @@ rule splitbams:
         "bamfiles/split_bams/chrm{ch}/{bam}.bam"
     shell: "samtools view -b {input.bam} {wildcards.ch} > {output}"
 
-"""
+
 
 rule split_bed:
     input:
-        bed="allsites_neaden_lauritsSlack.bed"
+        bed="allsites.bed"
     output:
         split="chrm{ch}_allsites.bed"
     shell: "awk '{{if ($1 == {wildcards.ch}) print $0}}' {input.bed} > {output.split}"
