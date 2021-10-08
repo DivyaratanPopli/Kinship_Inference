@@ -141,10 +141,49 @@ rule get_read:
         )
         """
 
-rule run_read:
+rule filterlowcov_read:
     input:
         tped="filtered{Mfil}/read/read_allsamples.tped",
         tfam="filtered{Mfil}/read/read_allsamples.tfam"
+    output:
+        tped_good="filtered{Mfil}/read/good_read_allsamples.tped",
+        tfam_good="filtered{Mfil}/read/good_read_allsamples.tfam"
+    run:
+        if str(wildcards.Mfil)=='0':
+            min_read=min_read0
+        elif str(wildcards.Mfil)=='1':
+            min_read=min_read1
+        df=pd.read_csv(input.tped, sep="\t", header=None, index_col=False)
+        tf=pd.read_csv(input.tfam, sep="\t", header=None, index_col=False)
+
+
+        dfsml=df.loc[:,4:]
+        dfsml=dfsml.T.reset_index(drop=True).T
+        goodlibs=[0,1,2,3]
+
+        for i in range(int(dfsml.shape[1])):
+            if np.sum((dfsml.iloc[:,i] !='0') & (dfsml.iloc[:,i] !=0))  > min_read:
+                goodlibs.append(i+4)
+
+
+        dfnew=df.loc[:,goodlibs]
+        index=[x-4 for x in goodlibs]
+        index = [i for i in index if i >= 0]
+        index1=[ int(i/2) for i in index if i%2==0]
+        tfnew=tf.loc[index1,:]
+
+        with pd.option_context('display.max_rows', len(dfnew.index), 'display.max_columns', len(dfnew.columns)):
+                    dfnew.to_csv(output.tped_good, sep='\t', header=None, index=False)
+
+        with pd.option_context('display.max_rows', len(tfnew.index), 'display.max_columns', len(tfnew.columns)):
+                    tfnew.to_csv(output.tfam_good, sep='\t', header=None, index=False)
+
+
+
+rule run_read:
+    input:
+        tped="filtered{Mfil}/read/good_read_allsamples.tped",
+        tfam="filtered{Mfil}/read/good_read_allsamples.tfam"
 
     output:
         read_results="filtered{Mfil}/read/READ_results",
@@ -154,7 +193,7 @@ rule run_read:
         (
         cd filtered{wildcards.Mfil}/read
         echo $PWD
-        python READ.py read_allsamples
+        python READ.py good_read_allsamples
         cd ../../
         echo $PWD
         )

@@ -344,109 +344,112 @@ def hmm(difffile, targets, totalfile, listind, listf, pfile, Afile, resfile, lik
     total= np.loadtxt(totalfile,dtype='float', delimiter = ",")[:,ind]
 
     data=np.vstack([diff,total]).T
-
-    pth=np.loadtxt(p1thresh,dtype='float', delimiter = ",")[:,[i1,i2]]
-
-
-    pair1=pd.read_csv(pairf1, sep=",", header=0,index_col=0)
-    pair2=pd.read_csv(pairf2, sep=",", header=0,index_col=0)
-
-    pair1['infocount']=pth[:,0]
-    pair2['infocount']=pth[:,1]
-    ####correct for numeric errors from hbd_hmm
-    pair1.loc[(pair1['g_noin']!=9) & (pair1['g_noin']>1),'g_noin']=1
-    pair2.loc[(pair2['g_noin']!=9) & (pair2['g_noin']>1),'g_noin']=1
-
-    pair1.loc[pair1['g_noin']<0,'g_noin']=0
-    pair2.loc[pair2['g_noin']<0,'g_noin']=0
-
-#    pair1['ninb']=pair1['dis']/pair1['count']     #1 means no hbd
-#    pair1['inb']=1-pair1['ninb']
-#    pair2['ninb']=pair2['dis']/pair2['count']     #1 means no hbd
-#    pair2['inb']=1-pair2['ninb']
-
-    pair1.loc[pair1['infocount']<thresh, 'g_noin']=9
-    pair2.loc[pair2['infocount']<thresh, 'g_noin']=9
-
-#    pair1.loc[pair1['g_noin']>0.5,'g_noin']=1
-#    pair2.loc[pair2['g_noin']>0.5,'g_noin']=1
-
-    pair1['ninb']=pair1['g_noin']     #1 means no hbd
-    pair1['inb']=1-pair1['g_noin']
-    pair2['ninb']=pair2['g_noin']     #1 means no hbd
-    pair2['inb']=1-pair2['g_noin']
+    if np.sum(data[:,1]>0)>10:
+        pth=np.loadtxt(p1thresh,dtype='float', delimiter = ",")[:,[i1,i2]]
 
 
-    badwin1=list(pair1.index[pair1['ninb']==9])
-    badwin2=list(pair2.index[pair2['ninb']==9])
+        pair1=pd.read_csv(pairf1, sep=",", header=0,index_col=0)
+        pair2=pd.read_csv(pairf2, sep=",", header=0,index_col=0)
 
-    pair1.loc[badwin1,'inb']=0
-    pair1.loc[badwin1,'ninb']=1
-    pair2.loc[badwin2,'inb']=0
-    pair2.loc[badwin2,'ninb']=1
+        pair1['infocount']=pth[:,0]
+        pair2['infocount']=pth[:,1]
+        ####correct for numeric errors from hbd_hmm
+        pair1.loc[(pair1['g_noin']!=9) & (pair1['g_noin']>1),'g_noin']=1
+        pair2.loc[(pair2['g_noin']!=9) & (pair2['g_noin']>1),'g_noin']=1
 
+        pair1.loc[pair1['g_noin']<0,'g_noin']=0
+        pair2.loc[pair2['g_noin']<0,'g_noin']=0
 
+    #    pair1['ninb']=pair1['dis']/pair1['count']     #1 means no hbd
+    #    pair1['inb']=1-pair1['ninb']
+    #    pair2['ninb']=pair2['dis']/pair2['count']     #1 means no hbd
+    #    pair2['inb']=1-pair2['ninb']
 
-    hbd=np.zeros([len(total),3])
-    hbd[:,0]=pair1['ninb']*pair2['ninb']
-    hbd[:,1]=(pair1['ninb']*pair2['inb']) + (pair2['ninb']*pair1['inb'])
-    hbd[:,2]=pair1['inb']*pair2['inb']
+        pair1.loc[pair1['infocount']<thresh, 'g_noin']=9
+        pair2.loc[pair2['infocount']<thresh, 'g_noin']=9
 
-    gudwin=total>0
-    data=data[gudwin,:]
-    hbd=hbd[gudwin,:]
+    #    pair1.loc[pair1['g_noin']>0.5,'g_noin']=1
+    #    pair2.loc[pair2['g_noin']>0.5,'g_noin']=1
 
-    chrmlist=np.asarray(pair1['chrom'])
-    chrmlist=chrmlist[gudwin]
-
-    win=np.sum(gudwin)
-
-    with open(pfile,"r") as f:
-        p_1=float(f.read())
-
-    p_12=p_1/2
-    inerror=p_12/2
-    initial_p=np.array([[(p_1+p_12)/2,p_1,p_12],
-                        [p_12,p_1,inerror],
-                        [inerror,p_1, inerror]])
+        pair1['ninb']=pair1['g_noin']     #1 means no hbd
+        pair1['inb']=1-pair1['g_noin']
+        pair2['ninb']=pair2['g_noin']     #1 means no hbd
+        pair2['inb']=1-pair2['g_noin']
 
 
-    pos=np.where(chrmlist[:-1] != chrmlist[1:])[0]+1
-    pos=np.append(pos,np.shape(total)[0])
-    pos=np.insert(pos, 0, 0, axis=0)
+        badwin1=list(pair1.index[pair1['ninb']==9])
+        badwin2=list(pair2.index[pair2['ninb']==9])
+
+        pair1.loc[badwin1,'inb']=0
+        pair1.loc[badwin1,'ninb']=1
+        pair2.loc[badwin2,'inb']=0
+        pair2.loc[badwin2,'ninb']=1
 
 
 
-    pi= np.array([1/3,1/3,1/3])
+        hbd=np.zeros([len(total),3])
+        hbd[:,0]=pair1['ninb']*pair2['ninb']
+        hbd[:,1]=(pair1['ninb']*pair2['inb']) + (pair2['ninb']*pair1['inb'])
+        hbd[:,2]=pair1['inb']*pair2['inb']
 
-    #A=A1
-    A=np.array(pd.read_csv(Afile,sep=',',header=None,index_col=False))
+        gudwin=total>0
+        data=data[gudwin,:]
+        hbd=hbd[gudwin,:]
 
-    Bu = np.zeros((inbr_states,np.shape(A)[0],win)) #Emission probability
-    #for st in instates:
-     #   for re in range(np.shape(A)[0]):
-     #       Bu[st,re,:]=binom.pmf(data[:,0], data[:,1], initial_p[st,re])
+        chrmlist=np.asarray(pair1['chrom'])
+        chrmlist=chrmlist[gudwin]
 
-    [b0, b1, b2, b3]=[1000,1000,1000,1000]
-    [a0,a1,a2,a3]=[b0*initial_p[0,0]/(1-initial_p[0,0]), b1*initial_p[0,1]/(1-initial_p[0,1]), b2*initial_p[0,2]/(1-initial_p[0,2]), b3*initial_p[2,2]/(1-initial_p[2,2])]
-    x0 = [a0,b0,a1,b1,a2,b2,a3,b3]
+        win=np.sum(gudwin)
 
-    xin0=makexin(x=x0)
-    Bu=makeB(data=data,xin=xin0, M=A.shape[0], T=len(data), inbr=inbr_states)
+        with open(pfile,"r") as f:
+            p_1=float(f.read())
 
-
-
-    #print(A)
-    #[B, log_bscale]= scaleB(Bu, instates)
-    B=Bu
-
-    np.argwhere(np.isnan(B))
+        p_12=p_1/2
+        inerror=p_12/2
+        initial_p=np.array([[(p_1+p_12)/2,p_1,p_12],
+                            [p_12,p_1,inerror],
+                            [inerror,p_1, inerror]])
 
 
+        pos=np.where(chrmlist[:-1] != chrmlist[1:])[0]+1
+        pos=np.append(pos,np.shape(total)[0])
+        pos=np.insert(pos, 0, 0, axis=0)
 
-    gamma,A,B,up_p,lik, pi= baum_welch(data=data, hbd=hbd, A=A, B=B, pos=pos, p1avg=initial_p, update_transition=upA, inbr=inbr_states, x0=x0)
-    res=viterbi(data, A, B, pi)
 
+
+        pi= np.array([1/3,1/3,1/3])
+
+        #A=A1
+        A=np.array(pd.read_csv(Afile,sep=',',header=None,index_col=False))
+
+        Bu = np.zeros((inbr_states,np.shape(A)[0],win)) #Emission probability
+        #for st in instates:
+         #   for re in range(np.shape(A)[0]):
+         #       Bu[st,re,:]=binom.pmf(data[:,0], data[:,1], initial_p[st,re])
+
+        [b0, b1, b2, b3]=[1000,1000,1000,1000]
+        [a0,a1,a2,a3]=[b0*initial_p[0,0]/(1-initial_p[0,0]), b1*initial_p[0,1]/(1-initial_p[0,1]), b2*initial_p[0,2]/(1-initial_p[0,2]), b3*initial_p[2,2]/(1-initial_p[2,2])]
+        x0 = [a0,b0,a1,b1,a2,b2,a3,b3]
+
+        xin0=makexin(x=x0)
+        Bu=makeB(data=data,xin=xin0, M=A.shape[0], T=len(data), inbr=inbr_states)
+
+
+
+        #print(A)
+        #[B, log_bscale]= scaleB(Bu, instates)
+        B=Bu
+
+        np.argwhere(np.isnan(B))
+
+
+
+        gamma,A,B,up_p,lik, pi= baum_welch(data=data, hbd=hbd, A=A, B=B, pos=pos, p1avg=initial_p, update_transition=upA, inbr=inbr_states, x0=x0)
+        res=viterbi(data, A, B, pi)
+        
+    else:
+        res=np.ones(len(data))*-9
+        lik=float('-inf')
     np.savetxt(fname=resfile, X=res,delimiter=',')
 
     with open(likfile,'w') as f:
