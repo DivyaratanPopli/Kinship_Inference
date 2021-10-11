@@ -42,9 +42,9 @@ mkdir autosnake
 	#a script to get this file using vcf with genotypes for one ind each from target and contaminating populations.
 #Finally, to run the script to get input files type on the command line:
 
-snakemake all --cores n    #where n is the number of cores you want to use
-# alternatively use "bash run_snakemake_eva.sh all" to run the pipeline on cluster
-# if you get an error, use a conda env with latest version of pybedtools and pysam
+snakemake all --cores n --config is_contam=0    #where n is the number of cores you want to use, iscontam is binary (0 for no contam files)
+# alternatively use "bash run_snakemake_eva.sh all --config is_contam=0" to run the pipeline on cluster
+# if you get an error, make sure to use a conda env with latest version of pybedtools and pysam
 
 
 #This will prepare the input files for the model
@@ -57,7 +57,7 @@ mkdir autosnake
 #You don't need conda env for this part
 #run this on command line:
 
-bash run_snakemake_eva.sh all 
+bash run_snakemake_eva.sh all
 # you can run it on a number cruncher (instead of cluster) with  snakemake all --cores n ,here n is no. of cores
 
 #Our model uses python3 but READ uses python2, so make sure that if you use conda env, it allows both versions.
