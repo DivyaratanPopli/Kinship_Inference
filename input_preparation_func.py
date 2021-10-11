@@ -371,42 +371,43 @@ def adjust_sd(D_obs, N_obs, *args, **kwargs):
     return d_adj, d_adj+s_adj
 
 
-def contamAll(dfile, tfile, cfile, Dnhfile, difffile, totalfile):
+def contamAll(dfile, tfile, cfile, Dnhfile, difffile, totalfile, iscnt):
 
     diff=np.loadtxt(dfile, delimiter=',', dtype='float')
     total=np.loadtxt(tfile, delimiter=',', dtype='float')
 
-
-    p_c=Dnhfile
-
-
-    df=pd.read_csv(cfile, sep=",",header=0,index_col=0)
-    cnt1=np.array(df['contam'])
-
-    c=cnt1/100
-
-    propmean=np.sum(diff, axis=0)/np.sum(total, axis=0)
+    if str(iscnt)=='1':
+        p_c=Dnhfile
 
 
-    p_e = (propmean - c * p_c)/ (1-c)
-    p_e[p_e>1]=1
+        df=pd.read_csv(cfile, sep=",",header=0,index_col=0)
+        cnt1=np.array(df['contam'])
 
-    d_cor, n_cor = adjust_sd(D_obs=diff, N_obs=total, p_e=p_e, p_c=p_c, c=c)
-    #print(d_cor[np.isnan(d_cor)])
+        c=cnt1/100
 
-    if np.all(np.where(np.isnan(np.sum(d_cor,0)))[0] == np.where(np.isnan(np.sum(n_cor,0)))[0]):
-        d_cor[np.isnan(d_cor)] = 0
-        n_cor[np.isnan(n_cor)] = 0
+        propmean=np.sum(diff, axis=0)/np.sum(total, axis=0)
 
 
-    if(np.sum(np.isnan(d_cor))==0):
-        if(np.sum(np.isnan(n_cor))==0):
+        p_e = (propmean - c * p_c)/ (1-c)
+        p_e[p_e>1]=1
+
+        d_cor, n_cor = adjust_sd(D_obs=diff, N_obs=total, p_e=p_e, p_c=p_c, c=c)
+        #print(d_cor[np.isnan(d_cor)])
+
+        if np.all(np.where(np.isnan(np.sum(d_cor,0)))[0] == np.where(np.isnan(np.sum(n_cor,0)))[0]):
+            d_cor[np.isnan(d_cor)] = 0
+            n_cor[np.isnan(n_cor)] = 0
 
 
-            np.savetxt(fname=difffile, X=d_cor, delimiter=",")
-            np.savetxt(fname=totalfile, X=n_cor, delimiter=",")
+        if(np.sum(np.isnan(d_cor))==0):
+            if(np.sum(np.isnan(n_cor))==0):
 
+                np.savetxt(fname=difffile, X=d_cor, delimiter=",")
+                np.savetxt(fname=totalfile, X=n_cor, delimiter=",")
 
+    elif str(iscnt)=='0':
+        np.savetxt(fname=difffile, X=diff, delimiter=",")
+        np.savetxt(fname=totalfile, X=total, delimiter=",")
 
 def getHighDiv(diff, total, fout):
 

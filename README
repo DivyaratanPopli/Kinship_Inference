@@ -34,9 +34,12 @@ mkdir autosnake
 
 #good for estimating differences for unrelated individuals.
 
-#make a contamination file (named contam_est). In this file keep 2 columns separated by tab: 'name' with names of samples and 'contamination (%)' 
-#It does not matter if the file has more columns.  
+#If you want to include contamination correction then:
+	#make a contamination file (named contam_est). In this file keep 2 columns separated by tab: 'name' with names of samples and 'contamination (%)' 
+	#It does not matter if the file has more columns.  
 
+	#make a file with a float number showing average difference between target population and the contaminatinf population. I'll provide
+	#a script to get this file using vcf with genotypes for one ind each from target and contaminating populations.
 #Finally, to run the script to get input files type on the command line:
 
 snakemake all --cores n    #where n is the number of cores you want to use

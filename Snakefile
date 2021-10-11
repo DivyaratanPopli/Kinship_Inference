@@ -11,10 +11,19 @@ interval=1e7
 
 #HN_diff0=0.36
 #HN_diff1=0.55
-HN_diff0=0.35
-HN_diff1=0.475
+#HN_diff0=0.35
+#HN_diff1=0.475
 
-HN_diff=[HN_diff0,HN_diff1]
+#HN_diff=[HN_diff0,HN_diff1]
+HN_diff=[0,0]
+is_contam=int(config["is_contam"])
+
+if is_contam==1:
+    with open("contam_diff.txt") as f:
+        HN_diff0=float(f.read())
+    with open("contam_diff_filtered.txt") as f:
+        HN_diff1=float(f.read())
+    HN_diff=[HN_diff0,HN_diff1]
 
 with open("targets.txt") as f:
     libraries = [line.strip() for line in f]
@@ -266,7 +275,9 @@ rule contam_all:
         difffile="mergedwin_contam_fil{Mfil}/contam_diff.csv",
         totalfile="mergedwin_contam_fil{Mfil}/contam_total.csv"
     run:
-        contamAll(dfile=input.dfile, tfile=input.tfile, cfile=input.contam_est, Dnhfile=HN_diff[int(wildcards.Mfil)], difffile=output.difffile, totalfile=output.totalfile)
+        contamAll(dfile=input.dfile, tfile=input.tfile, cfile=input.contam_est,
+        Dnhfile=HN_diff[int(wildcards.Mfil)], difffile=output.difffile,
+        totalfile=output.totalfile, iscnt=is_contam)
 
 
 rule contam_id:
@@ -278,7 +289,9 @@ rule contam_id:
         difffile="identicalmergedwin_contam_fil{Mfil}/id_diff.csv",
         totalfile="identicalmergedwin_contam_fil{Mfil}/id_total.csv",
     run:
-        contamAll(dfile=input.dfile, tfile=input.tfile, cfile=input.contam_est, Dnhfile=HN_diff[int(wildcards.Mfil)], difffile=output.difffile, totalfile=output.totalfile)
+        contamAll(dfile=input.dfile, tfile=input.tfile, cfile=input.contam_est,
+        Dnhfile=HN_diff[int(wildcards.Mfil)], difffile=output.difffile,
+        totalfile=output.totalfile, iscnt=is_contam)
 
 
 rule get_highDiv:
