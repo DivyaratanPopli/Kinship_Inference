@@ -15,6 +15,8 @@ interval=1e7
 #HN_diff1=0.475
 
 #HN_diff=[HN_diff0,HN_diff1]
+#target_ind=config["target_ind"]
+#contam_ind=config["contam_ind"]
 HN_diff=[0,0]
 is_contam=int(config["is_contam"])
 
@@ -265,18 +267,53 @@ rule contam_file:
         contamFile(infile=input.cfile, outfile=output.pairf, targets=libraries, idfile=output.idfile)
 
 
+rule merge_pos:
+    input:
+        poslist=expand("hapProbs/chrm{ch}/pos_filtered{{Mfil}}", ch=totalch)
+    output:
+        filbed="filtered_bed{Mfil}.bed"
+    run:
+        mergePos(poslist=input.poslist, filbed=output.filbed)
+
+
+rule nh_inputFile:
+    input:
+        genf="contam_diff.vcf.gz",
+        index="contam_diff.vcf.gz.tbi",
+        bed="filtered_bed{Mfil}.bed"
+    output:
+        diff="contam_diff_{tar_ind}_{contam_ind}_fil{Mfil}.txt",
+        test="test_{tar_ind}_{contam_ind}_fil{Mfil}.vcf"
+    shell:
+        """
+        (
+        bcftools view {input.genf} -R {input.bed} -s {wildcards.tar_ind},{wildcards.contam_ind} -e 'GT="mis"'>{output.test}
+        bcftools query -f '%CHROM\t%POS[\t%GT]\n' {output.test}>{output.diff}
+        )
+        """
+
+rule nhfile:
+    input:
+        alldiff="contam_diff_{tar_ind}_{contam_ind}_fil{Mfil}.txt",
+    output:
+        avgdiff="nhfile_{tar_ind}_{contam_ind}_fil{Mfil}.txt"
+    run:
+        nhFile(alldiff=input.alldiff, avgdiff=output.avgdiff, phased=config["phased"])
+#bcftools query -f '%CHROM %POS[\t%GT]\n' test.vcf>{output.nhf}
+#nhFile(genf=input.genf,fil_posf=input.fil_posf, bedf=input.bedf, nhf=output.nhf,ind1=target_ind, ind2=contam_ind)
 rule contam_all:
     input:
         dfile="mergedwin_fil{Mfil}/merged_wind.csv",
         tfile= "mergedwin_fil{Mfil}/merged_wint.csv",
         contam_est="contam_est_pairwise",
+        nh_file=expand("nhfile_{tar_ind}_{contam_ind}_fil{{Mfil}}.txt",tar_ind=config["tar_ind"], contam_ind=config["contam_ind"])
 
     output:
         difffile="mergedwin_contam_fil{Mfil}/contam_diff.csv",
         totalfile="mergedwin_contam_fil{Mfil}/contam_total.csv"
     run:
         contamAll(dfile=input.dfile, tfile=input.tfile, cfile=input.contam_est,
-        Dnhfile=HN_diff[int(wildcards.Mfil)], difffile=output.difffile,
+        Dnhfile=input.nh_file[0], difffile=output.difffile,
         totalfile=output.totalfile, iscnt=is_contam)
 
 
@@ -285,12 +322,14 @@ rule contam_id:
         dfile="identicalmergedwin_fil{Mfil}/id_wind.csv",
         tfile="identicalmergedwin_fil{Mfil}/id_wint.csv",
         contam_est="contam_est_2",
+        nh_file=expand("nhfile_{tar_ind}_{contam_ind}_fil{{Mfil}}.txt",tar_ind=config["tar_ind"], contam_ind=config["contam_ind"])
+
     output:
         difffile="identicalmergedwin_contam_fil{Mfil}/id_diff.csv",
         totalfile="identicalmergedwin_contam_fil{Mfil}/id_total.csv",
     run:
         contamAll(dfile=input.dfile, tfile=input.tfile, cfile=input.contam_est,
-        Dnhfile=HN_diff[int(wildcards.Mfil)], difffile=output.difffile,
+        Dnhfile=input.nh_file[0], difffile=output.difffile,
         totalfile=output.totalfile, iscnt=is_contam)
 
 

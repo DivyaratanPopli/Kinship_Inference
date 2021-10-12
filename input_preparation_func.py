@@ -323,6 +323,48 @@ def mergeChrm(dinfiles, tinfiles, dfile, tfile, chfile):
     np.savetxt(fname=tfile, X=tf0, delimiter=",")
     np.savetxt(fname=chfile, X=chrm0, delimiter=",")
 
+
+def mergePos(poslist, filbed):
+    po0=np.loadtxt(poslist[0], dtype='float', delimiter=',')
+    chrm0=np.ones(len(po0))
+    for pf in range(1,len(poslist)):
+
+        po=np.loadtxt(poslist[pf], dtype='float', delimiter=',')
+        chrm=np.ones(len(po)) * (pf+1)
+
+        po0=np.concatenate((po0,po),axis=0)
+        chrm0=np.concatenate((chrm0,chrm),axis=0)
+
+    df=pd.DataFrame({
+        "chrm":chrm0.astype(int),
+        "pos":po0.astype(int),
+        "pos1":(po0+1).astype(int)
+    })
+    with pd.option_context('display.max_rows', len(df.index), 'display.max_columns', len(df.columns)):
+    	    df.to_csv(filbed, sep='\t',header=False,index=None)
+
+
+def nhFile(alldiff, avgdiff, phased):
+
+    df=pd.read_csv(alldiff, sep="\t",header=None,index_col=None)
+
+    if phased==1:
+        nD=np.array(df[2].str.split('|').sum()).astype(int)
+        hD=np.array(df[3].str.split('|').sum()).astype(int)
+    elif phased==0:
+        nD=np.array(df[2].str.split('/').sum()).astype(int)
+        hD=np.array(df[3].str.split('/').sum()).astype(int)
+    nA=2-nD
+
+    hA=2-hD
+
+    diff=((nA*hD)+(nD*hA)) / ((nA+nD)*(hA+hD))
+    nh_diff=np.mean(diff)
+
+    with open(avgdiff, 'w') as f:
+        print(nh_diff,file=f)
+
+
 def contamFile(infile, outfile, targets, idfile):
 
     cnf=pd.read_csv(infile, sep="\t",header=0,index_col=None)
@@ -377,8 +419,9 @@ def contamAll(dfile, tfile, cfile, Dnhfile, difffile, totalfile, iscnt):
     total=np.loadtxt(tfile, delimiter=',', dtype='float')
 
     if str(iscnt)=='1':
-        p_c=Dnhfile
 
+        with open(Dnhfile,"r") as f:
+            p_c=float(f.read())
 
         df=pd.read_csv(cfile, sep=",",header=0,index_col=0)
         cnt1=np.array(df['contam'])
