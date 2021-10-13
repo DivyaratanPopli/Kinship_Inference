@@ -25,7 +25,6 @@ if is_contam==1:
     if tc_diff==0:
         tar_ind1=config["tar_ind"]
         contam_ind1=config["contam_ind"]
-        phased1=config["phased"]
     elif tc_diff==1:
         tar_ind1=0
         contam_ind1=0
@@ -324,7 +323,7 @@ rule nhfile:
     params:
         is_contam=is_contam
     run:
-        nhFile(alldiff=input.alldiff, avgdiff=output.avgdiff, phased=phased1, is_contam=is_contam)
+        nhFile(alldiff=input.alldiff, avgdiff=output.avgdiff, is_contam=is_contam)
 
 
 rule contam_all:

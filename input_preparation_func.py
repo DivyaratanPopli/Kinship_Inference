@@ -344,29 +344,27 @@ def mergePos(poslist, filbed):
     	    df.to_csv(filbed, sep='\t',header=False,index=None)
 
 
-def nhFile(alldiff, avgdiff, phased, is_contam):
+def nhFile(alldiff, avgdiff, is_contam):
 
     if str(is_contam)=='0':
         with open(avgdiff, 'w') as f:
             print("NA",file=f)
 
-    elif str(is_contam)=='1':    
+    elif str(is_contam)=='1':
         df=pd.read_csv(alldiff, sep="\t",header=None,index_col=None)
 
-        if phased==1:
-            nD=np.array(df[2].str.split('|').sum()).astype(int)
-            hD=np.array(df[3].str.split('|').sum()).astype(int)
-        elif phased==0:
-            nD=np.array(df[2].str.split('/').sum()).astype(int)
-            hD=np.array(df[3].str.split('/').sum()).astype(int)
-        nA=2-nD
+        x2=[char for char in df[2][0]][1]
+        x3=[char for char in df[3][0]][1]
 
+        nD=np.array(df[2].str.split(x2).sum()).astype(int)
+        hD=np.array(df[3].str.split(x3).sum()).astype(int)
+        nA=2-nD
         hA=2-hD
 
         diff=((nA*hD)+(nD*hA)) / ((nA+nD)*(hA+hD))
         nh_diff=np.mean(diff)
-
-        with open(avgdiff, 'w') as f:
+        
+        with open(nhf, 'w') as f:
             print(nh_diff,file=f)
 
 
