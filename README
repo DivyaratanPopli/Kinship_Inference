@@ -52,7 +52,9 @@ If you want to use contamination correction using your own nh_file, then use:
 snakemake all --cores n --is_contam=1 tc_diff=1
 
 # alternatively use "bash run_snakemake_eva.sh all --config is_contam=0" to run the pipeline on cluster
-# if you get an error, make sure to use a conda env with latest version of pybedtools and pysam
+# if you get an error, make sure to use a conda env with latest version of pybedtools and pysam.You can use environment.yml file for this
+conda env create -f environment.yml
+conda activate relcap_env
 
 
 #This will prepare the input files for the model
@@ -61,14 +63,15 @@ snakemake all --cores n --is_contam=1 tc_diff=1
 
 mkdir autosnake
 
-#Inside readPlot.R and kinPlot.R, change the names of the samples to your samples (in the order that you'd like to see in the plot).
+
 #You don't need conda env for this part
+conda deactivate
 #run this on command line:
 
 bash run_snakemake_eva.sh all
 # you can run it on a number cruncher (instead of cluster) with  snakemake all --cores n ,here n is no. of cores
 
-#Our model uses python3 but READ uses python2, so make sure that if you use conda env, it allows both versions.
+#Our model uses python3 but READ uses python2, so make sure that if you use conda env, it allows both versions (environment here does not).
 
 #The output will be hmm_numba/filtered0/merged_relatable_allLikelihoods.csv in folder hmm_numba
 
