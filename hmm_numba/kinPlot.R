@@ -8,11 +8,11 @@ library(plyr)
 #relatable <- "/mnt/diversity/divyaratan_popli/100arc/inbreeding/laurits_writeup/Ch9_rem/neavar/newSim_probCorr/hmm_numba/filtered0/merged_relatable_allLikelihoods.csv"
 #out_rel <- "aaaaaa.txt"
 #out_over <-"aaaaaaaaaa.txt"
+#tarf="/mnt/diversity/alba_bm/Belgian/Nuclear_Belgian/KIN_Indiv_contam_newSim/targets.txt
 
+bubbleplot_kin <- function(overlap_table, relatable, out_rel, out_over, tarf) {
 
-bubbleplot_kin <- function(overlap_table, relatable, out_rel, out_over) {
-
-
+  allnames <- read.csv(tarf, header = FALSE, sep = ",")
   over=read.csv(file=overlap_table, header=TRUE, row.names=1, sep=',')
   rel=read.csv(file=relatable, row.names = 1, header=TRUE, sep='\t')
   info=merge(over, rel, by=c("pair"),all.x=TRUE)
@@ -35,8 +35,8 @@ bubbleplot_kin <- function(overlap_table, relatable, out_rel, out_over) {
                        label=c("0","0-10","10-20","21-50","50-100","101-500","501-1000","1000-5000","5000-10000",">10000"))
   matr1$loglik_ratio <- round(matr1$loglik_ratio,1)
   #data[, c(1, 2)] <- as.data.frame(t(apply(data[, c(1, 2)], 1, sort)))data$V1 <- factor(data$V1, levels=c(“Fonds”,“Spy8",“Spy1”,“Spy94a”,“GoyetQ57-3”,“GoyetQ57-2",“GoyetQ57-1”,“GoyetQ305-4",“GoyetQ56-1”,“GoyetQ56-1-lowCov”,“Goyet374a-1”,“Goyet305-7",“GoyetQ55-4”,“Goyet1424-3D”,“GoyetC5-1”,“GoyetQ119-2",“GoyetQ376-25”))
-  matr1$lib2 <- factor(matr1$lib2, levels=c("Chagyrskaya01","Chagyrskaya06","Chagyrskaya14","Chagyrskaya12","Chagyrskaya41","Chagyrskaya20","Chagyrskaya1141","Chagyrskaya13","Chagyrskaya19","Chagyrskaya07","Chagyrskaya17","Chagyrskaya18","Chagyrskaya02","Chagyrskaya60","Okladnikov11","Okladnikov15"))#data$SP_V1 <- ifelse(data$V1 == “A29253”, “red”, “black”)
-  matr1$lib1 <- factor(matr1$lib1, levels=c("Chagyrskaya01","Chagyrskaya06","Chagyrskaya14","Chagyrskaya12","Chagyrskaya41","Chagyrskaya20","Chagyrskaya1141","Chagyrskaya13","Chagyrskaya19","Chagyrskaya07","Chagyrskaya17","Chagyrskaya18","Chagyrskaya02","Chagyrskaya60","Okladnikov11","Okladnikov15"))#data$SP_V1 <- ifelse(data$V1 == “A29253”, “red”, “black”)
+  matr1$lib2 <- factor(matr1$lib2, levels=allnames$V1)#data$SP_V1 <- ifelse(data$V1 == “A29253”, “red”, “black”)
+  matr1$lib1 <- factor(matr1$lib1, levels=allnames$V1)#data$SP_V1 <- ifelse(data$V1 == “A29253”, “red”, “black”)
 
   colors <- c("seagreen4","steelblue2","mediumblue","steelblue3","lightpink3","thistle3","gray45","lightsalmon3","darkred","firebrick","tan","black","gray70","lightcyan3","darkorchid","pink3","pink4")#data[, c(1, 2)] <- as.data.frame(t(apply(data[, c(1, 2)], 1, sort)))#Plot all the infered relatedness
 
@@ -88,4 +88,4 @@ bubbleplot_kin <- function(overlap_table, relatable, out_rel, out_over) {
 }
 
 
-bubbleplot_kin(overlap_table=snakemake@input[["over"]], relatable = snakemake@input[["rel"]], out_rel=snakemake@output[["outfile_rel"]], out_over=snakemake@output[["outfile_over"]])
+bubbleplot_kin(overlap_table=snakemake@input[["over"]], relatable = snakemake@input[["rel"]], out_rel=snakemake@output[["outfile_rel"]], out_over=snakemake@output[["outfile_over"]], tarf=snakemake@input[["tarf"]])

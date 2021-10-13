@@ -204,6 +204,7 @@ rule relatable_read:
     input:
         over=datafolder + "overlap_fil1",
         rel="filtered{Mfil}/read/READ_results",
+        tarf=datafolder + "targets.txt"
     output:
         outfile_rel="allread/fil{Mfil}/read_plot.png",
         outfile_over="allread/fil{Mfil}/read_overlap.png"
@@ -214,7 +215,8 @@ rule relatable_read:
 rule relatable_plot:
     input:
         over=datafolder + "overlap_fil1",
-        rel="filtered{Mfil}/merged_relatable_allLikelihoods.csv"
+        rel="filtered{Mfil}/merged_relatable_allLikelihoods.csv",
+        tarf=datafolder + "targets.txt"
     output:
         outfile_rel="allLikelihoods/fil{Mfil}/relatable_plot.png",
         outfile_over="allLikelihoods/fil{Mfil}/overlap_plot.png"
