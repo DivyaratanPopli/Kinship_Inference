@@ -25,6 +25,9 @@ if is_contam==1:
     if tc_diff==0:
         tar_ind1=config["tar_ind"]
         contam_ind1=config["contam_ind"]
+
+        contam_diff_vcf=config["contam_diff_vcf"]
+        contam_diff_ind=contam_diff_vcf + '.tbi'
     elif tc_diff==1:
         tar_ind1=0
         contam_ind1=0
@@ -39,6 +42,7 @@ elif is_contam==0:
     vcf_tbi_empty="contam_diff.vcf.gz.tbi"
     with open(vcf_tbi_empty,'w') as f:
         print("NA")
+
 
 
 with open("targets.txt") as f:
@@ -292,8 +296,8 @@ rule merge_pos:
 
 rule nh_inputFile:
     input:
-        genf="contam_diff.vcf.gz",
-        index="contam_diff.vcf.gz.tbi",
+        genf=contam_diff_vcf,
+        index=contam_diff_ind,
         bed="filtered_bed{Mfil}.bed"
     output:
         test="test_{tar_ind}_{contam_ind}_fil{Mfil}.vcf",

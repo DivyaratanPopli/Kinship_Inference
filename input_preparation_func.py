@@ -363,8 +363,8 @@ def nhFile(alldiff, avgdiff, is_contam):
 
         diff=((nA*hD)+(nD*hA)) / ((nA+nD)*(hA+hD))
         nh_diff=np.mean(diff)
-        
-        with open(nhf, 'w') as f:
+
+        with open(avgdiff, 'w') as f:
             print(nh_diff,file=f)
 
 
