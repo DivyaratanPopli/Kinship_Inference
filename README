@@ -79,3 +79,4 @@ bash run_snakemake_eva.sh all
 
 #results for READ are in hmm_numba/filtered0/read/READ_results
 
+Use bash looprel.sh n=number_of_cores for large dataset (>100 samples)
