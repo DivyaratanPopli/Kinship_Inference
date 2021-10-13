@@ -9,10 +9,10 @@ from hbd_hmm_func_new import *
 interval=1e7
 #split_bams = "./bamfiles/stephane"
 
-#HN_diff0=0.36
-#HN_diff1=0.55
-#HN_diff0=0.35
-#HN_diff1=0.475
+#HN_diff0=0.36 chagyrskaya
+#HN_diff1=0.55 chagyrskaya
+#HN_diff0=0.35 vindija
+#HN_diff1=0.475 vindija
 
 #HN_diff=[HN_diff0,HN_diff1]
 #target_ind=config["target_ind"]
@@ -21,9 +21,15 @@ interval=1e7
 is_contam=int(config["is_contam"])
 
 if is_contam==1:
-    tar_ind1=config["tar_ind"]
-    contam_ind1=config["contam_ind"]
-    phased1=config["phased"]
+    tc_diff=int(config["tc_diff"])
+    if tc_diff==0:
+        tar_ind1=config["tar_ind"]
+        contam_ind1=config["contam_ind"]
+        phased1=config["phased"]
+    elif tc_diff==1:
+        tar_ind1=0
+        contam_ind1=0
+
 elif is_contam==0:
     tar_ind1='none'
     contam_ind1='none'
@@ -326,12 +332,14 @@ rule contam_all:
         dfile="mergedwin_fil{Mfil}/merged_wind.csv",
         tfile= "mergedwin_fil{Mfil}/merged_wint.csv",
         contam_est="contam_est_pairwise",
+        nh_file=expand("nhfile_{tar_ind}_{contam_ind}_fil{{Mfil}}.txt",tar_ind=tar_ind1,contam_ind=contam_ind1)
 
 
     output:
         difffile="mergedwin_contam_fil{Mfil}/contam_diff.csv",
         totalfile="mergedwin_contam_fil{Mfil}/contam_total.csv"
     run:
+
         contamAll(dfile=input.dfile, tfile=input.tfile, cfile=input.contam_est,
         Dnhfile=input.nh_file[0], difffile=output.difffile,
         totalfile=output.totalfile, iscnt=is_contam)
