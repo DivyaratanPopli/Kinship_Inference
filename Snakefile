@@ -17,15 +17,24 @@ interval=1e7
 #HN_diff=[HN_diff0,HN_diff1]
 #target_ind=config["target_ind"]
 #contam_ind=config["contam_ind"]
-HN_diff=[0,0]
+
 is_contam=int(config["is_contam"])
 
 if is_contam==1:
-    with open("contam_diff.txt") as f:
-        HN_diff0=float(f.read())
-    with open("contam_diff_filtered.txt") as f:
-        HN_diff1=float(f.read())
-    HN_diff=[HN_diff0,HN_diff1]
+    tar_ind1=config["tar_ind"]
+    contam_ind1=config["contam_ind"]
+    phased1=config["phased"]
+elif is_contam==0:
+    tar_ind1='none'
+    contam_ind1='none'
+    phased1='none'
+    vcf_empty="contam_diff.vcf.gz"
+    with open(vcf_empty,'w') as f:
+        print("NA")
+    vcf_tbi_empty="contam_diff.vcf.gz.tbi"
+    with open(vcf_tbi_empty,'w') as f:
+        print("NA")
+
 
 with open("targets.txt") as f:
     libraries = [line.strip() for line in f]
@@ -282,13 +291,22 @@ rule nh_inputFile:
         index="contam_diff.vcf.gz.tbi",
         bed="filtered_bed{Mfil}.bed"
     output:
+        test="test_{tar_ind}_{contam_ind}_fil{Mfil}.vcf",
         diff="contam_diff_{tar_ind}_{contam_ind}_fil{Mfil}.txt",
-        test="test_{tar_ind}_{contam_ind}_fil{Mfil}.vcf"
+    params:
+        cnt=is_contam
     shell:
         """
         (
-        bcftools view {input.genf} -R {input.bed} -s {wildcards.tar_ind},{wildcards.contam_ind} -e 'GT="mis"'>{output.test}
-        bcftools query -f '%CHROM\t%POS[\t%GT]\n' {output.test}>{output.diff}
+        if [[ {params.cnt} -eq 1 ]]
+        then
+            bcftools view {input.genf} -R {input.bed} -s {wildcards.tar_ind},{wildcards.contam_ind} -e 'GT="mis"'>{output.test}
+            bcftools query -f '%CHROM\t%POS[\t%GT]\n' {output.test}>{output.diff}
+        elif [[ {params.cnt} -eq 0 ]]
+        then
+            echo "NA">{output.test}
+            echo "NA">{output.diff}
+        fi
         )
         """
 
@@ -297,16 +315,18 @@ rule nhfile:
         alldiff="contam_diff_{tar_ind}_{contam_ind}_fil{Mfil}.txt",
     output:
         avgdiff="nhfile_{tar_ind}_{contam_ind}_fil{Mfil}.txt"
+    params:
+        is_contam=is_contam
     run:
-        nhFile(alldiff=input.alldiff, avgdiff=output.avgdiff, phased=config["phased"])
-#bcftools query -f '%CHROM %POS[\t%GT]\n' test.vcf>{output.nhf}
-#nhFile(genf=input.genf,fil_posf=input.fil_posf, bedf=input.bedf, nhf=output.nhf,ind1=target_ind, ind2=contam_ind)
+        nhFile(alldiff=input.alldiff, avgdiff=output.avgdiff, phased=phased1, is_contam=is_contam)
+
+
 rule contam_all:
     input:
         dfile="mergedwin_fil{Mfil}/merged_wind.csv",
         tfile= "mergedwin_fil{Mfil}/merged_wint.csv",
         contam_est="contam_est_pairwise",
-        nh_file=expand("nhfile_{tar_ind}_{contam_ind}_fil{{Mfil}}.txt",tar_ind=config["tar_ind"], contam_ind=config["contam_ind"])
+
 
     output:
         difffile="mergedwin_contam_fil{Mfil}/contam_diff.csv",
@@ -322,7 +342,7 @@ rule contam_id:
         dfile="identicalmergedwin_fil{Mfil}/id_wind.csv",
         tfile="identicalmergedwin_fil{Mfil}/id_wint.csv",
         contam_est="contam_est_2",
-        nh_file=expand("nhfile_{tar_ind}_{contam_ind}_fil{{Mfil}}.txt",tar_ind=config["tar_ind"], contam_ind=config["contam_ind"])
+        nh_file=expand("nhfile_{tar_ind}_{contam_ind}_fil{{Mfil}}.txt",tar_ind=tar_ind1, contam_ind=contam_ind1)
 
     output:
         difffile="identicalmergedwin_contam_fil{Mfil}/id_diff.csv",

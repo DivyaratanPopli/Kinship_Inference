@@ -344,25 +344,30 @@ def mergePos(poslist, filbed):
     	    df.to_csv(filbed, sep='\t',header=False,index=None)
 
 
-def nhFile(alldiff, avgdiff, phased):
+def nhFile(alldiff, avgdiff, phased, is_contam):
 
-    df=pd.read_csv(alldiff, sep="\t",header=None,index_col=None)
+    if str(is_contam)=='0':
+        with open(avgdiff, 'w') as f:
+            print("NA",file=f)
 
-    if phased==1:
-        nD=np.array(df[2].str.split('|').sum()).astype(int)
-        hD=np.array(df[3].str.split('|').sum()).astype(int)
-    elif phased==0:
-        nD=np.array(df[2].str.split('/').sum()).astype(int)
-        hD=np.array(df[3].str.split('/').sum()).astype(int)
-    nA=2-nD
+    elif str(is_contam)=='1':    
+        df=pd.read_csv(alldiff, sep="\t",header=None,index_col=None)
 
-    hA=2-hD
+        if phased==1:
+            nD=np.array(df[2].str.split('|').sum()).astype(int)
+            hD=np.array(df[3].str.split('|').sum()).astype(int)
+        elif phased==0:
+            nD=np.array(df[2].str.split('/').sum()).astype(int)
+            hD=np.array(df[3].str.split('/').sum()).astype(int)
+        nA=2-nD
 
-    diff=((nA*hD)+(nD*hA)) / ((nA+nD)*(hA+hD))
-    nh_diff=np.mean(diff)
+        hA=2-hD
 
-    with open(avgdiff, 'w') as f:
-        print(nh_diff,file=f)
+        diff=((nA*hD)+(nD*hA)) / ((nA+nD)*(hA+hD))
+        nh_diff=np.mean(diff)
+
+        with open(avgdiff, 'w') as f:
+            print(nh_diff,file=f)
 
 
 def contamFile(infile, outfile, targets, idfile):
@@ -422,6 +427,7 @@ def contamAll(dfile, tfile, cfile, Dnhfile, difffile, totalfile, iscnt):
 
         with open(Dnhfile,"r") as f:
             p_c=float(f.read())
+
 
         df=pd.read_csv(cfile, sep=",",header=0,index_col=0)
         cnt1=np.array(df['contam'])
