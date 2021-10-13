@@ -88,6 +88,20 @@ rule hmm:
                         p1thresh=p1thresh, thresh=10, instates=instates)
 
 
+rule short1:
+    input:
+        h=expand("filtered{Mfil}/relation_{rel}_file/res/lik/pw_{listind}.csv", Mfil=Mfilist, rel=['gr','sib','hsib','avu'], listind=listf)
+
+
+rule short2:
+    input:
+        h=expand("filtered{Mfil}/relation_{rel}_file/res/lik/pw_{listind}.csv", Mfil=Mfilist, rel=['un','id','deg4'], listind=listf)
+
+
+rule short3:
+    input:
+        h=expand("filtered{Mfil}/relation_{rel}_file/res/lik/pw_{listind}.csv", Mfil=Mfilist, rel=['pc','deg3','deg5'], listind=listf)
+
 
 rule merge_lik:
     input:
