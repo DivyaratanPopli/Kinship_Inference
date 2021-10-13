@@ -294,22 +294,25 @@ rule merge_pos:
         mergePos(poslist=input.poslist, filbed=output.filbed)
 
 
+
 rule nh_inputFile:
     input:
         genf=contam_diff_vcf,
         index=contam_diff_ind,
         bed="filtered_bed{Mfil}.bed"
     output:
-        test="test_{tar_ind}_{contam_ind}_fil{Mfil}.vcf",
-        diff="contam_diff_{tar_ind}_{contam_ind}_fil{Mfil}.txt",
+        test="test_fil{Mfil}.vcf",
+        diff="contam_diff_fil{Mfil}.txt",
     params:
-        cnt=is_contam
+        cnt=is_contam,
+        tar_ind=tar_ind1,
+        contam_ind=contam_ind1
     shell:
         """
         (
         if [[ {params.cnt} -eq 1 ]]
         then
-            bcftools view {input.genf} -R {input.bed} -s {wildcards.tar_ind},{wildcards.contam_ind} -e 'GT="mis"'>{output.test}
+            bcftools view {input.genf} -R {input.bed} -s {params.tar_ind},{params.contam_ind} -e 'GT="mis"'>{output.test}
             bcftools query -f '%CHROM\t%POS[\t%GT]\n' {output.test}>{output.diff}
         elif [[ {params.cnt} -eq 0 ]]
         then
@@ -321,9 +324,9 @@ rule nh_inputFile:
 
 rule nhfile:
     input:
-        alldiff="contam_diff_{tar_ind}_{contam_ind}_fil{Mfil}.txt",
+        alldiff="contam_diff_fil{Mfil}.txt",
     output:
-        avgdiff="nhfile_{tar_ind}_{contam_ind}_fil{Mfil}.txt"
+        avgdiff="nhfile_fil{Mfil}.txt"
     params:
         is_contam=is_contam
     run:
@@ -335,7 +338,7 @@ rule contam_all:
         dfile="mergedwin_fil{Mfil}/merged_wind.csv",
         tfile= "mergedwin_fil{Mfil}/merged_wint.csv",
         contam_est="contam_est_pairwise",
-        nh_file=expand("nhfile_{tar_ind}_{contam_ind}_fil{{Mfil}}.txt",tar_ind=tar_ind1,contam_ind=contam_ind1)
+        nh_file="nhfile_fil{Mfil}.txt"
 
 
     output:
@@ -344,7 +347,7 @@ rule contam_all:
     run:
 
         contamAll(dfile=input.dfile, tfile=input.tfile, cfile=input.contam_est,
-        Dnhfile=input.nh_file[0], difffile=output.difffile,
+        Dnhfile=input.nh_file, difffile=output.difffile,
         totalfile=output.totalfile, iscnt=is_contam)
 
 
@@ -353,7 +356,7 @@ rule contam_id:
         dfile="identicalmergedwin_fil{Mfil}/id_wind.csv",
         tfile="identicalmergedwin_fil{Mfil}/id_wint.csv",
         contam_est="contam_est_2",
-        nh_file=expand("nhfile_{tar_ind}_{contam_ind}_fil{{Mfil}}.txt",tar_ind=tar_ind1, contam_ind=contam_ind1)
+        nh_file="nhfile_fil{Mfil}.txt"
 
     output:
         difffile="identicalmergedwin_contam_fil{Mfil}/id_diff.csv",

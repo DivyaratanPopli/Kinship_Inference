@@ -39,7 +39,7 @@ mkdir autosnake
 	#It does not matter if the file has more columns.  
 	
 	 
-	#make 2 files named nhfile_0_0_fil0.txt, nhfile_0_0_fil1.txt with a float number showing average difference between target population and the contaminatinf population at all sites and only at polymorphic sites respectively. 
+	#make 2 files named nhfile_fil0.txt, nhfile_fil1.txt with a float number showing average difference between target population and the contaminatinf population at all sites and only at polymorphic sites respectively. 
 	#We have option to calculate these differences from a vcf file. In this case you need to have a vcf.gz  and index file with extension .tbi
 
 
