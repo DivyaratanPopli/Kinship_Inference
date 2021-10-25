@@ -26,7 +26,7 @@ if is_contam==1:
         tar_ind1=config["tar_ind"]
         contam_ind1=config["contam_ind"]
 
-        contam_diff_vcf=config["contam_diff_vcf"]
+        contam_diff_vcf=config["contam_diff.vcf.gz"]
         contam_diff_ind=contam_diff_vcf + '.tbi'
     elif tc_diff==1:
         tar_ind1=0
@@ -36,11 +36,14 @@ elif is_contam==0:
     tar_ind1='none'
     contam_ind1='none'
     phased1='none'
-    vcf_empty="contam_diff.vcf.gz"
-    with open(vcf_empty,'w') as f:
+    contam_diff_vcf="contam_diff.vcf.gz"
+    with open(contam_diff_vcf,'w') as f:
         print("NA")
-    vcf_tbi_empty="contam_diff.vcf.gz.tbi"
-    with open(vcf_tbi_empty,'w') as f:
+    contam_diff_ind=contam_diff_vcf+'.tbi'
+    with open(contam_diff_ind,'w') as f:
+        print("NA")
+    contam_estF="contam_est"
+    with open(contam_estF,'w') as f:
         print("NA")
 
 
@@ -282,7 +285,7 @@ rule contam_file:
         pairf="contam_est_pairwise",
         idfile="contam_est_2"
     run:
-        contamFile(infile=input.cfile, outfile=output.pairf, targets=libraries, idfile=output.idfile)
+        contamFile(infile=input.cfile, outfile=output.pairf, targets=libraries, idfile=output.idfile, iscnt=is_contam)
 
 
 rule merge_pos:

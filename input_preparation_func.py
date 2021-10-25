@@ -368,35 +368,39 @@ def nhFile(alldiff, avgdiff, is_contam):
             print(nh_diff,file=f)
 
 
-def contamFile(infile, outfile, targets, idfile):
+def contamFile(infile, outfile, targets, idfile, iscnt):
+    if str(iscnt)=='1':
+        cnf=pd.read_csv(infile, sep="\t",header=0,index_col=None)
+        cnf=cnf.loc[cnf['name'].isin(targets),:]
+        cnf.reset_index(drop=True, inplace=True)
+        names=[]
+        contam=[]
+        for ch1 in range(len(cnf)-1):
+            for ch2 in range(ch1+1,len(cnf)):
+                names.append(cnf.loc[ch1, 'name'] + '_' + cnf.loc[ch2, 'name'])
+                ctotal=cnf.loc[ch1, 'contamination (%)'] + cnf.loc[ch2, 'contamination (%)']
+                contam.append(ctotal)
 
-    cnf=pd.read_csv(infile, sep="\t",header=0,index_col=None)
-    cnf=cnf.loc[cnf['name'].isin(targets),:]
-    cnf.reset_index(drop=True, inplace=True)
-    names=[]
-    contam=[]
-    for ch1 in range(len(cnf)-1):
-        for ch2 in range(ch1+1,len(cnf)):
-            names.append(cnf.loc[ch1, 'name'] + '_' + cnf.loc[ch2, 'name'])
-            ctotal=cnf.loc[ch1, 'contamination (%)'] + cnf.loc[ch2, 'contamination (%)']
-            contam.append(ctotal)
+        df = pd.DataFrame(
+            {'name': names,
+             'contam': contam
+            })
 
-    df = pd.DataFrame(
-        {'name': names,
-         'contam': contam
-        })
+        df_id = pd.DataFrame(
+            {'name': cnf['name'],
+             'contam': 2*cnf['contamination (%)']
+            })
 
-    df_id = pd.DataFrame(
-        {'name': cnf['name'],
-         'contam': 2*cnf['contamination (%)']
-        })
+        with pd.option_context('display.max_rows', len(df.index), 'display.max_columns', len(df.columns)):
+        	    df.to_csv(outfile, sep=',')
 
-    with pd.option_context('display.max_rows', len(df.index), 'display.max_columns', len(df.columns)):
-    	    df.to_csv(outfile, sep=',')
-
-    with pd.option_context('display.max_rows', len(df_id.index), 'display.max_columns', len(df_id.columns)):
-    	    df_id.to_csv(idfile, sep=',')
-
+        with pd.option_context('display.max_rows', len(df_id.index), 'display.max_columns', len(df_id.columns)):
+        	    df_id.to_csv(idfile, sep=',')
+    elif str(iscnt)=='0':
+        with open(outfile,'w') as f:
+            print("NA")
+        with open(idfile,'w') as f:
+            print("NA")
 
 def adjust_d(D_obs, c, p_c, p_e):
     x1 = p_e * (1-c)
