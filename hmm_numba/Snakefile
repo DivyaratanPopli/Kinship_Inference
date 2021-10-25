@@ -90,17 +90,49 @@ rule hmm:
 
 rule short1:
     input:
-        h=expand("filtered{Mfil}/relation_{rel}_file/res/lik/pw_{listind}.csv", Mfil=Mfilist, rel=['gr','sib','hsib','avu'], listind=listf)
+        h=expand("filtered{Mfil}/relation_{rel}_file/res/lik/pw_{listind}.csv", Mfil=Mfilist, rel=['gr'], listind=listf)
 
 
 rule short2:
     input:
-        h=expand("filtered{Mfil}/relation_{rel}_file/res/lik/pw_{listind}.csv", Mfil=Mfilist, rel=['un','id','deg4'], listind=listf)
+        h=expand("filtered{Mfil}/relation_{rel}_file/res/lik/pw_{listind}.csv", Mfil=Mfilist, rel=['un'], listind=listf)
 
 
 rule short3:
     input:
-        h=expand("filtered{Mfil}/relation_{rel}_file/res/lik/pw_{listind}.csv", Mfil=Mfilist, rel=['pc','deg3','deg5'], listind=listf)
+        h=expand("filtered{Mfil}/relation_{rel}_file/res/lik/pw_{listind}.csv", Mfil=Mfilist, rel=['pc'], listind=listf)
+
+rule short4:
+    input:
+        h=expand("filtered{Mfil}/relation_{rel}_file/res/lik/pw_{listind}.csv", Mfil=Mfilist, rel=['sib'], listind=listf)
+
+
+rule short5:
+    input:
+        h=expand("filtered{Mfil}/relation_{rel}_file/res/lik/pw_{listind}.csv", Mfil=Mfilist, rel=['id'], listind=listf)
+
+
+rule short6:
+    input:
+        h=expand("filtered{Mfil}/relation_{rel}_file/res/lik/pw_{listind}.csv", Mfil=Mfilist, rel=['deg3'], listind=listf)
+
+rule short7:
+    input:
+        h=expand("filtered{Mfil}/relation_{rel}_file/res/lik/pw_{listind}.csv", Mfil=Mfilist, rel=['hsib'], listind=listf)
+
+
+rule short8:
+    input:
+        h=expand("filtered{Mfil}/relation_{rel}_file/res/lik/pw_{listind}.csv", Mfil=Mfilist, rel=['deg4'], listind=listf)
+
+
+rule short9:
+    input:
+        h=expand("filtered{Mfil}/relation_{rel}_file/res/lik/pw_{listind}.csv", Mfil=Mfilist, rel=['deg5'], listind=listf)
+
+rule short10:
+    input:
+        h=expand("filtered{Mfil}/relation_{rel}_file/res/lik/pw_{listind}.csv", Mfil=Mfilist, rel=['avu'], listind=listf)
 
 
 rule merge_lik:
