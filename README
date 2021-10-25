@@ -68,8 +68,7 @@ mkdir autosnake
 conda deactivate
 #run this on command line:
 
-bash run_snakemake_eva.sh all
-# you can run it on a number cruncher (instead of cluster) with  snakemake all --cores n ,here n is no. of cores
+bash looprel.sh n=100 #for running on a number cruncher with 100 cores
 
 #Our model uses python3 but READ uses python2, so make sure that if you use conda env, it allows both versions (environment here does not).
 
