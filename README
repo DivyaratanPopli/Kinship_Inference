@@ -73,9 +73,17 @@ bash looprel.sh n=100 #for running on a number cruncher with 100 cores
 #Our model uses python3 but READ uses python2, so make sure that if you use conda env, it allows both versions (environment here does not).
 
 #The output will be hmm_numba/filtered0/merged_relatable_allLikelihoods.csv in folder hmm_numba
+	#Columns in output file:
+	#-pair: name of pair
+	#-relatedness: most likely relatedness
+	#-second_guess: second most likely relatedness outside the degree of the most likely relatedness
+	#-loglik_ratio: log likelihood ratio between relatedness and second_guess. loglik_ratio >1 is trustable result in general
+	#-withinDeg_second_guess: If relatedness is sib/pc, then it shows pc/sib
+	#-withinDeg_ll: If relatedness is sib/pc, then shows the log liklihood ratio between sib and pc (or the other way round). Ifn general withinDeg_ll>2 is trustable 
 
 #No. of overlapping sites are in overlap_fil0.csv (or fil1.csv if you want only polymorphic sites)
-
+#You can look for loglikelihood for any pair for each model in the file hmm_numba/filtered0/allLikelihoods/pw_pairName.csv
 #results for READ are in hmm_numba/filtered0/read/READ_results
 
-Use bash looprel.sh n=number_of_cores for large dataset (>100 samples)
+#Relatedness plot is hmm_numba/allLikelihoods/fil0/relatable_plot.png
+#Relatedness plot for READ is hmm_numba/allread/fil0/read_plot.png
