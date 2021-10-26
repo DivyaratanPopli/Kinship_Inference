@@ -79,7 +79,7 @@ bash looprel.sh n=100 #for running on a number cruncher with 100 cores
 	#-second_guess: second most likely relatedness outside the degree of the most likely relatedness
 	#-loglik_ratio: log likelihood ratio between relatedness and second_guess. loglik_ratio >1 is trustable result in general
 	#-withinDeg_second_guess: If relatedness is sib/pc, then it shows pc/sib
-	#-withinDeg_ll: If relatedness is sib/pc, then shows the log liklihood ratio between sib and pc (or the other way round). Ifn general withinDeg_ll>2 is trustable 
+	#-withinDeg_ll: If relatedness is sib/pc, then shows the log liklihood ratio between sib and pc (or the other way round). In general withinDeg_ll>2 is trustable 
 
 #No. of overlapping sites are in overlap_fil0.csv (or fil1.csv if you want only polymorphic sites)
 #You can look for loglikelihood for any pair for each model in the file hmm_numba/filtered0/allLikelihoods/pw_pairName.csv
