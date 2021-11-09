@@ -31,6 +31,21 @@ if is_contam==1:
     elif tc_diff==1:
         tar_ind1=0
         contam_ind1=0
+        contam_diff_vcf="contam_diff.vcf.gz"
+        with open(contam_diff_vcf,'w') as f:
+            print("NA")
+        contam_diff_ind=contam_diff_vcf+'.tbi'
+        with open(contam_diff_ind,'w') as f:
+            print("NA")
+        with open("test_fil0.vcf",'w') as f:
+            print("NA")
+        with open("test_fil1.vcf",'w') as f:
+            print("NA")
+        with open("contam_diff_fil0.txt",'w') as f:
+            print("NA")
+        with open("contam_diff_fil1.txt",'w') as f:
+            print("NA")
+
 
 elif is_contam==0:
     tar_ind1='none'
