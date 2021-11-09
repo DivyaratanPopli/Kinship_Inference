@@ -35,21 +35,23 @@ mkdir autosnake
 #good for estimating differences for unrelated individuals.
 
 #If you want to include contamination correction then:
+
 	#make a contamination file (named contam_est). In this file keep 2 columns separated by tab: 'name' with names of samples and 'contamination (%)' 
 	#It does not matter if the file has more columns.  
 	
 	 
 	#make 2 files named nhfile_fil0.txt, nhfile_fil1.txt with a float number showing average difference between target population and the contaminatinf population at all sites and only at polymorphic sites respectively. 
-	#We have option to calculate these differences from a vcf file. In this case you need to have a vcf.gz  and index file with extension .tbi
+	#We have option to calculate these differences from a vcf file. In this case you need to have a vcf.gz  and index file with extension .tbi. In the
+	#vcf file, we need the genotype of an individual in the target population, and an individual from contaminating population.
 
 
 #Finally, to run the script to get input files type on the command line:
 
-snakemake all --cores n --is_contam=0 #where n is the number of cores you want to use, iscontam is binary (0 for no contam files)
+snakemake all --cores n --config is_contam=0 #where n is the number of cores you want to use, iscontam is binary (0 for no contam files)
 If you want to use contamination correction from a vcf, then use:
-snakemake all --cores n --is_contam=1 tc_diff=0 tar_ind=i1 contam_ind=i2 contam_diff_vcf=nameOfVCFfile #where i1 and i2 are names of individuals to be used from vcf
+snakemake all --cores n --config is_contam=1 tc_diff=0 tar_ind=i1 contam_ind=i2 contam_diff_vcf=nameOfVCFfile #where i1 and i2 are names of individuals to be used from vcf
 If you want to use contamination correction using your own nh_file, then use:
-snakemake all --cores n --is_contam=1 tc_diff=1
+snakemake all --cores n --config is_contam=1 tc_diff=1
 
 # alternatively use "bash run_snakemake_eva.sh all --config is_contam=0" to run the pipeline on cluster
 # if you get an error, make sure to use a conda env with latest version of pybedtools and pysam.You can use environment.yml file for this
@@ -77,7 +79,7 @@ bash looprel.sh n=100 #for running on a number cruncher with 100 cores
 	#-pair: name of pair
 	#-relatedness: most likely relatedness
 	#-second_guess: second most likely relatedness outside the degree of the most likely relatedness
-	#-loglik_ratio: log likelihood ratio between relatedness and second_guess. loglik_ratio >1 is trustable result in general
+	#-loglik_ratio: log likelihood ratio between relatedness and second_guess.
 	#-withinDeg_second_guess: If relatedness is sib/pc, then it shows pc/sib
 	#-withinDeg_ll: If relatedness is sib/pc, then shows the log liklihood ratio between sib and pc (or the other way round). In general withinDeg_ll>2 is trustable 
 
