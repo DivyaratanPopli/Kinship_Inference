@@ -54,7 +54,7 @@ allrel=['un','deg5','deg4','deg3','gr','hsib','avu','sib','pc','id']
 relno=len(allrel)
 stateno=3
 
-
+"""
 rule hmm:
     input:
         pfile=datafolder+"hmm_parameters_fil{Mfil}/p1_file",
@@ -67,6 +67,7 @@ rule hmm:
     output:
         resfile="filtered{Mfil}/relation_{rel}_file/res/pw_{listind}.csv",
         likfile="filtered{Mfil}/relation_{rel}_file/res/lik/pw_{listind}.csv",
+        gammafile="filtered{Mfil}/relation_{rel}_file/res/gamma/pw_{listind}.csv",
 
 
     run:
@@ -83,7 +84,7 @@ rule hmm:
 
         hmm(difffile=input.dfile, totalfile=input.tfile, listind=wildcards.listind,
                         listf=np.array(listf), targets=np.array(libraries),pfile=input.pfile,
-                        Afile=input.Afile, resfile=output.resfile, likfile=output.likfile,
+                        Afile=input.Afile, resfile=output.resfile, likfile=output.likfile, gammafile=output.gammafile,
                         upA=wildcards.rel, pairf1=pairf1, pairf2=pairf2,
                         p1thresh=p1thresh, thresh=10, instates=instates)
 
@@ -153,6 +154,19 @@ rule get_relatable:
         liktab="filtered{Mfil}/relatable_{myfolder}.csv"
     run:
         getRelatable(filist=input.likfile, relatable=output.liktab)
+"""
+
+
+rule IBD_states:
+    input:
+        relatable="filtered{Mfil}/relatable_{myfolder}.csv",
+        gamma=expand("filtered{{Mfil}}/relation_{rel}_file/res/gamma/pw_{listind}.csv", rel=allrel, listind=listf)
+    output:
+        IBDfile="filtered{Mfil}/IBDstates_{myfolder}.csv",
+
+    run:
+        IBDstates(gammafs=input.gamma, relatable=input.relatable, IBDfile=output.IBDfile,
+            fil=wildcards.Mfil, dfolder=datafolder)
 
 rule merge_relatable:
     input:

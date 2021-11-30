@@ -83,6 +83,16 @@ bash looprel.sh n=100 #for running on a number cruncher with 100 cores
 	#-withinDeg_second_guess: If relatedness is sib/pc, then it shows pc/sib
 	#-withinDeg_ll: If relatedness is sib/pc, then shows the log liklihood ratio between sib and pc (or the other way round). In general withinDeg_ll>2 is trustable 
 
+#We provide a file with IBD information: 
+	#Columns:
+	#pair: name of pair
+	#rel: relatedness
+	#k0_prop,k1_prop,k2_prop:Proportion of genome in k_0,k_1,k_2 (obtained from posterior probabilities)
+	#k0_abs,k1_abs,k2_abs: same as above, but obtained from Viterbi algorithm
+	#IBD_len: Total length of genome where 1 chromosome is shared
+	#IBD_num: Number of IBD segments
+
+
 #No. of overlapping sites are in overlap_fil0.csv (or fil1.csv if you want only polymorphic sites)
 #You can look for loglikelihood for any pair for each model in the file hmm_numba/filtered0/allLikelihoods/pw_pairName.csv
 #results for READ are in hmm_numba/filtered0/read/READ_results

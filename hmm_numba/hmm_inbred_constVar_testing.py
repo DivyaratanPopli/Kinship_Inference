@@ -331,7 +331,7 @@ def viterbi(data, A, B, pi):
     S[S==0]=3/4
     return S
 
-def hmm(difffile, targets, totalfile, listind, listf, pfile, Afile, resfile, likfile, upA,pairf1, pairf2, instates, p1thresh, thresh):
+def hmm(difffile, targets, totalfile, listind, listf, pfile, Afile, resfile, likfile, gammafile, upA, pairf1, pairf2, instates, p1thresh, thresh):
 
 
     inbr_states=len(instates)
@@ -446,11 +446,13 @@ def hmm(difffile, targets, totalfile, listind, listf, pfile, Afile, resfile, lik
 
         gamma,A,B,up_p,lik, pi= baum_welch(data=data, hbd=hbd, A=A, B=B, pos=pos, p1avg=initial_p, update_transition=upA, inbr=inbr_states, x0=x0)
         res=viterbi(data, A, B, pi)
-        
+
     else:
         res=np.ones(len(data))*-9
         lik=float('-inf')
+        gamma=np.ones([len(data),3])*-9
     np.savetxt(fname=resfile, X=res,delimiter=',')
+    np.savetxt(fname=gammafile, X=gamma.T,delimiter=',')
 
     with open(likfile,'w') as f:
         f.write(str(lik))
@@ -578,6 +580,63 @@ def getRelatable(filist, relatable):
 
     with pd.option_context('display.max_rows', len(df.index), 'display.max_columns', len(df.columns)):
             df.to_csv(relatable, sep=',')
+
+
+def IBDstates(gammafs, relatable, IBDfile,fil,dfolder):
+    rel=pd.read_csv(relatable, sep=",", header=0,index_col=0)[['pair','relatedness']]
+
+    pair_all=[]
+    rel_all=[]
+    k0prop=[]
+    k0abs=[]
+    k1prop=[]
+    k1abs=[]
+    k2prop=[]
+    k2abs=[]
+    IBDlen_all=[]
+    IBDnum_all=[]
+    for p in range(len(rel)):
+        px=rel.loc[p,'pair']
+        rx=rel.loc[p,'relatedness']
+        gname="./filtered%s/relation_%s_file/res/gamma/pw_%s.csv" %(fil,rx,px)
+        gamma=np.loadtxt(gname, dtype='float', delimiter = ",")
+        gamma_sum=np.sum(gamma,0)/np.sum(gamma)
+
+        rname="./filtered%s/relation_%s_file/res/pw_%s.csv" %(fil,rx,px)
+        res=np.loadtxt(rname, dtype='float', delimiter = ",")
+        res_count=np.array([np.sum(res==3/4), np.sum(res==1), np.sum(res==1/2)])/ len(res)
+
+        IBD1=np.where(res==0.75)[0]
+        IBDinfo=np.split(IBD1, np.where(np.diff(IBD1) != 1)[0]+1)
+        IBDlen=len(IBD1)
+        IBDnum=len(IBDinfo)
+        pair_all.append(px)
+        rel_all.append(rx)
+        k0prop.append(gamma_sum[1])
+        k1prop.append(gamma_sum[0])
+        k2prop.append(gamma_sum[2])
+        k0abs.append(res_count[1])
+        k1abs.append(res_count[0])
+        k2abs.append(res_count[2])
+        IBDlen_all.append(IBDlen)
+        IBDnum_all.append(IBDnum)
+
+    df=pd.DataFrame({
+        'pair': pair_all,
+        'rel': rel_all,
+        'k0_prop':k0prop,
+        'k1_prop':k1prop,
+        'k2_prop':k2prop,
+        'k0_abs':k0abs,
+        'k1_abs':k1abs,
+        'k2_abs':k2abs,
+        'IBD_len':IBDlen_all,
+        'IBD_num':IBDnum_all
+        })
+
+    with pd.option_context('display.max_rows', len(df.index), 'display.max_columns', len(df.columns)):
+        df.to_csv(IBDfile, sep=',')
+
 
 
 def mergeRelatable(relf, mergef):
