@@ -323,16 +323,17 @@ rule nh_inputFile:
         diff="contam_diff_fil{Mfil}.txt",
     params:
         cnt=is_contam,
+        tc=tc_diff,
         tar_ind=tar_ind1,
         contam_ind=contam_ind1
     shell:
         """
         (
-        if [[ {params.cnt} -eq 1 ]]
+        if [[ {params.cnt} -eq 1 ]] && [[ {params.tc} -eq 0 ]]
         then
             bcftools view {input.genf} -R {input.bed} -s {params.tar_ind},{params.contam_ind} -e 'GT="mis"'>{output.test}
             bcftools query -f '%CHROM\t%POS[\t%GT]\n' {output.test}>{output.diff}
-        elif [[ {params.cnt} -eq 0 ]]
+        elif [[ {params.cnt} -eq 0 ]] || [[ {params.tc} -eq 1 ]]
         then
             echo "NA">{output.test}
             echo "NA">{output.diff}
@@ -340,15 +341,26 @@ rule nh_inputFile:
         )
         """
 
+
+def second_input(wildcards):
+    xxstr="contam_diff_fil%s.txt" %(str(wildcards.Mfil))
+    if os.path.exists(xxstr):
+        return ""
+    else:
+        return xxstr
+
 rule nhfile:
     input:
-        alldiff="contam_diff_fil{Mfil}.txt",
+        alldiff=second_input,
     output:
         avgdiff="nhfile_fil{Mfil}.txt"
     params:
-        is_contam=is_contam
+        is_contam=is_contam,
     run:
-        nhFile(alldiff=input.alldiff, avgdiff=output.avgdiff, is_contam=is_contam)
+        nhFile(alldiff=input.alldiff, avgdiff=output.avgdiff, is_contam=params.is_contam)
+
+
+
 
 
 rule contam_all:
