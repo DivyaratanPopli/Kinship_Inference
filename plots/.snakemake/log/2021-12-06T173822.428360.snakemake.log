@@ -1,0 +1,28 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cores: 1 (use --cores to define parallelism)
+Rules claiming more threads will be scaled down.
+Job counts:
+	count	jobs
+	1	ROHplot
+	1
+
+[Mon Dec  6 17:38:23 2021]
+rule ROHplot:
+    input: plot_ROH.csv
+    output: ROHplot.png
+    jobid: 0
+
+[Mon Dec  6 17:38:24 2021]
+Error in rule ROHplot:
+    jobid: 0
+    output: ROHplot.png
+
+RuleException:
+CalledProcessError in line 18 of /mnt/diversity/divyaratan_popli/100arc/inbreeding/model_git/plots/Snakefile:
+Command 'set -euo pipefail;  Rscript --vanilla /mnt/diversity/divyaratan_popli/100arc/inbreeding/model_git/plots/.snakemake/scripts/tmpj9flifc4.ROHplot.R' returned non-zero exit status 1.
+  File "/mnt/diversity/divyaratan_popli/100arc/inbreeding/model_git/plots/Snakefile", line 18, in __rule_ROHplot
+  File "/usr/lib/python3.8/concurrent/futures/thread.py", line 57, in run
+Shutting down, this might take some time.
+Exiting because a job execution failed. Look above for error message
+Complete log: /mnt/diversity/divyaratan_popli/100arc/inbreeding/model_git/plots/.snakemake/log/2021-12-06T173822.428360.snakemake.log

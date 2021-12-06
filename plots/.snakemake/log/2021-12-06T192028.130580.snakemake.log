@@ -1,0 +1,19 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cores: 1 (use --cores to define parallelism)
+Rules claiming more threads will be scaled down.
+Job counts:
+	count	jobs
+	1	comparisonplot
+	1
+
+[Mon Dec  6 19:20:28 2021]
+rule comparisonplot:
+    input: comparison_plot_data.csv.gz
+    output: comparison_plot.png
+    jobid: 0
+
+[Mon Dec  6 19:20:30 2021]
+Finished job 0.
+1 of 1 steps (100%) done
+Complete log: /mnt/diversity/divyaratan_popli/100arc/inbreeding/model_git/plots/.snakemake/log/2021-12-06T192028.130580.snakemake.log
