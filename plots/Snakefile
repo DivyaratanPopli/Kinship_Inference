@@ -1,67 +1,68 @@
 from plot_script import ROH_plotf, IBD_plotf, cutoff_plotf, comparison_table, comparison_plotf
 
 infold="/mnt/diversity/divyaratan_popli/100arc/inbreeding/fastsim_gz/"
-outfold="./"
+plotdata="./plotdata/"
+plotimg="./plotimg/"
 hmmfold="/mnt/diversity/divyaratan_popli/100arc/inbreeding/fastsim_gz/hmm_numba_incorrect_roh_i1_i1_insteadOf_i1_i2/"
 #hmmdeg3="hmm_numba_incorrect_roh_i1_i1_insteadOf_i1_i2/rocNo3deg/"
 rule ROHplotf:
     input:"README"
-    output:"plot_ROH.csv"
+    output:"plotdata/plot_ROH.csv"
     run:
-        ROH_plotf(fold=infold,outfold=outfold)
+        ROH_plotf(fold=infold,outfold=plotdata)
 
 rule ROHplot:
     input:
-        infile_roh="plot_ROH.csv",
+        infile_roh="plotdata/plot_ROH.csv",
     output:
-        outfile_roh="ROHplot.png",
-    script:"ROHplot.R"
+        outfile_roh="plotimg/ROHplot.png",
+    script:"Rscripts/ROHplot.R"
 
 
 rule IBDplotf:
     input:"README"
-    output:"plot_IBD.csv"
+    output:"plotdata/plot_IBD.csv"
     run:
-        IBD_plotf(fold=infold,outfold=outfold)
+        IBD_plotf(fold=infold,outfold=plotdata)
 
 rule IBDplot:
     input:
-        infile_ibd="plot_IBD.csv",
+        infile_ibd="plotdata/plot_IBD.csv",
         p1_file=infold+"contam0/inbred0/run1/coverage4/asc0/inputMode_hapProbs_fil0/hmm_parameters/p1_file.gz"
     output:
-        output_ibd="IBDplot.png"
-    script:"IBDplot.R"
+        output_ibd="plotimg/IBDplot.png"
+    script:"Rscripts/IBDplot.R"
 
 rule cutoffplotf:
     input:"README"
-    output:"contam{cnt}_inbred{inb}_model_performance_allroc_asc{asc}.csv.gz"
+    output:"plotdata/contam{cnt}_inbred{inb}_model_performance_allroc_asc{asc}.csv.gz"
     run:
-        cutoff_plotf(a=wildcards.asc, cnt=wildcards.cnt, inb=wildcards.inb, hmmfold=hmmfold, outfold=outfold)
+        cutoff_plotf(a=wildcards.asc, cnt=wildcards.cnt, inb=wildcards.inb, hmmfold=hmmfold, outfold=plotdata)
 
 rule cutoffplot:
     input:
-        infile_cut="contam{cnt}_inbred{inb}_model_performance_allroc_asc{asc}.csv.gz"
+        infile_cut="plotdata/contam{cnt}_inbred{inb}_model_performance_allroc_asc{asc}.csv.gz"
     output:
-        outfile_cut="contam{cnt}_inbred{inb}_model_performance_allroc_asc{asc}_plot.png"
-    script:"cutoffPlot.R"
+        outfile_cut="plotimg/contam{cnt}_inbred{inb}_model_performance_allroc_asc{asc}_plot.png"
+    script:"Rscripts/cutoffPlot.R"
 
 
 rule comparisonplotf:
     input:"README"
-    output:"comparison_plot_data.csv.gz"
+    output:"plotdata/comparison_plot_data.csv.gz"
     run:
-        comparison_plotf(hmmfold=hmmfold,outfold=outfold)
+        comparison_plotf(hmmfold=hmmfold,outfold=plotdata)
 
 rule comparisonplot:
     input:
-        infile_comp="comparison_plot_data.csv.gz"
+        infile_comp="plotdata/comparison_plot_data.csv.gz"
     output:
-        outfile_comp="comparison_plot.png"
-    script:"comparisonPlot.R"
+        outfile_comp="plotimg/comparison_plot.png"
+    script:"Rscripts/comparisonPlot.R"
 
 rule all:
     input:
-        o1="plot_ROH.csv",
-        o2="plot_IBD.csv",
-        o3="contam0_inbred0_model_performance_allroc_asc0.csv.gz",
-        o4="comparison_plot_data.csv.gz",
+        o1="plotimg/ROHplot.png",
+        o2="plotimg/IBDplot.png",
+        o3="plotimg/contam0_inbred0_model_performance_allroc_asc0_plot.png",
+        o4="plotimg/comparison_plot.png",
