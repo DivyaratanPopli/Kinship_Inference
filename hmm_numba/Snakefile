@@ -54,7 +54,7 @@ allrel=['un','deg5','deg4','deg3','gr','hsib','avu','sib','pc','id']
 relno=len(allrel)
 stateno=3
 
-"""
+
 rule hmm:
     input:
         pfile=datafolder+"hmm_parameters_fil{Mfil}/p1_file",
@@ -154,7 +154,7 @@ rule get_relatable:
         liktab="filtered{Mfil}/relatable_{myfolder}.csv"
     run:
         getRelatable(filist=input.likfile, relatable=output.liktab)
-"""
+
 
 
 rule IBD_states:
