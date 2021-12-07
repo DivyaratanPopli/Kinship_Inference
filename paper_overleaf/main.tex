@@ -9,6 +9,7 @@ singlelinecheck=false
 ]{caption}
 \usepackage{amsmath}
 \usepackage{bbm}
+\usepackage{graphicx}
 \title{Method to infer relatedness using low coverage ancient DNA}
 \author{Divya Ratan Popli, Benjamin M. Peter}
 \date{5 August 2021}
@@ -416,12 +417,48 @@ Notation used in the paper:
 \item P: Probability
 \end{itemize}
 
-\bibliographystyle{plain}
-\bibliography{KIn_ref.bib}
-
 
 \section{Results}
 We predict the following categories of relatedness with KIn: Identical individuals (twins), First degree (parent-child), First degree (siblings), Second degree, Third degree, Unrelated ( including higher than third degree relatives). We apply KIn ROH model on simulated data with different coverages:
+
+
+\graphicspath{{plots/plotimg/}}
+\begin{figure}[htp]
+    \centering
+    \includegraphics[width=18cm]{ROHplot.png}
+    \caption{ROH stuff}
+    \label{fig:galaxy}
+\end{figure}
+
+Then we look at IBD with different models:
+\begin{figure}[htp]
+    \centering
+    \includegraphics[width=18cm]{IBDplot.png}
+    \caption{IBD stuff}
+    \label{fig:galaxy}
+\end{figure}
+
+And then cutoff:
+\begin{figure}[htp]
+    \centering
+    \includegraphics[width=18cm]{contam0_inbred0_model_performance_allroc_asc0_plot.png}
+    \caption{cutoff stuff}
+    \label{fig:galaxy}
+\end{figure}
+
+And then comparison with read:
+\begin{figure}[htp]
+    \centering
+    \includegraphics[width=18cm]{comparison_plot.png}
+    \caption{comparison stuff}
+    \label{fig:galaxy}
+\end{figure}
+
+Comparison with Chagyrskaya:
+
+
+\bibliographystyle{plain}
+\bibliography{KIn_ref.bib}
 
 
 \section{Discussion}
