@@ -419,17 +419,19 @@ Notation used in the paper:
 
 
 \section{Results}
-\graphicspath{{plots/plotimg/}}
-We predict the following categories of relatedness with KIn: Identical individuals (twins), First degree (parent-child), First degree (siblings), Second degree, Third degree, Unrelated (including higher than third degree relatives). We show the working of Relatedness HMM with fig.1 showing performance of each model, when applied to a pair of siblings. We see that the siblings model predictions match true IBD states the most. This is reflected in the log likelihoods values of the models as well, where siblings have the highest value shown in table 3. We take a loglikelihood ratio of the two most likely models to get a confidence in the relatedness estimate. All the models in fig.1 utilize information about ROH given by the ROH-HMM. Performance of ROH-HMM under different cases of ascertainment, contamination and long ROH, and for different coverages is shown in fig 2. We applied the ROH-HMM and relatedness HMM on 60 runs of simulations, to get relatedness estimates, and compared the final relatedness estimates to the true relatedness for different pairs at coverages ranging from 4x to 0.1x. We plotted the true positive and false positive rates with a cutoff on the loglikelihood ratio in fig.3. Here, and in fig.4, we have two different relatedness labels: 'Unrelated' and 'Unrelated w/o 3rd Degree'. Unrelated label here refers to KIn performance results when all unrelated, degree5, degree4, degree3 pairs are labelled as unrelated. This is useful for comparison to READ, since READ classifies relatedness upto degree2. 'Unrelated w/o degree3'  refers to the performance results when degree 3 is considered as separate from the unrelated individuals. Fig.3 shows that both for identical, 1st degree, unrelated pairs, the false positive rate is below $5\%$ even when no cut off is used. For second degree, at 0.1x we see a high false positive rate of under 0.25, and does not go down much with an increase in cutoff. For the same relationship, a cutoff of 1 seems appropriate to reduce false positive rate to much below $5\%$. Similarly, for siblings at 0.1x, a cutoff of 1 works well to keep false positives low. For parent-child, we find that a cutoff of about 2 is a better choice. Degree 3 shows higher false positive rates in general, and we see that only for 4x coverage and a cutoff of 2, do we see a false positive rate of below $5\%$. In conclusion, it is recommended to use a cutoff of 1 for most cases, with the exception of differentiation between paret-child and siblings, where a cutoff of 2 may be more appropriate, and degree 3 where cutoff of 2 at 4x coverage seems reasonable. We use a cutoff of 1 to compare our method performance to READ, while using a cutoff of 1 standard deviation for READ. Fig.4 shows this comparison using false positive and true positive rates for both the mothods at different coverages under different simulations. We show that both methods have similar performance in the control case (except for 0.1x coverage, where KIn has higher power to detect degree1 and degree2, and higher false positive rate for degree 2). However, in case of ascertainment, ROH, or comtamination KIn shows higher power to detect relatedness cases while maintaining a low false positive rate. To test KIn on real ancient dataset, we apply it to look for neandertal specimens from Chagyrskaya cave in Siberia, Russia. This dataset comprised of 14 specimens that came from neighbouring layers, and hence could possibly belong to contemporary neandertals who occupied the cave 63 ± 4 to 48 ± 3 ka \cite{kolobova_archaeological_2020-1}
+
+We predict the following categories of relatedness with KIn: Identical individuals (twins), First degree (parent-child), First degree (siblings), Second degree, Third degree, Unrelated (including higher than third degree relatives). We show the working of Relatedness HMM with fig.1 showing performance of each model, when applied to a pair of siblings. 
+
 
 \begin{figure}[htp]
     \centering
-    \includegraphics[width=18cm]{IBDplot.png}
+    \includegraphics[width=18cm]{plots/plotimg/IBDplot.png}
     \caption{IBD fragments detected for a pair of simulated siblings (proportion of differences in each window shown on top) by the relatedness HMM with different models.}
     \label{fig:ibd}
 \end{figure}
 
 
+We see that in this case, the siblings model predictions match true IBD states the most. This is reflected in the log likelihoods values of the models as well, where siblings have the highest value shown in table 3. We take a loglikelihood ratio ($\Lambda$) of the two most likely models to get a confidence in the relatedness estimate (in this case $\Lambda$ = 22.48). All the models in fig.1 utilize information about ROH given by the ROH-HMM. 
 
 
 \begin{table}
@@ -446,35 +448,42 @@ We predict the following categories of relatedness with KIn: Identical individua
 \end{table}
 
 
+Performance of ROH-HMM under different cases of ascertainment, contamination and long ROH, and for different coverages is shown in fig 2. We applied the ROH-HMM and relatedness HMM on 60 runs of simulations, to get relatedness estimates, and compared the final relatedness estimates to the true relatedness for different pairs at coverages ranging from 4x to 0.1x. 
 
 \begin{figure}[htp]
     \centering
-    \includegraphics[width=18cm]{ROHplot.png}
+    \includegraphics[width=18cm]{plots/plotimg/ROHplot.png}
     \caption{ROH stuff}
     \label{fig:galaxy}
 \end{figure}
 
 
-And then cutoff:
+We plotted the true positive and false positive rates with a cutoff on the loglikelihood ratio in fig.3. Here, and in fig.4, we have two relatedness labels: 'Unrelated' and 'Unrelated w/o 3rd Degree'. Unrelated label here refers to KIn performance results when all unrelated, degree5, degree4, degree3 pairs are labelled as unrelated. This is useful for comparison to READ, since READ classifies relatedness upto degree2. 'Unrelated w/o degree3'  refers to the performance results when degree 3 is considered as separate from the unrelated individuals. Fig.3 shows that both for identical, 1st degree, unrelated pairs, the false positive rate is below $5\%$ even when no cut off is used. For second degree, at 0.1x we see a high false positive rate, that does not go down much with an increase in cutoff. For the same relationship, at a coverage of 0.2x, a cutoff of 1 seems appropriate to reduce false positive rate to below $5\%$. Similarly, for siblings at 0.1x, a cutoff of 1 works well to keep false positives low. For parent-child, we find that a cutoff of about 2 is a better choice. Degree 3 shows higher false positive rates in general, and we see that only for 4x coverage and a cutoff of 2, do we see a false positive rate of below $5\%$. In conclusion, it is recommended to use a cutoff of 1 for most cases, with the exception of differentiation between paret-child and siblings, where a cutoff of 2 may be more appropriate, and degree 3 where cutoff of 2 at 4x coverage seems reasonable. 
+
 \begin{figure}[htp]
     \centering
-    \includegraphics[width=18cm]{contam0_inbred0_model_performance_allroc_asc0_plot.png}
+    \includegraphics[width=18cm]{plots/plotimg/contam0_inbred0_model_performance_allroc_asc0_plot.png}
     \caption{cutoff stuff}
     \label{fig:galaxy}
 \end{figure}
 
-And then comparison with read:
+We use a cutoff of 1 to compare our method performance to READ, while using a cutoff of 1 standard deviation for READ. Fig.4 shows this comparison using false positive and true positive rates for both the methods at different coverages under different simulations. We show that both methods have similar performance in the control case (except for 0.1x coverage, where KIn has higher power to detect degree1 and degree2, and higher false positive rate for degree 2). However, in case of ascertainment, ROH, or comtamination KIn shows higher power to detect relatedness cases while maintaining a low false positive rate. 
+
 \begin{figure}[htp]
     \centering
-    \includegraphics[width=18cm]{comparison_plot.png}
+    \includegraphics[width=18cm]{plots/plotimg/comparison_plot.png}
     \caption{comparison stuff}
     \label{fig:galaxy}
 \end{figure}
 
-Comparison with Chagyrskaya:
+
+To test KIn on real ancient dataset, we applied it to look for neandertal specimens from Chagyrskaya cave in Siberia, Russia. This dataset comprised of 14 specimens that came from neighbouring layers, and hence could possibly belong to contemporary neandertals who occupied the cave 63 ± 4 to 48 ± 3 kya \cite{kolobova_archaeological_2020-1}. These specimens showed low coverage of nuclear genome, with 8 samples out of 14 showing <1x coverage. Some of these specimens showed signs of long ROH, and contamination from modern humans as well as Hyena. All these samples were captured with an array targeting for Neanderthal variation, and we further ascertained this data to variable sites in high coverage Neanderthal genomes: Altai Neanderthal (Denisova 5) (Prüfer et al., 2014) and Vindija 33.19 (Prüfer et al., 2017). This dataset had all the issues that KIn deals with, and hence we decided to apply it here to see if we could find family relationships that would not be possible with other available methods. Our results for pairwise relatedness for these individuals is shown in fig.5. We found that identical individuals (Chagyrskaya13-Chagyrskaya19-Chagyrskaya1141), first degree relatives (Chagyrskaya07-Chagyrskaya17, Chagyrskaya06-Chagyrskaya14), and a second degree relative (Chagyrskaya01-Chagyrskaya60). These results agree with READ (supplementary fig). However, we find that Chagyrskaya07-Chagyrskaya17 are parent-child. This matches with the conclusions of the authors based on additional information from mtDNA. Further, we find a possible third degree relative (Chagyrskaya07-Chagyrskaya60). We compare our results to lcMLkin, and show that the software does not perform well with these low coverage samples since it is not possible to obtain reliable genotype likelihoods for many of these samples (supplementary fig).
+
+
+
 \begin{figure}[htp]
     \centering
-    \includegraphics[width=18cm]{fil0_relatable_plot.png}
+    \includegraphics[width=18cm]{plots/plotimg/fil0_relatable_plot.png}
     \caption{Chagyrskaya stuff}
     \label{fig:galaxy}
 \end{figure}
