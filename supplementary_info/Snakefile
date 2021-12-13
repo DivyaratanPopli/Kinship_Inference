@@ -1,0 +1,61 @@
+from delta_functions import *
+
+datafolder="/mnt/diversity/divyaratan_popli/100arc/inbreeding/fastsim_gz_highDiversity/"
+paramfolder="/mnt/diversity/divyaratan_popli/100arc/inbreeding/fastsim_gz/transitions/"
+hbdfolder="/mnt/diversity/divyaratan_popli/100arc/inbreeding/fastsim_gz_highDiversity/hbd_hmm/"
+
+inds=list(range(17))
+instates=[0,1,2]
+
+
+listf=[]
+for i, l1 in enumerate(inds):
+    for l2 in inds[(i+1):]:
+        s = '%s_%s' %(str(l1).strip("['']"), str(l2).strip("['']"))
+        listf.append(s)
+
+
+rule get_delta:
+    input:
+        pfile=datafolder+"contam0/inbred0/run1/coverage4/asc0/inputMode_hapProbs_fil0/hmm_parameters/p1_file.gz",
+        dfile=datafolder+"contam0/inbred0/run1/coverage4/asc0/inputMode_hapProbs_fil0/merged_wind.csv.gz",
+        tfile=datafolder+"contam0/inbred0/run1/coverage4/asc0/inputMode_hapProbs_fil0/merged_wint.csv.gz",
+        Afile=paramfolder+"transition_matrix_{rel}.csv",
+
+
+
+    output:
+        deltafile="datafiles/contam0_inbred0_run1_coverage4_asc0_inputMode_hapProbs_fil0_delta_{listind}_{rel}.csv.gz"
+
+
+    run:
+        l=wildcards.listind
+        print(l)
+        i1=l.split('_')[0]
+        i2=l.split('_')[1]
+        print(i1,i2)
+
+        pairf1=hbdfolder+"contam0/inbred0/run1/coverage4/filtered0/asc0_res/gamma_hapProbs/pw_%s.csv.gz" %(i1)
+        pairf2=hbdfolder+"contam0/inbred0/run1/coverage4/filtered0/asc0_res/gamma_hapProbs/pw_%s.csv.gz" %(i2)
+
+        p1thresh=datafolder+"contam0/inbred0/run1/coverage4/asc0/inputMode_idhapProbs_fil1/id_remHighdiv_total.csv"
+
+        hmm(difffile=input.dfile, totalfile=input.tfile, listind=wildcards.listind,
+                        listf=np.array(listf), targets=np.array(inds),pfile=input.pfile,
+                        Afile=input.Afile, deltafile=output.deltafile,
+                        upA='un', pairf1=pairf1, pairf2=pairf2,
+                        p1thresh=p1thresh, thresh=10, instates=instates)
+
+
+
+rule binom_plot:
+    input:
+        dfile=datafolder + "contam0/inbred0/run1/coverage4/asc0/inputMode_hapProbs_fil0/merged_wind.csv.gz",
+        tfile=datafolder + "contam0/inbred0/run1/coverage4/asc0/inputMode_hapProbs_fil0/merged_wint.csv.gz",
+        p1file=datafolder + "contam0/inbred0/run1/coverage4/asc0/inputMode_hapProbs_fil0/hmm_parameters/p1_file.gz",
+        del0="datafiles/contam0_inbred0_run1_coverage4_asc0_inputMode_hapProbs_fil0_delta_0_1_un.csv.gz",
+        del1="datafiles/contam0_inbred0_run1_coverage4_asc0_inputMode_hapProbs_fil0_delta_0_8_pc.csv.gz",
+        del2="datafiles/contam0_inbred0_run1_coverage4_asc0_inputMode_hapProbs_fil0_delta_0_15_id.csv.gz",
+    output:
+        binomplot="plots/binom.png"
+    script:"Rscripts/binom.R"
