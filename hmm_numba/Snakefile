@@ -325,4 +325,6 @@ rule all:
         outfile_read=expand("allread/fil{Mfil}/read_plot.png", Mfil=Mfilist),
         #plot6_14=expand("fil{Mfil}_diff_6_14.png", Mfil=Mfilist),
         #read_table=expand("filtered{Mfil}/read/output_table.csv", Mfil=Mfilist),
-        #read_outplot=expand("filtered{Mfil}/read/READ_out.png", Mfil=Mfilist)
+        #read_outplot=expand("filtered{Mfil}/read/READ_out.png", Mfil=Mfilist),
+        ibd=filtered0/IBDstates_allLikelihoods.csv
+
