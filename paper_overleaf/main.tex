@@ -453,7 +453,7 @@ Performance of ROH-HMM under different cases of ascertainment, contamination and
 \begin{figure}[htp]
     \centering
     \includegraphics[width=18cm]{plots/plotimg/ROHplot.png}
-    \caption{ROH stuff}
+    \caption{Estimation of ROH probabilities along the genome. Top panel shows proportion of differences along the genome, and the bottom panel shows probability of no ROH. A.Simulation with no ascertainment, contamination, or ROH. B. Simulation with ROH C. Simulation with ROH and ascertainment D. Simulation with ascertainment}
     \label{fig:galaxy}
 \end{figure}
 
@@ -463,8 +463,8 @@ We plotted the true positive and false positive rates with a cutoff on the logli
 \begin{figure}[htp]
     \centering
     \includegraphics[width=18cm]{plots/plotimg/contam0_inbred0_model_performance_allroc_asc0_plot.png}
-    \caption{cutoff stuff}
-    \label{fig:galaxy}
+    \caption{False positive and negative rates as a function of cutoff on log likelihood ratio. Dotted line represents $5\%$$}
+    \label{fig3}
 \end{figure}
 
 We use a cutoff of 1 to compare our method performance to READ, while using a cutoff of 1 standard deviation for READ. Fig.4 shows this comparison using false positive and true positive rates for both the methods at different coverages under different simulations. We show that both methods have similar performance in the control case (except for 0.1x coverage, where KIn has higher power to detect degree1 and degree2, and higher false positive rate for degree 2). However, in case of ascertainment, ROH, or comtamination KIn shows higher power to detect relatedness cases while maintaining a low false positive rate. 
@@ -472,8 +472,8 @@ We use a cutoff of 1 to compare our method performance to READ, while using a cu
 \begin{figure}[htp]
     \centering
     \includegraphics[width=18cm]{plots/plotimg/comparison_plot.png}
-    \caption{comparison stuff}
-    \label{fig:galaxy}
+    \caption{Comparison of KIn with READ using simulations with different coverages, and different cases of ascertainment, contamination and ROH}
+    \label{fig4}
 \end{figure}
 
 
@@ -484,8 +484,8 @@ To test KIn on real ancient dataset, we applied it to look for neandertal specim
 \begin{figure}[htp]
     \centering
     \includegraphics[width=18cm]{plots/plotimg/fil0_relatable_plot.png}
-    \caption{Chagyrskaya stuff}
-    \label{fig:galaxy}
+    \caption{Application of KIn on Neandertal specimens from Chagyrskaya}
+    \label{fig5}
 \end{figure}
 
 
