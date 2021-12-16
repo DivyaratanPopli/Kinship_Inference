@@ -86,7 +86,7 @@ mergePanels <- function(dfile, tfile, p1file, deltafile0, deltafile1, deltafile2
 
 
     plot_grid(panel0binom,panel1binom,panel2binom, labels= c("A","B","C"),
-              ncol=3, rel_widths = c(1,1,1.45), align = "h", axis="b")
+              ncol=3, rel_widths = c(1,1,1.5), align = "h", axis="b")
   ggsave(outf,
          width = 8, height = 5, dpi = 150, units = "in", device='png')
 }

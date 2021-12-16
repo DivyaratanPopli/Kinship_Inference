@@ -3,6 +3,8 @@ from delta_functions import *
 datafolder="/mnt/diversity/divyaratan_popli/100arc/inbreeding/fastsim_gz_highDiversity/"
 paramfolder="/mnt/diversity/divyaratan_popli/100arc/inbreeding/fastsim_gz/transitions/"
 hbdfolder="/mnt/diversity/divyaratan_popli/100arc/inbreeding/fastsim_gz_highDiversity/hbd_hmm/"
+Chagfold="/mnt/diversity/divyaratan_popli/100arc/inbreeding/laurits_writeup/Ch9_rem/neavar/newSim_ibd//"
+lcfold="/mnt/diversity/divyaratan_popli/100arc/inbreeding/laurits_writeup/Ch9_rem/neavar/"
 
 inds=list(range(17))
 instates=[0,1,2]
@@ -59,3 +61,24 @@ rule binom_plot:
     output:
         binomplot="plots/binom.png"
     script:"Rscripts/binom.R"
+
+
+rule Chagyrskaya:
+    input:
+        over=Chagfold + "overlap_fil1",
+        rel=Chagfold + "hmm_numba/filtered{Mfil}/read/READ_results"
+    output:
+        outfile_rel="plots/fil{Mfil}_read_plot.png",
+        outfile_over="plots/fil{Mfil}_overlap_plot.png"
+    script: "Rscripts/readPlot.R"
+
+
+rule lcMLkin:
+    input:
+        lcres=lcfold + "noCh12_9mar_newmodel/lcMLkin/output.relate",
+        likf=Chagfold + "hmm_numba/filtered0/merged_relatable_allLikelihoods.csv",
+        kinf=Chagfold + "hmm_numba/filtered0/IBDstates_allLikelihoods.csv"
+
+    output:
+        outplot="plots/lcPlot.png"
+    script:"Rscripts/lcPlot.R"
