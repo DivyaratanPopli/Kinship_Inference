@@ -5,10 +5,11 @@ paramfolder="/mnt/diversity/divyaratan_popli/100arc/inbreeding/fastsim_gz/transi
 hbdfolder="/mnt/diversity/divyaratan_popli/100arc/inbreeding/fastsim_gz_highDiversity/hbd_hmm/"
 Chagfold="/mnt/diversity/divyaratan_popli/100arc/inbreeding/laurits_writeup/Ch9_rem/neavar/newSim_ibd//"
 lcfold="/mnt/diversity/divyaratan_popli/100arc/inbreeding/laurits_writeup/Ch9_rem/neavar/"
+deg2fold="/mnt/diversity/divyaratan_popli/100arc/inbreeding/fastsim_gz/"
 
 inds=list(range(17))
 instates=[0,1,2]
-
+runlist=list(range(1,61))
 
 listf=[]
 for i, l1 in enumerate(inds):
@@ -82,3 +83,10 @@ rule lcMLkin:
     output:
         outplot="plots/lcPlot.png"
     script:"Rscripts/lcPlot.R"
+
+rule degree2_plot:
+    input:
+        fnames=expand(deg2fold+"hmm_numba_corr_IBD/contam0/inbred0/run{r}/coverage4/filtered0/asc0/IBDstates_allLikelihoods_inphapProbs.csv.gz", r=runlist),
+    output:
+        outplot="plots/degree2_10Mwin.png",
+    script:"Rscripts/degree2_cluster.R"
