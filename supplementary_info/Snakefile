@@ -1,5 +1,5 @@
 from delta_functions import *
-
+from beta_bnds import *
 datafolder="/mnt/diversity/divyaratan_popli/100arc/inbreeding/fastsim_gz_highDiversity/"
 paramfolder="/mnt/diversity/divyaratan_popli/100arc/inbreeding/fastsim_gz/transitions/"
 hbdfolder="/mnt/diversity/divyaratan_popli/100arc/inbreeding/fastsim_gz_highDiversity/hbd_hmm/"
@@ -84,9 +84,74 @@ rule lcMLkin:
         outplot="plots/lcPlot.png"
     script:"Rscripts/lcPlot.R"
 
+
 rule degree2_plot:
     input:
         fnames=expand(deg2fold+"hmm_numba_corr_IBD/contam0/inbred0/run{r}/coverage4/filtered0/asc0/IBDstates_allLikelihoods_inphapProbs.csv.gz", r=runlist),
     output:
         outplot="plots/degree2_10Mwin.png",
     script:"Rscripts/degree2_cluster.R"
+
+rule variance_bnd_data:
+    input:
+        pfile=datafolder+"contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/asc{asc}/inputMode_{inpMode}_fil{Mfil}/hmm_parameters/p1_file.gz",
+        dfile=datafolder+"contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/asc{asc}/inputMode_{inpMode}_fil{Mfil}/remHighdiv_diff.csv.gz",
+        tfile=datafolder+"contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/asc{asc}/inputMode_{inpMode}_fil{Mfil}/remHighdiv_total.csv.gz",
+        Afile=paramfolder+"transition_matrix_{rel}.csv"
+    output:
+        B1file="dataf/contam{cnt}_inbred{inb}_run{RID}_coverage{cov}_asc{asc}_inputMode_{inpMode}_fil{Mfil}_B1file_{listind}_rel{rel}",
+        B2file="dataf/contam{cnt}_inbred{inb}_run{RID}_coverage{cov}_asc{asc}_inputMode_{inpMode}_fil{Mfil}_B2file_{listind}_rel{rel}",
+        xnew1file="dataf/contam{cnt}_inbred{inb}_run{RID}_coverage{cov}_asc{asc}_inputMode_{inpMode}_fil{Mfil}_xnew1file_{listind}_rel{rel}",
+        xnew2file="dataf/contam{cnt}_inbred{inb}_run{RID}_coverage{cov}_asc{asc}_inputMode_{inpMode}_fil{Mfil}_xnew2file_{listind}_rel{rel}",
+        resfile1="dataf/contam{cnt}_inbred{inb}_run{RID}_coverage{cov}_asc{asc}_inputMode_{inpMode}_fil{Mfil}_resfile1_{listind}_rel{rel}",
+        resfile2="dataf/contam{cnt}_inbred{inb}_run{RID}_coverage{cov}_asc{asc}_inputMode_{inpMode}_fil{Mfil}_resfile2_{listind}_rel{rel}",
+        betaplot="plots/contam{cnt}_inbred{inb}_run{RID}_coverage{cov}_asc{asc}_inputMode_{inpMode}_fil{Mfil}_pair{listind}_rel{rel}_betaplot.png",
+
+    run:
+        l=wildcards.listind
+        print(l)
+        i1=l.split('_')[0]
+        i2=l.split('_')[1]
+        print(i1,i2)
+
+        cov=str(wildcards.cov)
+        cnt=str(wildcards.cnt)
+        inb=str(wildcards.inb)
+        run=str(wildcards.RID)
+        asc=str(wildcards.asc)
+        inpMode=str(wildcards.inpMode)
+        fil=str(wildcards.Mfil)
+
+        #parameters I used:
+        #cov=0.2
+        #cnt=0
+        #inb=1
+        #run=57
+        #asc=0
+        #inpMode=hapProbs
+        #fil=0
+
+        pairf1=hbdfolder+"contam%s/inbred%s/run%s/coverage%s/filtered%s/asc%s_res/gamma_%s/pw_%s.csv.gz" %(cnt,inb,run,cov,fil,asc,inpMode,i1)
+        pairf2=hbdfolder+"contam%s/inbred%s/run%s/coverage%s/filtered%s/asc%s_res/gamma_%s/pw_%s.csv.gz" %(cnt,inb,run,cov,fil,asc,inpMode,i2)
+
+        p1thresh=datafolder+"contam%s/inbred%s/run%s/coverage%s/asc%s/inputMode_id%s_fil1/id_remHighdiv_total.csv" %(cnt,inb,run,cov,asc,inpMode)
+
+        plot_betas(dfile=input.dfile, tfile=input.tfile, pair=wildcards.listind,
+                        listf=np.array(listf), libraries=np.array(inds),pfile=input.pfile,
+                        Afile=input.Afile, B1file=output.B1file, B2file=output.B2file, xnew1file=output.xnew1file,
+                        xnew2file=output.xnew2file, rel=wildcards.rel, pairf1=pairf1, pairf2=pairf2,
+                        p1thresh=p1thresh, thresh=10, instates=instates,res1file=output.resfile1, res2file=output.resfile2, betaplot=output.betaplot)
+
+
+rule plot_emission:
+    input:
+        p1f=datafolder+"contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/asc{asc}/inputMode_{inpMode}_fil{Mfil}/hmm_parameters/p1_file.gz",
+        dfile=datafolder+"contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/asc{asc}/inputMode_{inpMode}_fil{Mfil}/remHighdiv_diff.csv.gz",
+        tfile=datafolder+"contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/asc{asc}/inputMode_{inpMode}_fil{Mfil}/remHighdiv_total.csv.gz",
+        B1file="dataf/contam{cnt}_inbred{inb}_run{RID}_coverage{cov}_asc{asc}_inputMode_{inpMode}_fil{Mfil}_B1file_{listind}_rel{rel}",
+        B2file="dataf/contam{cnt}_inbred{inb}_run{RID}_coverage{cov}_asc{asc}_inputMode_{inpMode}_fil{Mfil}_B2file_{listind}_rel{rel}",
+        xnew1="dataf/contam{cnt}_inbred{inb}_run{RID}_coverage{cov}_asc{asc}_inputMode_{inpMode}_fil{Mfil}_xnew1file_{listind}_rel{rel}",
+        xnew2="dataf/contam{cnt}_inbred{inb}_run{RID}_coverage{cov}_asc{asc}_inputMode_{inpMode}_fil{Mfil}_xnew2file_{listind}_rel{rel}",
+    output:
+        outf="plots/contam{cnt}_inbred{inb}_run{RID}_coverage{cov}_asc{asc}_inputMode_{inpMode}_fil{Mfil}_pair{listind}_rel{rel}_emissions_bnds.png"
+    script:"Rscripts/emission_bnds.R"
