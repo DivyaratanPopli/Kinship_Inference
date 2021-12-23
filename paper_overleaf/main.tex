@@ -463,7 +463,7 @@ We plotted the true positive and false positive rates with a cutoff on the logli
 \begin{figure}[htp]
     \centering
     \includegraphics[width=18cm]{plots/plotimg/contam0_inbred0_model_performance_allroc_asc0_plot.png}
-    \caption{False positive and negative rates as a function of cutoff on log likelihood ratio. Dotted line represents $5\%$$}
+    \caption{False positive and negative rates as a function of cutoff on log likelihood ratio. Dotted line represents $5\%$}
     \label{fig3}
 \end{figure}
 
@@ -497,62 +497,61 @@ To test KIn on real ancient dataset, we applied it to look for neandertal specim
 We show that READ outputs higher false positives in case of recent inbreeding in the population, and higher false negatives in case of contamination. 
 
 \section{Supplementary Information}
--binomial,betabinomial
-
+Beta binomial distribution is a better fit compared to Binomial distribution for proportion of differences in windows.
 \begin{figure}[htp]
     \centering
     \includegraphics[width=18cm]{supplementary_info/plots/binom.png}
-    \caption{Beta binomial distribution is a better fit compared to Binomial for proportion of difference in windows}
+    \caption{Comparison of fit with Betabinomial and Binomial distributions on (A) unrelated, (B) Parent-Child, (C) Identical pair of individuals.}
     \label{figS1}
 \end{figure}
 
-- Variances are proportional to mean
-
-- READ with Chagyrskaya
-
+Results from KIn agree with results from READ, and provide some more information about siblings/parent-child, and $3^{rd}$ Degree relatedness. 
 \begin{figure}[htp]
     \centering
     \includegraphics[width=18cm]{supplementary_info/plots/fil0_read_plot.png}
-    \caption{Application of READ on Neandertal specimens from Chagyrskaya. Color of a square represents the relatedness, while the number denotes loglikelihood ratio.}
+    \caption{Application of READ on Neandertal specimens from Chagyrskaya cave. Color of a square represents the relatedness, while the number denotes standard deviations away from the upper threshold (we show lower threshold for unrelated pairs since upper threshold is not available).}
     \label{figS2}
 \end{figure}
 
--effect of bounding variance on emission. Here is an identical pair, with identical model transitions with and without variance constraints
+Constraining variance of beta distributions in case of an identical pair, when identical relatedness hmm is applied, gives more accurate emission probabilities.
 \begin{figure}[htp]
     \centering
     \includegraphics[width=18cm]{supplementary_info/plots/contam0_inbred1_run57_coverage0.2_asc0_inputMode_hapProbs_fil0_pair0_15_relid_emissions_bnds.png}
-    \caption{Emission with bnds}
+    \caption{Application of identical relatedness HMM on a pair of identical individuals with low coverage (0.2x), and ROH tracts. Top panel shows pairwise proportion of differences is close to expectation, but dips in some windows due to presence of ROH tracts. Bottom two panels show $P(Data|Z=2)$ without constraints and with constraints respectively.}
     \label{figS3}
 \end{figure}
 
--effect of bounding variance on beta. Here is an identical pair, with identical model transitions with and without emissions
+In figS4, the emissions improve in accuracy with constraints on variance of Beta distributions. figS5 shows why we see this improvement. With variance constraints, beta distributions corresponding to Z=1 and Z=2 do not overfit the data, and higher emission probabilities seen in (A) at $D_w/N_w$=0.05 disappear. All probability distributions are scaled by the same factor so they are visible with the data histogram.
 \begin{figure}[htp]
     \centering
     \includegraphics[width=18cm]{supplementary_info/plots/contam0_inbred1_run57_coverage0.2_asc0_inputMode_hapProbs_fil0_pair0_15_relid_betaplot.png}
-    \caption{beta with bnds}
+    \caption{Comparison of beta distributions estimated with the HMM (A) without and (B) with variance constraints.}
     \label{figS3}
 \end{figure}
 
+Restricting the emission probabilities at 1 for Y=1, in windows that have higher than $p_0$ difference improves the estimated Beta parameters. 
 \begin{figure}[htp]
     \centering
-    \includegraphics[width=18cm]{supplementary_info/plots/contam0_inbred1_run57_coverage0.2_asc0_inputMode_hapProbs_fil0_pair0_15_reli
-    \caption{beta with bnds}
+    \includegraphics[width=18cm]{supplementary_info/plots/contam0_inbred1_run57_coverage0.2_asc0_inputMode_hapProbs_fil0_ind0_foreced_roh.png}
+    \caption{Comparison of Beta distributions (A) without and (B) with modified emissions}
     \label{figS3}
 \end{figure}
 
-- lcMLKIn and kin ibd
+*Remember to use updated lcMLkin in the plot.
 \begin{figure}[htp]
     \centering
     \includegraphics[width=18cm]{supplementary_info/plots/lcPlot.png}
-    \caption{Application of lcMLkin on Neandertal specimens from Chagyrskaya.}
+    \caption{Comparison of IBD states estimated for Chagyrskaya specimens using (A) lcMLkin and (B) KIn.}
     \label{figS4}
 \end{figure}
 
--2nd degree with 10M windows
+This figure shows that it is possible to differentiate between Avuncular and Grandparent-Grandchild pairs.
+However, differentiating between Half-siblings may not be possible with our approach. 
+*Add 1M windows result
 \begin{figure}[htp]
     \centering
     \includegraphics[width=18cm]{supplementary_info/plots/degree2_10Mwin.png}
-    \caption{2deg}
+    \caption{Clustering of Avuncular, Half-siblings and Grandparent-Grandchild pairs using IBD estimation in simulations.}
     \label{figS5}
 \end{figure}
 
@@ -586,7 +585,7 @@ Choi Y, Wijsman EM, Weir BS (2009) Case-control association testing in the prese
 
 There are various ways to measure the coefficient of relatedness r. Most methods use the probabilties of IBD to calculate r. There can be, in total 9 modes of identity described by Jacquard (1974), including the cases for 3 IBD probabilities and 3 cases of IBD. Methods assuming outbred population use only the three modes accounting for IBD. Most methods used maximum likelihood approach to estimate r (). Other methods are moment estimators that assume Hardy-Weinberg equilibrium in the population (KING, GCTA).
 
-#Methods
+Methods
 $$\sum_{w} \sum_{I}\sum_\omega \log P(D_{w}|Z_w, H_w)k_{w\omega i}$$
 
 
