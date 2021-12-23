@@ -1,6 +1,9 @@
 from delta_functions import *
 from beta_bnds import *
+from forcedROH import *
+
 datafolder="/mnt/diversity/divyaratan_popli/100arc/inbreeding/fastsim_gz_highDiversity/"
+datafolder_alt="/mnt/diversity/divyaratan_popli/100arc/inbreeding/fastsim_gz/"
 paramfolder="/mnt/diversity/divyaratan_popli/100arc/inbreeding/fastsim_gz/transitions/"
 hbdfolder="/mnt/diversity/divyaratan_popli/100arc/inbreeding/fastsim_gz_highDiversity/hbd_hmm/"
 Chagfold="/mnt/diversity/divyaratan_popli/100arc/inbreeding/laurits_writeup/Ch9_rem/neavar/newSim_ibd//"
@@ -155,3 +158,17 @@ rule plot_emission:
     output:
         outf="plots/contam{cnt}_inbred{inb}_run{RID}_coverage{cov}_asc{asc}_inputMode_{inpMode}_fil{Mfil}_pair{listind}_rel{rel}_emissions_bnds.png"
     script:"Rscripts/emission_bnds.R"
+
+
+rule plot_forcedROH:
+    input:
+        p1f=datafolder_alt+"contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/asc{asc}/inputMode_{inpMode}_fil{Mfil}/hmm_parameters/p1_file.gz",
+        dfile=datafolder_alt+"contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/asc{asc}/inputMode_id{inpMode}_fil{Mfil}/id_remHighdiv_diff.csv.gz",
+        tfile=datafolder_alt+"contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/asc{asc}/inputMode_id{inpMode}_fil{Mfil}/id_remHighdiv_total.csv.gz",
+        chrmf=datafolder_alt+"contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/asc{asc}/inputMode_id{inpMode}_fil{Mfil}/id_chrm.csv.gz"
+    output:
+        outplot="plots/contam{cnt}_inbred{inb}_run{RID}_coverage{cov}_asc{asc}_inputMode_{inpMode}_fil{Mfil}_ind{ind}_foreced_roh.png"
+    run:
+
+        plotbetas(dfile=input.dfile, tfile=input.tfile, ind=wildcards.ind, chrmf=input.chrmf,
+        p1file=input.p1f, upA='initial', targets=inds, outplot=output.outplot)
