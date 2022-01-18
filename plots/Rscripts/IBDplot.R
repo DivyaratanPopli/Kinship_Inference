@@ -27,10 +27,21 @@ ibd_plot <- function(inf,p1f,outf){
   d_ibd<-subset(d3, name!="Data")
   d_prop<-subset(d3, name=="Data")
 
-  plot1<-ggplot(data=d_ibd,aes(x=Wins, y=value)) + geom_line() + facet_grid(name_f~., scales='free') +
+  dat_text <- data.frame(
+    label = as.factor(c("", "LL=-1478.24", "LL=-1259.44", "LL=-1213.61", "LL=-1236.09", "LL=-1261.19", "LL=-1281.77")),
+    name_f = as.factor(c("True", "Identical", "Parent-Child", "Siblings", "Degree2", "Degree3", "Unrelated")),
+    x     = c(5,5,5,5,5,5,5),
+    y     = c(0.85,0.85,0.85,0.85,0.85,0.85,0.85)
+  )
+
+  plot1i<-ggplot(data=d_ibd,aes(x=Wins, y=value)) + geom_line() + facet_grid(name_f~., scales='free') +
   scale_y_continuous(breaks=c(0.5,0.75,1.0), labels = c("2","1","0")) +theme_bw() + labs(y="IBD state", x = "Windows along the genome") +
   theme(strip.text = element_text(size = 6))
-    
+
+  plot1 <- plot1i + geom_text(
+    data    = dat_text,
+    mapping = aes(x = x, y = y, label = label)
+  )
 
   plot2 <-ggplot(data=d_prop,aes(x=Wins, y=value)) + geom_line() + facet_grid(name_f~., scales='free') +
   geom_segment(aes(x=0,xend=220,y=p1,yend=p1),linetype='dotted') + geom_segment(aes(x=0,xend=220,y=p12,yend=p12),linetype='dotted') +
