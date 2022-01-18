@@ -30,7 +30,7 @@ ibd_plot <- function(inf,p1f,outf){
   dat_text <- data.frame(
     label = as.factor(c("", "LL=-1478.24", "LL=-1259.44", "LL=-1213.61", "LL=-1236.09", "LL=-1261.19", "LL=-1281.77")),
     name_f = as.factor(c("True", "Identical", "Parent-Child", "Siblings", "Degree2", "Degree3", "Unrelated")),
-    x     = c(5,5,5,5,5,5,5),
+    x     = c(10,10,10,10,10,10,10),
     y     = c(0.85,0.85,0.85,0.85,0.85,0.85,0.85)
   )
 
