@@ -426,26 +426,12 @@ We predict the following categories of relatedness with KIn: Identical individua
 \begin{figure}[htp]
     \centering
     \includegraphics[width=18cm]{plots/plotimg/IBDplot.png}
-    \caption{IBD fragments detected for a pair of simulated siblings (proportion of differences in each window shown on top) by the relatedness HMM with different models.}
+    \caption{Comparison of IBD fragments predicted by different relatedness models. Top panel shows the proportion of differences in each window along the genome for a pair of simulated siblings. The panel below shows the true IBD state for each window. Each panel below shows the IBD states predicted by a particular relatedness model. The log likelihood values for each model is shown on upper left corner of the panel. }
     \label{fig:ibd}
 \end{figure}
 
 
-We see that in this case, the siblings model predictions match true IBD states the most. This is reflected in the log likelihoods values of the models as well, where siblings have the highest value shown in table 3. We take a loglikelihood ratio ($\Lambda$) of the two most likely models to get a confidence in the relatedness estimate (in this case $\Lambda$ = 22.48). All the models in fig.1 utilize information about ROH given by the ROH-HMM. 
-
-
-\begin{table}
-\caption{\label{tab:Table 3}Log likelihoods for different relatedness models}
-\begin{tabular}{|c|c|c|c|c|c|c|}
-    \hline
-    Relatedness & $Identical$ & $Parent-Child$ & $Siblings$ & $Degree2$ & $Degree3$ & $Unrelated$\\
-    \hline
-    Loglikelihood & -1478.24 & -1259.44 & -1213.61 & -1236.09 & -1261.19 & -1281.77\\
-    \hline
-   
-\end{tabular}
-
-\end{table}
+We see that in this case, the siblings model predictions match true IBD states the most. This is reflected in the log likelihoods values of the models as well, where siblings model has the highest value. We take a loglikelihood ratio ($\Lambda$) of the two most likely models to get a confidence in the relatedness estimate (in this case $\Lambda$ = 22.48). All the models in fig.1 utilize information about ROH given by the ROH-HMM. 
 
 
 Performance of ROH-HMM under different cases of ascertainment, contamination and long ROH, and for different coverages is shown in fig 2. We applied the ROH-HMM and relatedness HMM on 60 runs of simulations, to get relatedness estimates, and compared the final relatedness estimates to the true relatedness for different pairs at coverages ranging from 4x to 0.1x. 
