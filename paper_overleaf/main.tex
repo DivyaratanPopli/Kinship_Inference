@@ -333,7 +333,7 @@ This model outputs the contamination corrected number of differences and overlap
 \subsection{Simulations}
 
 \paragraph{ Simulations for estimation of transition matrix}
-We use simulations both for estimating the transition matrices for all our models, and for testing and validating our algorithm. All simulations are performed using \textt{msprime} \cite{kelleher_efficient_2016}, followed by simulations of related indivudals using a predetermined pedigree (Figure S1).
+We use simulations both for estimating the transition matrices for all our models, and for testing and validating our algorithm. All simulations are performed using \textt{msprime} \cite{kelleher_efficient_2016}, followed by simulations of related individuals using a predetermined pedigree (Figure S1).
 
 For our simulations of background diversity, we simulated a haploid population (pop1) with constant effective size of 10,000 and sampled 16 haploids from 2500 generations ago to randomly combine into 8 unrelated diploid ancient individuals. For each individual, we simulated 22 chromosomes with length $L=100$ Mb. The mutation rate was set as $\mu= 10^{-8}$ per base pair per generation and recombination rate used was $r=10^{-8}$ 
 
@@ -423,10 +423,10 @@ Notation used in the paper:
 We predict the following categories of relatedness with KIn: Identical individuals (twins), First degree (parent-child), First degree (siblings), Second degree, Third degree, Unrelated (including higher than third degree relatives). We show the working of Relatedness HMM with fig.1 showing performance of each model, when applied to a pair of siblings. 
 
 
-\begin{figure}[htp]
+\begin{figure}[h]
     \centering
     \includegraphics[width=18cm]{plots/plotimg/IBDplot.png}
-    \caption{Comparison of IBD fragments predicted by different relatedness models. Top panel shows the proportion of differences in each window along the genome for a pair of simulated siblings. Dashed lines in this panel represent $p_0$, $p_1$ and $p_2$ estimates. The panel below shows the true IBD state for each window. Each panel below shows the IBD states predicted by a particular relatedness model. The log likelihood value for each model is shown on upper left corner of the panel. }
+    \caption{Comparison of IBD fragments predicted by different relatedness models. Top panel shows the proportion of differences in each window along the genome for a pair of simulated siblings. Dashed lines in this panel represent $p_0$, $p_1$ and $p_2$ estimates. The panel just below shows the true IBD state for each window. Each panel below shows the IBD states predicted by a particular relatedness model. The log likelihood value for each model is shown on upper left corner of the panel. }
     \label{fig:ibd}
 \end{figure}
 
@@ -436,26 +436,26 @@ We see that in this case, the siblings model predictions match true IBD states t
 
 Performance of ROH-HMM under different cases of ascertainment, contamination and long ROH, and for different coverages is shown in fig 2. We applied the ROH-HMM and relatedness HMM on 60 runs of simulations, to get relatedness estimates, and compared the final relatedness estimates to the true relatedness for different pairs at coverages ranging from 4x to 0.1x. 
 
-\begin{figure}[htp]
+\begin{figure}[h]
     \centering
     \includegraphics[width=18cm]{plots/plotimg/ROHplot.png}
-    \caption{Estimation of ROH probabilities along the genome. Top panel shows proportion of differences along the genome, and the bottom panel shows probability of no ROH. A.Simulation with no ascertainment, contamination, or ROH. B. Simulation with ROH C. Simulation with ROH and ascertainment D. Simulation with ascertainment}
+    \caption{Estimation of ROH probabilities along the genome. Top panel shows proportion of differences along the genome, and the bottom panel shows probability of seeing no ROH. (A) Simulation with no ascertainment, contamination, or ROH. (B) Simulation with ROH. (C) Simulation with ROH and ascertainment. (D) Simulation with ROH and contamination. Legend to be added with inkscape: blue:4x, green:0.5x, orange:0.2x}
     \label{fig:galaxy}
 \end{figure}
 
 
-We plotted the true positive and false positive rates with a cutoff on the loglikelihood ratio in fig.3. Here, and in fig.4, we have two relatedness labels: 'Unrelated' and 'Unrelated w/o 3rd Degree'. Unrelated label here refers to KIn performance results when all unrelated, degree5, degree4, degree3 pairs are labelled as unrelated. This is useful for comparison to READ, since READ classifies relatedness upto degree2. 'Unrelated w/o degree3'  refers to the performance results when degree 3 is considered as separate from the unrelated individuals. Fig.3 shows that both for identical, 1st degree, unrelated pairs, the false positive rate is below $5\%$ even when no cut off is used. For second degree, at 0.1x we see a high false positive rate, that does not go down much with an increase in cutoff. For the same relationship, at a coverage of 0.2x, a cutoff of 1 seems appropriate to reduce false positive rate to below $5\%$. Similarly, for siblings at 0.1x, a cutoff of 1 works well to keep false positives low. For parent-child, we find that a cutoff of about 2 is a better choice. Degree 3 shows higher false positive rates in general, and we see that only for 4x coverage and a cutoff of 2, do we see a false positive rate of below $5\%$. In conclusion, it is recommended to use a cutoff of 1 for most cases, with the exception of differentiation between paret-child and siblings, where a cutoff of 2 may be more appropriate, and degree 3 where cutoff of 2 at 4x coverage seems reasonable. 
+We plotted the true positive and false positive rates with a cutoff on the loglikelihood ratio in fig.3. Here, and in fig.4, we have two relatedness labels: 'Unrelated' and 'Unrelated w/o 3rd Degree'. Unrelated label here refers to KIn performance results when all unrelated, degree5, degree4, degree3 pairs are labelled as unrelated. This is useful for comparison to READ, since READ classifies relatedness upto degree2. 'Unrelated w/o degree3'  refers to the performance results when degree 3 is considered as separate from the unrelated individuals. Fig.3 shows that for identical, 1st degree, unrelated pairs, the false positive rate is below $5\%$ even when no cut off is used. For second degree, at 0.1x we see a high false positive rate, that does not go down much with an increase in cutoff. For the same relationship, at a coverage of 0.2x, a cutoff of 1 seems appropriate to reduce false positive rate to below $5\%$. Similarly, for siblings at 0.1x, a cutoff of 1 works well to keep false positives low. For parent-child, we find that a cutoff of about 2 is a better choice. Degree 3 shows higher false positive rates in general, and we see that only for 4x coverage and a cutoff of 2, do we see a false positive rate of around $5\%$. In conclusion, it is recommended to use a cutoff of 1 for most cases, with the exception of differentiation between paret-child and siblings, where a cutoff of 2 may be more appropriate, and degree 3 where cutoff of 2 at 4x coverage seems reasonable. 
 
-\begin{figure}[htp]
+\begin{figure}[h]
     \centering
     \includegraphics[width=18cm]{plots/plotimg/contam0_inbred0_model_performance_allroc_asc0_plot.png}
-    \caption{False positive and negative rates as a function of cutoff on log likelihood ratio. Dotted line represents $5\%$}
+    \caption{False positive and True Positive rates as a function of cutoff on log likelihood ratio. In top panel, dotted line represents $5\%$}.
     \label{fig3}
 \end{figure}
 
 We use a cutoff of 1 to compare our method performance to READ, while using a cutoff of 1 standard deviation for READ. Fig.4 shows this comparison using false positive and true positive rates for both the methods at different coverages under different simulations. We show that both methods have similar performance in the control case (except for 0.1x coverage, where KIn has higher power to detect degree1 and degree2, and higher false positive rate for degree 2). However, in case of ascertainment, ROH, or comtamination KIn shows higher power to detect relatedness cases while maintaining a low false positive rate. 
 
-\begin{figure}[htp]
+\begin{figure}[h]
     \centering
     \includegraphics[width=18cm]{plots/plotimg/comparison_plot.png}
     \caption{Comparison of KIn with READ using simulations with different coverages, and different cases of ascertainment, contamination and ROH}
@@ -463,18 +463,19 @@ We use a cutoff of 1 to compare our method performance to READ, while using a cu
 \end{figure}
 
 
-To test KIn on real ancient dataset, we applied it to look for neandertal specimens from Chagyrskaya cave in Siberia, Russia. This dataset comprised of 14 specimens that came from neighbouring layers, and hence could possibly belong to contemporary neandertals who occupied the cave 63 ± 4 to 48 ± 3 kya \cite{kolobova_archaeological_2020-1}. These specimens showed low coverage of nuclear genome, with 8 samples out of 14 showing <1x coverage. Some of these specimens showed signs of long ROH, and contamination from modern humans as well as Hyena. All these samples were captured with an array targeting for Neanderthal variation, and we further ascertained this data to variable sites in high coverage Neanderthal genomes: Altai Neanderthal (Denisova 5) (Prüfer et al., 2014) and Vindija 33.19 (Prüfer et al., 2017). This dataset had all the issues that KIn deals with, and hence we decided to apply it here to see if we could find family relationships that would not be possible with other available methods. Our results for pairwise relatedness for these individuals is shown in fig.5. We found that identical individuals (Chagyrskaya13-Chagyrskaya19-Chagyrskaya1141), first degree relatives (Chagyrskaya07-Chagyrskaya17, Chagyrskaya06-Chagyrskaya14), and a second degree relative (Chagyrskaya01-Chagyrskaya60). These results agree with READ (supplementary fig). However, we find that Chagyrskaya07-Chagyrskaya17 are parent-child. This matches with the conclusions of the authors based on additional information from mtDNA. Further, we find a possible third degree relative (Chagyrskaya07-Chagyrskaya60). We compare our results to lcMLkin, and show that the software does not perform well with these low coverage samples since it is not possible to obtain reliable genotype likelihoods for many of these samples (supplementary fig).
+To test KIn on real ancient dataset, we applied it to look for neandertal specimens from Chagyrskaya cave in Siberia, Russia. This dataset comprised of 14 specimens that came from neighbouring layers, and hence could possibly belong to contemporary neandertals who occupied the cave 63 ± 4 to 48 ± 3 kya \cite{kolobova_archaeological_2020-1}. These specimens showed low coverage of nuclear genome, with 8 samples out of 14 showing $<1x$ coverage. Some of these specimens showed signs of long ROH, and contamination from modern humans as well as Hyena. All these samples were captured with an array targeting for Neanderthal variation, and we further ascertained this data to variable sites in high coverage Neanderthal genomes: Altai Neanderthal (Denisova 5) (Prüfer et al., 2014) and Vindija 33.19 (Prüfer et al., 2017). This dataset had all the issues that KIn deals with, and hence we decided to apply it here to see if we could find family relationships that would not be possible with other available methods. Our results for pairwise relatedness for these individuals is shown in fig.5. We found that identical individuals (Chagyrskaya13-Chagyrskaya19-Chagyrskaya1141), first degree relatives (Chagyrskaya07-Chagyrskaya17, Chagyrskaya06-Chagyrskaya14), and a second degree relative (Chagyrskaya01-Chagyrskaya60). These results agree with READ (supplementary fig). However, we find that Chagyrskaya07-Chagyrskaya17 are parent-child. This matches with the conclusions of the authors based on additional information from mtDNA. Further, we find a possible third degree relative (Chagyrskaya07-Chagyrskaya60). We compare our results to lcMLkin, and show that the software does not perform well with these low coverage samples since it is not possible to obtain reliable genotype likelihoods for many of these samples (supplementary fig).
 
 
 
-\begin{figure}[htp]
+\begin{figure}[h]
     \centering
     \includegraphics[width=18cm]{plots/plotimg/fil0_relatable_plot.png}
     \caption{Application of KIn on Neandertal specimens from Chagyrskaya. Color of a square represents the relatedness, while the number denotes loglikelihood ratio.}
     \label{fig5}
 \end{figure}
 
-
+We further applied KIn to a genome-wide dataset of 118 ancient individuals sequenced and analyzed by Mittnik et al.,2019. We compared our relatedness estimates to those obtained from the authors using READ and lcMLkin, and found that in most cases the three methods agree. Out of 6903 pairs, 344 pairs show different relatedness for KIn and READ (suppl table1). We find only three pairs in this subset where lcMLkin has sufficient data, and for two of these pairs, KIn and lcMLKin predict relatedness as second degree, and READ predicts unrelated individuals. This is concurrent with the results from simulations where we find that KIn has higher power to detect second degree relatedness, compared to READ. We find only one pair in the entire dataset for which all three methods differ. For pair (POST131_POST28), READ predicts unrelated, KIn predicts second degree, while lcMLkin shows 3rd-5th degree relatedness.  
+KIn is able to differentiate between parent-child and siblings in many cases where READ can identify the pairs as first degree but there is not enough data for lcMLkin to give a result (suppl table2). In many of these cases, KIn can differentiate between parent-child and siblings. Interestingly, we also find cases where READ predicts first degree, but KIn and lcMLKin predict differ in prediction of siblings and parent-child (supple table 3). Four such pairs have good amount of data, and a visual inspection shows that in all these cases, KIn seems to have the correct estimate (supp fig. ).
 
 
 
@@ -484,15 +485,15 @@ We show that READ outputs higher false positives in case of recent inbreeding in
 
 \section{Supplementary Information}
 Beta binomial distribution is a better fit compared to Binomial distribution for proportion of differences in windows.
-\begin{figure}[htp]
+\begin{figure}[h]
     \centering
     \includegraphics[width=18cm]{supplementary_info/plots/binom.png}
-    \caption{Comparison of fit with Betabinomial and Binomial distributions on (A) unrelated, (B) Parent-Child, (C) Identical pair of individuals.}
+    \caption{Comparison of fit with Betabinomial and Binomial distributions. Data is represented by the histogram of proportion of differences from all windows of a (A) unrelated, (B) Parent-Child, (C) Identical pair of individuals. Binomial parameter p is calculated from the data, while Betabinomial parameters are estimated with the relatedness HMM.}
     \label{figS1}
 \end{figure}
 
 Results from KIn agree with results from READ, and provide some more information about siblings/parent-child, and $3^{rd}$ Degree relatedness. 
-\begin{figure}[htp]
+\begin{figure}[h]
     \centering
     \includegraphics[width=18cm]{supplementary_info/plots/fil0_read_plot.png}
     \caption{Application of READ on Neandertal specimens from Chagyrskaya cave. Color of a square represents the relatedness, while the number denotes standard deviations away from the upper threshold (we show lower threshold for unrelated pairs since upper threshold is not available).}
@@ -500,7 +501,7 @@ Results from KIn agree with results from READ, and provide some more information
 \end{figure}
 
 Constraining variance of beta distributions in case of an identical pair, when identical relatedness hmm is applied, gives more accurate emission probabilities.
-\begin{figure}[htp]
+\begin{figure}[h]
     \centering
     \includegraphics[width=18cm]{supplementary_info/plots/contam0_inbred1_run57_coverage0.2_asc0_inputMode_hapProbs_fil0_pair0_15_relid_emissions_bnds.png}
     \caption{Application of identical relatedness HMM on a pair of identical individuals with low coverage (0.2x), and ROH tracts. Top panel shows pairwise proportion of differences is close to expectation, but dips in some windows due to presence of ROH tracts. Bottom two panels show $P(Data|Z=2)$ without constraints and with constraints respectively.}
@@ -508,7 +509,7 @@ Constraining variance of beta distributions in case of an identical pair, when i
 \end{figure}
 
 In figS4, the emissions improve in accuracy with constraints on variance of Beta distributions. figS5 shows why we see this improvement. With variance constraints, beta distributions corresponding to Z=1 and Z=2 do not overfit the data, and higher emission probabilities seen in (A) at $D_w/N_w$=0.05 disappear. All probability distributions are scaled by the same factor so they are visible with the data histogram.
-\begin{figure}[htp]
+\begin{figure}[h]
     \centering
     \includegraphics[width=18cm]{supplementary_info/plots/contam0_inbred1_run57_coverage0.2_asc0_inputMode_hapProbs_fil0_pair0_15_relid_betaplot.png}
     \caption{Comparison of beta distributions estimated with the HMM (A) without and (B) with variance constraints.}
@@ -516,7 +517,7 @@ In figS4, the emissions improve in accuracy with constraints on variance of Beta
 \end{figure}
 
 Restricting the emission probabilities at 1 for Y=1, in windows that have higher than $p_0$ difference improves the estimated Beta parameters. 
-\begin{figure}[htp]
+\begin{figure}[h]
     \centering
     \includegraphics[width=18cm]{supplementary_info/plots/contam0_inbred1_run57_coverage0.2_asc0_inputMode_hapProbs_fil0_ind0_foreced_roh.png}
     \caption{Comparison of Beta distributions (A) without and (B) with modified emissions}
@@ -524,20 +525,21 @@ Restricting the emission probabilities at 1 for Y=1, in windows that have higher
 \end{figure}
 
 *Remember to use updated lcMLkin in the plot.
-\begin{figure}[htp]
+\begin{figure}[h]
     \centering
     \includegraphics[width=18cm]{supplementary_info/plots/lcPlot.png}
-    \caption{Comparison of IBD states estimated for Chagyrskaya specimens using (A) lcMLkin and (B) KIn.}
+    \caption{Comparison of IBD states estimated for Chagyrskaya specimens using (A) lcMLkin and (B) KIn.
+    The relatedness shown with different colors is estimated with and matched with READ and KIn.}
     \label{figS4}
 \end{figure}
 
 This figure shows that it is possible to differentiate between Avuncular and Grandparent-Grandchild pairs.
 However, differentiating between Half-siblings may not be possible with our approach. 
 *Add 1M windows result
-\begin{figure}[htp]
+\begin{figure}[h]
     \centering
     \includegraphics[width=18cm]{supplementary_info/plots/degree2_10Mwin.png}
-    \caption{Clustering of Avuncular, Half-siblings and Grandparent-Grandchild pairs using IBD estimation in simulations.}
+    \caption{Avuncular and Grandparent-grandchild form different clusters, when total number of IBD fragments are plotted against total length of IBD fragments.}
     \label{figS5}
 \end{figure}
 
