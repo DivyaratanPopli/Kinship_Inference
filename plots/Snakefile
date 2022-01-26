@@ -4,7 +4,7 @@ infold="/mnt/diversity/divyaratan_popli/100arc/inbreeding/fastsim_gz/"
 plotdata="./plotdata/"
 plotimg="./plotimg/"
 hmmfold="/mnt/diversity/divyaratan_popli/100arc/inbreeding/fastsim_gz/hmm_numba_incorrect_roh_i1_i1_insteadOf_i1_i2/"
-Chagfold="/mnt/diversity/divyaratan_popli/100arc/inbreeding/laurits_writeup/Ch9_rem/neavar/newSim_probCorr/"
+Chagfold="/mnt/diversity/divyaratan_popli/100arc/inbreeding/laurits_writeup/Ch9_rem/neavar/newSim_ibd/"
 
 #hmmdeg3="hmm_numba_incorrect_roh_i1_i1_insteadOf_i1_i2/rocNo3deg/"
 rule ROHplotf:
@@ -66,7 +66,7 @@ rule comparisonplot:
 rule Chagyrskaya:
     input:
         over=Chagfold + "overlap_fil1",
-        rel=Chagfold + "hmm_numba/filtered{Mfil}/merged_relatable_allLikelihoods.csv"
+        rel=Chagfold + "hmm_numba_newA/filtered{Mfil}/merged_relatable_allLikelihoods.csv"
     output:
         outfile_rel="plotimg/fil{Mfil}_relatable_plot.png",
         outfile_over="plotimg/fil{Mfil}_overlap_plot.png"
