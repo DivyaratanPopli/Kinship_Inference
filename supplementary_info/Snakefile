@@ -1,6 +1,7 @@
 from delta_functions import *
 from beta_bnds import *
 from forcedROH import *
+from supplementary_scripts import suppTable2
 
 datafolder="/mnt/diversity/divyaratan_popli/100arc/inbreeding/fastsim_gz_highDiversity/"
 datafolder_alt="/mnt/diversity/divyaratan_popli/100arc/inbreeding/fastsim_gz/"
@@ -9,6 +10,7 @@ hbdfolder="/mnt/diversity/divyaratan_popli/100arc/inbreeding/fastsim_gz_highDive
 Chagfold="/mnt/diversity/divyaratan_popli/100arc/inbreeding/laurits_writeup/Ch9_rem/neavar/newSim_ibd//"
 lcfold="/mnt/diversity/divyaratan_popli/100arc/inbreeding/laurits_writeup/Ch9_rem/neavar/"
 deg2fold="/mnt/diversity/divyaratan_popli/100arc/inbreeding/fastsim_gz/"
+bronze_age_folder="/mnt/diversity/divyaratan_popli/100arc/inbreeding/bronze_age_newSim/"
 
 inds=list(range(17))
 instates=[0,1,2]
@@ -172,3 +174,12 @@ rule plot_forcedROH:
 
         plotbetas(dfile=input.dfile, tfile=input.tfile, ind=wildcards.ind, chrmf=input.chrmf,
         p1file=input.p1f, upA='initial', targets=inds, outplot=output.outplot)
+
+rule supplementary_table2:
+    input:
+        resultsf='/home/divyaratan_popli/Documents/bronze_age_data/aax6219_Mittnik_SM_TableS10_kinship_inference.xlsx',
+        kinf=bronze_age_folder + "hmm_numba_corrAsim_grSib_replaced/filtered0/merged_relatable_allLikelihoods.csv"
+    output:
+        outf="tables/supplementary_table2.csv"
+    run:
+        suppTable2(resultsf=input.resultsf, kinf=input.kinf, outf=output.outf)
