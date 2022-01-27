@@ -8,7 +8,7 @@ Created on Mon Oct 14 13:22:51 2019
 
 
 import os
-import msprime as msp
+#import msprime as msp
 import numpy as np
 import random
 import pandas as pd
