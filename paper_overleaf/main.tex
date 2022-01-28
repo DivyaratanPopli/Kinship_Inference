@@ -10,6 +10,8 @@ singlelinecheck=false
 \usepackage{amsmath}
 \usepackage{bbm}
 \usepackage{graphicx}
+\usepackage{csvsimple}
+
 \title{Method to infer relatedness using low coverage ancient DNA}
 \author{Divya Ratan Popli, Benjamin M. Peter}
 \date{5 August 2021}
@@ -21,8 +23,6 @@ singlelinecheck=false
 \newcommand{\BZ}{\mathbf{Z}}
 \newcommand{\BD}{\mathbf{D}}
 \newcommand{\BH}{\mathbf{H}}
-
-\usepackage{csvsimple}
 
 \begin{document}
 
@@ -477,7 +477,8 @@ To test KIn on real ancient dataset, we applied it to look for neandertal specim
 \end{figure}
 
 We further applied KIn to a genome-wide dataset of 118 ancient individuals sequenced and analyzed by Mittnik et al.,2019. We compared our relatedness estimates to those obtained from the authors using READ and lcMLkin, and found that in most cases the three methods agree. Out of 6903 pairs, 346 pairs show different relatedness for KIn and READ (suppl table2). However, there are only 31 pairs where KIn has $log likelihood >1$. We looked in detail at some of these pairs, and we found that it is possible to deduct the correct relatedness for several of these pairs by plotting the proportion of differences along the genome. In all the pairs that we analyzed in this way, KIn seems to predict the true relatedness. We show few examples of such cases in supple fig. We found 20 pairs in this subset of 346 pairs where lcMLkin has sufficient data. Among these 20 pairs, we found that lcMLkin matches KIn estimate in all cases except for pair POST131-POST28 (READ predicts unrelated individuals, lcMLkin predicts 3rd-5th degree, KIn predicts second degree) and pair AITI72-AITI77A (READ and lcMLKin predict unrelated, while KIn estimates 3rd degree with log likelihood=1.7).  
-KIn is able to differentiate between parent-child and siblings in many cases where READ can identify the pairs as first degree but there is not enough data for lcMLkin to give a result (suppl table2). Interestingly, we also find cases where READ predicts first degree, but KIn and lcMLKin predict differ in prediction of siblings and parent-child (supple table 3). Four such pairs have good amount of data, and a visual inspection shows that in all these cases, KIn seems to have the correct estimate (supp fig. ).
+We found 43 pairs for which READ estimates first degree, and compared the estimates of lcMLkin and KIn for these cases (suppl table3). There were a total of 20 pairs where lcMLkin had sufficient data, and 26 pairs where $loglikelihood ratio>2$ for KIn. Among the 19 overlapping pairs, we found four pairs where KIn and lcMLkin differ, and a visual inspection shows that in these cases, KIn seems to have the correct estimate (supp fig).  
+
 
 
 
@@ -545,10 +546,15 @@ However, differentiating between Half-siblings may not be possible with our appr
     \label{figS5}
 \end{figure}
 
--ROH high diff
+-READ and KIn differ
 
 -supplementary table2
-\csvautotabular{supp}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=18cm]{supplementary_info/plots/}
+    \caption{Avuncular and Grandparent-grandchild form different clusters, when total number of IBD fragments are plotted against total length of IBD fragments.}
+    \label{figS5}
+\end{figure}
 
 
 \bibliographystyle{plain}
