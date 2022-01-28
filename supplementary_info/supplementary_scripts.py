@@ -1,6 +1,6 @@
 import pandas as pd
 
-def suppTable2(resultsf,kinf,outf):
+def suppTable2(resultsf,kinf,outf2,outf3):
     res = pd.read_excel(resultsf,usecols=(0,1,5,6,7,8,16,17),header=None)
 
     res.columns=list(res.loc[3,:])
@@ -43,9 +43,17 @@ def suppTable2(resultsf,kinf,outf):
 
 
     dtable=diff.copy()
-    dtable.columns=['Relatedness KIn', 'relatedness_l', 'Log liklihood ratio (KIn)', 'Relatedness READ','Z_upper (READ)', 'Z_lower (READ)', 'Relatedness lcMLkin', 'pair', 'nSNPs']
-    dtable=dtable.drop('relatedness_l',1)
+    dtable.columns=['relatedness_r', 'Relatedness KIn', 'Log liklihood ratio (KIn)', 'Relatedness READ','Z_upper (READ)', 'Z_lower (READ)', 'Relatedness lcMLkin', 'pair', 'nSNPs']
+    dtable=dtable.drop('relatedness_r',1)
 
+    #looking at cases where read says first degree and others disagree
+    fread=ares.loc[ares['Relationship (READ)']=='First Degree',['relatedness_r','relatedness_l','withinDeg_ll','Relationship (READ)','Z_upper','Z_lower','Relationship (r/k0)* ','pair','nSNPs']]
+    rtable=fread.copy()
+    rtable.columns=['relatedness_r', 'Relatedness KIn', 'Log liklihood ratio (KIn)', 'Relatedness READ','Z_upper (READ)', 'Z_lower (READ)', 'Relatedness lcMLkin', 'pair', 'nSNPs']
+    rtable=rtable.drop('relatedness_r',1)
 
     with pd.option_context('display.max_rows', len(dtable.index), 'display.max_columns', len(dtable.columns)):
-                dtable.to_csv(outf, sep=',')
+                dtable.to_csv(outf2, sep=',',index=False)
+
+    with pd.option_context('display.max_rows', len(rtable.index), 'display.max_columns', len(rtable.columns)):
+                rtable.to_csv(outf3, sep=',',index=False)
