@@ -194,3 +194,13 @@ rule egplot1:
     output:
         outimg="plots/egplot1.png"
     script:"Rscripts/egplot1.R"
+
+rule egplot2:
+    input:
+        p1f=bronze_age_folder + "hmm_parameters_fil0/p1_file",
+        datadf=bronze_age_folder + "mergedwin_remHighdiv_fil0/pw_diff.csv",
+        datatf=bronze_age_folder + "mergedwin_remHighdiv_fil0/pw_total.csv",
+        chrmf=bronze_age_folder + "mergedwin_fil0/merged_chrm.csv"
+    output:
+        outimg="plots/egplot2.png"
+    script:"Rscripts/egplot2.R"
