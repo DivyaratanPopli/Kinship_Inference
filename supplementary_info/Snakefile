@@ -175,11 +175,22 @@ rule plot_forcedROH:
         plotbetas(dfile=input.dfile, tfile=input.tfile, ind=wildcards.ind, chrmf=input.chrmf,
         p1file=input.p1f, upA='initial', targets=inds, outplot=output.outplot)
 
-rule supplementary_table2:
+rule supplementary_table23:
     input:
         resultsf='/home/divyaratan_popli/Documents/bronze_age_data/aax6219_Mittnik_SM_TableS10_kinship_inference.xlsx',
         kinf=bronze_age_folder + "hmm_numba_corrAsim_grSib_replaced/filtered0/merged_relatable_allLikelihoods.csv"
     output:
-        outf="tables/supplementary_table2.csv"
+        outf2="tables/supplementary_table2.csv",
+        outf3="tables/supplementary_table3.csv"
     run:
-        suppTable2(resultsf=input.resultsf, kinf=input.kinf, outf=output.outf)
+        suppTable2(resultsf=input.resultsf, kinf=input.kinf, outf2=output.outf2, outf3=output.outf3)
+
+rule egplot1:
+    input:
+        p1f=bronze_age_folder + "hmm_parameters_fil0/p1_file",
+        datadf=bronze_age_folder + "mergedwin_remHighdiv_fil0/pw_diff.csv",
+        datatf=bronze_age_folder + "mergedwin_remHighdiv_fil0/pw_total.csv",
+        chrmf=bronze_age_folder + "mergedwin_fil0/merged_chrm.csv"
+    output:
+        outimg="plots/egplot1.png"
+    script:"Rscripts/egplot1.R"
