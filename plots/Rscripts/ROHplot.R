@@ -41,7 +41,7 @@ make_panel2 <- function(data,acrval,leg){
   plot2<-plot2+geom_line(aes(x=Wins, y=Model_pred, linetype="Inferred", colour=Coverage), alpha=0.4, size=0.8)
 
   plot2<-plot2+scale_linetype_manual(values=c("Truth"="dashed", "Inferred"="solid"))
-  plot2 <- plot2 + scale_color_manual(values=c("0.2"="Green", "0.5"="Blue","4"="Red"))
+  plot2 <- plot2 + scale_color_manual(values=c("0.2"="Red", "0.5"="Green","4"="Blue"))
   if (leg==1){
     plot2<-plot2 + theme_bw() + theme(legend.position = "bottom")+labs(y= "1 - P(ROH)", x = "Windows along genome")
     plot2<- plot2+ guides(linetype = guide_legend(nrow = 1, byrow = TRUE))+ guides(colour = guide_legend(nrow = 1, byrow = TRUE))
