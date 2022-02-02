@@ -17,6 +17,7 @@ make_panel1 <- function(data,acrval,leg){
     theme_void()
   plot1<-plot1+geom_line(aes(colour=Coverage),alpha=0.4, size=0.8)
   plot1<-plot1 + theme_bw()+ theme(legend.position = "none", axis.title.x = element_blank())+labs(y= "Heterozygosity", x = "Windows along genome") +
+    scale_color_manual(values=c("0.2"="Green", "0.5"="Blue","4"="Red")) +
     theme(panel.grid.major = element_blank(),
           panel.grid.minor = element_blank(),
           strip.background = element_blank(),
