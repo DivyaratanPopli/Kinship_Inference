@@ -20,6 +20,12 @@ rule ROHplot:
         outfile_roh="plotimg/ROHplot.png",
     script:"Rscripts/ROHplot.R"
 
+rule ROHlegend:
+    input:
+        infile_roh="plotdata/plot_ROH.csv",
+    output:
+            outfile_roh="inkscape/ROHlegend.png",
+    script:"Rscripts/ROHlegend.R"
 
 rule IBDplotf:
     input:"README"
