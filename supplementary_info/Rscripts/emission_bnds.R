@@ -41,16 +41,49 @@ plot_b01 <- function(B1file,B2file,xnew1,xnew2,dfile,tfile,p1f,outf){
   Blabel <- c('B1'='Emission w/o constraint', 'B2'='Emission with constraint')
 
 
-  plot1<-ggplot(data=df_prop,aes(x=Wins, y=value)) + geom_line() + facet_grid(Bname~., scales='free') +
+  chrm1=rep(c(rep(0,10),rep(1,10)),11)
+  df_prop$V1=chrm1
+  plot1<-ggplot(data=df_prop,aes(x=Wins, y=value)) +
+    geom_rect(aes(
+      xmin = Wins-1,
+      xmax = Wins,
+      ymin = -Inf,
+      ymax = +Inf,
+      fill = factor(V1),
+      #alpha=0.8
+    )) +
+    scale_fill_manual(values = c("grey90", "white")) +
+    theme_void() +
+    geom_line() + facet_grid(Bname~., scales='free') +
     geom_segment(aes(x=0,xend=220,y=p1,yend=p1),linetype='dotted') + geom_segment(aes(x=0,xend=220,y=p12,yend=p12),linetype='dotted') +
     geom_segment(aes(x=0,xend=220,y=p34,yend=p34),linetype='dotted') +theme_bw()+
     theme(legend.position = "none", axis.title.x = element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank(), strip.text = element_text(size = 6))+
-    labs(y=expression(D[w]/N[w])) + theme(strip.text = element_text(size = 7))
+    labs(y=expression(D[w]/N[w])) + theme(strip.text = element_text(size = 9)) +
+    theme(panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          strip.background = element_blank(),
+          panel.border = element_rect(colour = "black", fill = NA))
 
-
-  plot2<-ggplot(data=B_all,aes(x=Wins, y=value)) + geom_line() + facet_grid(Bname~., scales='free', labeller = as_labeller(Blabel)) +
+  B_all$V1=as.factor(rep(chrm1,2))
+  plot2<-ggplot(data=B_all,aes(x=Wins, y=value)) +
+    geom_rect(aes(
+      xmin = Wins-1,
+      xmax = Wins,
+      ymin = -Inf,
+      ymax = +Inf,
+      fill = factor(V1),
+      #alpha=0.8
+    )) +
+    scale_fill_manual(values = c("grey90", "white")) +
+    theme_void() +
+    geom_line() + facet_grid(Bname~., scales='free', labeller = as_labeller(Blabel)) +
     theme_bw() + labs(y=expression("Emission probabilities for Z"[w]*"=2"), x = "Windows along the genome (w)") +
-    theme(strip.text = element_text(size = 7))
+    theme(legend.position = "none",strip.text = element_text(size = 9)) +
+    theme(panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          strip.background = element_blank(),
+          panel.border = element_rect(colour = "black", fill = NA))
+
 
   panel <- plot_grid(plot1,plot2, ncol=1, rel_widths = c(1,1),rel_heights = c(1,2), align="v",axis='b')
   ggsave(outf,
@@ -59,6 +92,6 @@ plot_b01 <- function(B1file,B2file,xnew1,xnew2,dfile,tfile,p1f,outf){
 }
 
 plot_b01(dfile=snakemake@input[["dfile"]], tfile=snakemake@input[["tfile"]], p1f=snakemake@input[["p1f"]],
-            xnew1=snakemake@input[["xnew1"]], xnew2=snakemake@input[["xnew2"]],
-            B1file=snakemake@input[["B1file"]], B2file=snakemake@input[["B2file"]],
-            outf=snakemake@output[["outf"]])
+         xnew1=snakemake@input[["xnew1"]], xnew2=snakemake@input[["xnew2"]],
+         B1file=snakemake@input[["B1file"]], B2file=snakemake@input[["B2file"]],
+         outf=snakemake@output[["outf"]])
