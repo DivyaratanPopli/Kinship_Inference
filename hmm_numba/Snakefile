@@ -25,7 +25,7 @@ folders=["allLikelihoods", "allpostprobs", "read"]
 
 readfolder="/mnt/diversity/divyaratan_popli/100arc/readscripts/"
 datafolder="../"
-paramfolder="/mnt/diversity/divyaratan_popli/100arc/inbreeding/fastsim_gz/transitions/"
+paramfolder="/mnt/diversity/divyaratan_popli/100arc/inbreeding/fastsim_gz/corrected_transitions/"
 hbdfolder="../"
 
 with open(datafolder+"targets.txt") as f:
@@ -327,4 +327,3 @@ rule all:
         #read_table=expand("filtered{Mfil}/read/output_table.csv", Mfil=Mfilist),
         #read_outplot=expand("filtered{Mfil}/read/READ_out.png", Mfil=Mfilist),
         ibd="filtered0/IBDstates_allLikelihoods.csv"
-
