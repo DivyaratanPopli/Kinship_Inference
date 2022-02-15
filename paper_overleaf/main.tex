@@ -46,6 +46,15 @@ In ancient DNA, relatedness can be used to identify bones and teeth belonging to
 Commonly, pairs of relateded individuals are  identified by looking for parts of the genome that are identical by descent (IBD), ie. inherited from a recent common ancestor. Due to the laws of Mendelian segregation, a parent, for example, will share exactly one set of chromosome IBD with its offspring, with the other set of chromosomes in the offspring coming from the other parent. A grandparent will, on average share a quarter of its genome with a grand-child, because recombination broke up the chromosomes.
 
 However, it is not possible to directly observe IBD segments, and so most methods infer them by first identifying segments of the genome that are Identical by State (IBS) and using population allele frequencies to calculate the probability of IBD given IBS \cite{vai_kinship_2020}.  One exception is SNPduo, a software that uses IBS direclty to visualize and analyze pairwise relatedness. \cite{roberson_visualization_2009}. Most methods, however, use IBD as an intermediary in inferring relatedness \cite{boehnke_accurate_1997,lynch_estimation_1999,mcpeek_statistical_2000}. For a non-inbred population, there are three IBD states possible: either no chromosomes are shared, only one chromosome is shared, or both chromosomes are shared. The genome-wide proportions of these states (usually referred to as $k_0$, $k_1$, $k_2$, so that $k_0+k_1+k_2=1$) can be used to infer the degree and nature of relatedness for a pair of individuals. For example, a pair of siblings are expected to have all three possible IBD states with probabilities (0.25,0.5,0.25) as shown in fig 1. These IBD probabilities can directly be used to categorize a pair of individuals as related by a certain degree and nature of relatedness as shown in table1. One can also use these probabilities to estimate the coefficient of relatedness as $r= k_1/2 + k_2$. The coefficient of relatedness (r) is defined as the proportion of genome IBD for a pair of individuals.
+
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=18cm]{plots/inkscape_finalImg/schematic.png}
+    \caption{}
+    \label{fig1:ibd}
+\end{figure}
+
 There are numerous methods that utilize population allele frequencies, phase information, recombination maps, or genotype calls to estimate the relatedness coefficient \cite{huff_maximum-likelihood_2011,li_relationship_2014,li_accurate_2014,thornton_estimating_2012}. PLINK, a popular tool to infer relatedness coefficient in  diploid genotype data, estimates IBD probabilities from average of observed IBS, and using the allele frequencies at each SNP in samples \cite{purcell_plink_2007}. KING is another widely used software that allows relatedness inference with genotype data in homogeneous populations using population allele frequencies (KING homo), but can also work with structured populations with no good population allele frequencies using heterozygosity estimates from each sample (KING robust) \cite{manichaikul_robust_2010}. . 
 
 \begin{table}
@@ -436,6 +445,7 @@ Notation used in the paper:
 \section{Results}
 
 We predict the following categories of relatedness with KIn: Identical individuals (twins), First degree (parent-child), First degree (siblings), Second degree, Third degree, Unrelated (including higher than third degree relatives). We show the working of Relatedness HMM with Fig.\ref{fig1:ibd} showing performance of each model, when applied to a pair of siblings. 
+
 
 
 \begin{figure}[h]
