@@ -8,6 +8,7 @@
 singlelinecheck=false
 ]{caption}
 \usepackage{amsmath}
+\usepackage{bm}
 \usepackage{bbm}
 \usepackage{graphicx}
 \usepackage{csvsimple}
@@ -23,6 +24,7 @@ singlelinecheck=false
 \newcommand{\BZ}{\mathbf{Z}}
 \newcommand{\BD}{\mathbf{D}}
 \newcommand{\BH}{\mathbf{H}}
+\newcommand{\Btheta}{\pmb{\theta}}
 
 \begin{document}
 
@@ -30,7 +32,7 @@ singlelinecheck=false
 \maketitle
 
 \begin{abstract}
-\noindent Knowledge of familial relationships is an important part of several research fields. However, estimating relatedness from ancient DNA can be be difficult since DNA sequences extracted from ancient bones may have low coverage, ascertainment bias (if the sequences have been captured with DNA probes), and contamination from modern humans. In addition, the population of interest may have long runs of homozygosity (ROH) due to recent inbreeding or/and small population size. This can affect the relatedness estimates. Here, we present a Hidden Markov Model (HMM) to estimate identity by descent (IBD) fragments and pairwise relatedness upto 3rd degree, while additionally differentiating between siblings and parent-child. We have developed another HMM to estimate ROH proportions, that can be utilized by the relatedness estimation model to output better estimates. 
+\noindent Knowledge of familial relationships is an important part of several research fields. However, estimating relatedness from ancient DNA can be be difficult since DNA sequences extracted from ancient bones may have low coverage, ascertainment bias (if the sequences have been captured with DNA probes), and contamination from modern humans. In addition, the population of interest may have long runs of homozygosity (ROH) due to recent inbreeding or/and small population size. This can affect the relatedness estimates. Here, we present a Hidden Markov Model (HMM) to estimate identity by descent (IBD) fragments and degree of relatedness upto 3rd degree, while additionally differentiating between siblings and parent-child. We have developed another HMM to estimate ROH proportions, that can be utilized by the relatedness estimation model to output better estimates. 
 \end{abstract}
 
 \section{Introduction}
@@ -72,10 +74,10 @@ There are numerous methods that utilize population allele frequencies, phase inf
 One major issue with applying above mentioned methods to ancient DNA is that, frequently, the amount of endogenous DNA is very low, making it very difficult to get genotype calls.
 Several methods solve this problem by using genotype likelihoods \cite{lipatov_maximum_2015,korneliussen_ngsrelate_2015}. These methods account for the uncertainity in genotype calls by summing over all possible genotypes, weighted by the genotype likelihoods. However, these approaches typically still require at least 2x coverage, since genotype likelihoods may not be very informative at lower coverages. Apart from the low amount of endogenous DNA sequences present, ancient DNA analyses often have additional problems like contamination from modern populations \cite{peyregne_authentict_2020}, absence of a good reference panel, and ascertainment bias in case of captured sequences. In cases where allele frequency or a reference panel for the target population is not available, it is possible to use allele frequency from a modern population from the same geographic location, or to try using population allele frequencies from multiple potentially close populations. However, incorrect assumptions may cause the individuals in the target population to look more similar or different to each other \cite{amorim_understanding_2018}. Several methods have been proposed to estimate relatedness without a reference panel, but many of these require either $>4x$ coverage to get a good estimate of genotype likelihoods\cite{waples_allele_2019}, or a large sample size to get an estimate of population allele frequencies from the samples \cite{theunert_joint_2017}. In this study, we show that contamination from modern humans can cause some of the individuals in ancient populations to look more unrelated than they are. This happens because of comparison of endogenous reads to contaminating reads which would give higher differences than comparison of endogenous reads from individuals from ancient population. Hence, contamination can reduce the power to detect related pairs, especially when the target population is quite diverged from contaminating population(s). In addition, the target populations may have long runs of homozygosity (ROH) due to a small population size, or recent inbreeding. Long ROH causes related individuals to seem genetically closer to each other, while does not affect the genetic distance between unrelated individuals. This effect may cause an increase in false positives. In many cases, ancient DNA is captured with a SNP array, and the SNPs are ascertained to variable sites determined from certain individuals. Relatedness methods based on the fraction of sites in different IBS states are highly sensitive to ascertainment bias. KING robust, for example, differentiates between different relatedness by plotting KING‐robust kinship against fraction of sites in IBS0 \cite{manichaikul_robust_2010}. Another method from Rosenberg,2006 \cite{rosenberg_standardized_2006} uses the fraction of sites in all three IBS states to classify related individuals in the HGDP-CEPH Human Genome Diversity Cell Line Pane. These methods may give different results when applied to data with different ascertainment schemes \cite{waples_allele_2019}. 
 
-READ is a software that does not require population allele frequencies or a reference panel, and can work with around 0.5 x coverage in presence of ascertainment bias. The software solves the problem of unavailability of genotype calls by randomly sampling alleles from each individual. A string of these alleles at each position (called pseudohaploids) are then compared to other individuals to calculate pairwise genetic distances, which in turn are used to infer relatedness. The limitations are that the software can identify upto only second degree relatives, without differentiating between siblings and parent-child, which may be crucial when making pedigrees. 
+READ is a software that does not require population allele frequencies or a reference panel, and can work with around 0.5 x coverage in presence of ascertainment bias. The software addresses the problem of unavailability of genotype calls by randomly sampling alleles from each individual. A string of these alleles at each position (called pseudohaploids) are then compared to other individuals to calculate pairwise genetic distances, which in turn are used to infer relatedness. The limitations are that the software can identify upto only second degree relatives, without differentiating between siblings and parent-child, which may be crucial when making pedigrees. 
 
 \subsection{How our method works}
-Here, we present KIn (Kinship Inference), a Hidden Markov Model (HMM) to estimate relatedness from low-coverage ancient DNA data. KIn can detect up to \nth{3} degree relatives, and differentiates between siblings and parent-child. KIn is also able to incorporate ROH, contamination and ascertainment bias. We validate the performance of KIn using simulations and show that we are able to infer relatedness in an archaic human data set.
+Here, we present KIn (Kinship Inference), a Hidden Markov Model (HMM) to estimate relatedness from low-coverage ancient DNA data. KIn can detect up to \nth{3} degree relatives, and differentiates between siblings and parent-child. KIn is also able to incorporate ROH, contamination and ascertainment bias. We validate the performance of KIn using simulations and show that we are able to infer relatedness in a neandertal data set, and a Bronze age dataset.
 
 
 
@@ -86,13 +88,13 @@ The core of  KIn, is a HMM that aims to infer relatedness and IBD sharing betwee
 
 
 \subsection{Relatedness Model overview} 
-To estimate the relatedness of two individuals, we subdivide the genome into $L$ large windows $w$ (typically 10Mb). The inputs of our algorithm are i) the number of sites $N_w$ for which both samples have at least one read available, ii) the number of pairwise differences $D_w$ at these sites, and iii) position of ROH, by default obtained from ROH-HMM described in a following section. 
+To estimate the relatedness of two individuals, we subdivide the genome into $L$ large windows $w$ (typically of size 10Mb). The inputs of our algorithm are i) the number of sites $N_w$ for which both samples have at least one read available, ii) the number of pairwise differences $D_w$ at these sites, and iii) probability of ROH in in windows, by default obtained from ROH-HMM described in a following section. Calculation of $N_w$ and $D_w$ requires comparison of reads at all positions for a pair of individuals. For low coverage genomes, this can be done by comparing randomly sampled read at each position for a pair of individuals (or by comparing pseudo haploid sequences). However, we realized that such random sampling can throw away a lot of useful data. To avoid this wastage, our input generation pipeline for Relatedness HMM calculates proportion of reads with alternate allele, at all positions for each genome. We use these proportions to find pairwise heterozygosity as the probability of comparing different alleles. These probabilities are summed up in each window to give $D_w$, along with the number of overlapping sites $N_w$.
 
 Throughout, we will use bold-face notation to refer to the vector (or matrix) collecting  all the terms, e.g. $\BD = (D_1, D_2, \dots D_L)$. 
 
-The model then uses this data for a given pair of individuals to classify each window into three hidden states $Z_w$ reflecting zero, one or two chromosomes shared IBD. Likewise, we classify each window into one of three possible ROH state $H_w$, reflecting, neither, one or both indivuals being in a run-of-homozygosity at this genomic location.
+The model then uses this data for a given pair of individuals to classify each window into three hidden states $Z_w \in$ ($i_0$, $i_1$, $i_2$), reflecting zero, one or two chromosomes shared IBD. Likewise, we classify each window into one of three possible ROH state $H_w \in$ ($\omega_0$, $\omega_1$, $\omega_2$), reflecting, neither, one or both individuals being in a run-of-homozygosity at this genomic location.
 
-Ideally, we would like to compute the likelihood $P(\BD | \BZ, \BH, \theta$), where  $\theta$ is a vector of parameters (initial transition probability $\pi$, transition matrix $A$ and $N_w$). 
+Ideally, we would like to compute the likelihood $P(\BD | \BZ, \BH, \theta)$, where $\theta$ is a vector of parameters (initial transition probability $\pi$, transition matrix $A$ and $N_w$). 
 
 However, calculating this likelihood is hard because the number of possible states for $\mathbf{Z}$ is very large, and we use a standard trick for fitting HMMs, to base or inference on the complete data likelihood:
 
@@ -100,35 +102,36 @@ However, calculating this likelihood is hard because the number of possible stat
 \begin{align}
 P(\mathbf{D},\BZ, \BH|\theta) &= P(\mathbf{D}|\mathbf{Z},\BH, \theta) P(\BZ |\theta)P(\BH |\theta) \nonumber\\
 &= \prod_w P(D_w|Z_w,H_w, \theta) \prod_w P(H_w |\theta) \prod_w P(Z_w |Z_{w-1},\theta) P(Z_0|\theta)
+\label{eq:1}
 \end{align}
 
 
 Here, $P(D_w|Z_w,  H_w, \theta)$ is the emission probability for window $w$,  $P(Z_w|Z_{w-1},\theta)$ is the transition probability, and $P(Z_0| \theta)$ is the initial probability $\pi$. $P(H_w |\theta)$ is the output of ROH HMM described in a following section.
 
 Using the complete data likelihood allows us to factor the emission and transition probabilities, and hence we can maximize them independently.
-Transition matrix for different cases of relatedness are obtained from simulations (see section). Initial transition probability $\pi_i$ is same for all the $i$.
+Transition matrix for different cases of relatedness are either derived from theory, or obtained from simulations (see section). Initial transition probability $\pi_i$ is same for all the $i$.
 
 \subsection{Emission probability}
-In equation \ref{eq:cll}  the term $P(D_w | Z_w, H_w, \theta) = P(D_w | Z_w, H_w, N_w)$ is the emission probability, i.e. the probability of our data , given a particular hidden state. The number of shared sites $N_w$ is the only parameter in $\theta$ that affects the emissions.
+In equation \ref{eq:1} the term $P(D_w | Z_w, H_w, \theta) = P(D_w | Z_w, H_w, N_w)$ is the emission probability, i.e. the probability of our data , given a particular hidden state. The number of shared sites $N_w$ is the only parameter in $\theta$ that affects the emissions.
 
 Assuming sites are equally distributed and independent, we could use a  binomial likelihood
 $$P(D_w|Z_w, N_w, H_w) \sim \text{Binom}[D_w ;N_w, p(Z_w, H_w)] \text{,}$$
 
 where, $p$  is the expected proportion of differences we would expect for a particular IBD and ROH state.
 
-If the two individuals are unrelated in a particular window and neither is in a ROH region (i.e. $Z_w = H_w = 0$), then the expected proportion of pairwise differences depends solely on the effective population size, and we denote this proportion with $p_0$. If the two individuals share one or even both copies of the genome IBD, we would expect the proportion of differences to be reduced to $p_1 = \frac{3}{4} p_0$, and $p_2 = \frac{1}2 p_0$, respectively, since either one or two of the four possible comparisons will be between identical chromosomes.
+If the two individuals are unrelated in a particular window and neither is in a ROH region (i.e. $Z_w = i_0$, and $H_w = \omega_0$), then the expected proportion of pairwise differences depends solely on the effective population size, and we denote this proportion with $p_0$. If the two individuals share one or even both copies of the genome IBD, we would expect the proportion of differences to be reduced to $p_1 = \frac{3}{4} p_0$, and $p_2 = \frac{1}2 p_0$, respectively, since either one or two of the four possible comparisons will be between identical chromosomes.
 
 
-$p_0$, $p_1$, and $p_2$ are the expected proportion of differences in $i_0$, $i_1$, and $i_2$. $p_0$ is calculated directly from the data by calculating median of differences for all possible pairs of specimens. We calculate $p_1$ as $(3/4)p_1$ and $p_2$ as $p_1/2$. However, we need one more parameter (represented as $p_4$ in the table) in cases where IBD state is $i_1$ and ROH state is $\omega_2$, or IBD state is $i_2$ and ROH state is $\omega_1$ or $\omega_2$. In such cases the expected proportion of differences between the individuals should be 0. However, as mentioned before, we do all our calculations in windows of 10 Mb, and start/end positions of these windows may not coincide with that of ROH tracts. And so, the pairwise differences in this state (called $p_4$ in the table) can lie anywhere between 0 to $p_2$. We found $p_4$ = $p_2$/2 to be a reasonable assumption for expected pairwise proportion of differences in this IBD/ROH state.
+$p_0$, $p_1$, and $p_2$ are the expected proportion of differences in $i_0$, $i_1$, and $i_2$. $p_0$ is calculated directly from the data by calculating median of differences for all possible pairs of specimens. We calculate $p_1$ as $(3/4)p_1$ and $p_2$ as $p_1/2$. However, we need one more parameter (represented as $p_3$ in the matrix below) in cases where IBD state is $i_1$ and ROH state is $\omega_2$, or IBD state is $i_2$ and ROH state is $\omega_1$ or $\omega_2$. In such cases the expected proportion of differences between the individuals should be 0. However, as mentioned before, we do all our calculations in large windows, and start/end positions of these windows may not coincide with that of ROH tracts. And so, the pairwise differences in this state (called $p_3$ in the table) can lie anywhere between 0 to $p_2$. We found $p_3$ = $p_2$/2 to be a reasonable assumption for expected pairwise proportion of differences in this IBD/ROH state.
 
 
 Taken together, we can summarize $p$ as follows 
-\begin{equation}\label{eq:p}
+\begin{equation}\label{eq:2}
     p(Z_w, H_w) = \left[\begin{array}
 {rrr}
 p_0 & p_1 & p_2 \\
-p_0 & p_2 & p_4 \\
-p_0 & p_4 & p_4
+p_0 & p_2 & p_3 \\
+p_0 & p_4 & p_3
 \end{array}\right]
 \end{equation}
 
@@ -140,10 +143,10 @@ The effect of these considerations is that even though we have nine possible com
 
 However, we find that the data often has considerably higher variance than would be expected from a binomial distribution, likely because we average over a large number of SNPs with different allele frequencies. 
 
-We therefore add an overdispersion parameter $\delta$ that allows for variation in the $p$ between SNPs. This results in the betabinomial likelihood, (we show that such a distribution fits the data well (supplementary fig)).  
+We therefore add an overdispersion parameter $\delta$ that allows for variation in the $p$ between SNPs. This results in the betabinomial likelihood, (we show that such a distribution fits the data well (fig. S\ref{FigS1:binom})).  
 
-\begin{equation}\label{eq:bbsimple}
-P(D_{w}|p_i,\delta_i,N_w) = \binom{N_w}{D_w}\frac{B(D_w+p_i \delta_{i}, N_w-D_w+ \delta_{i}(1-p_{i}))}{ B(p_{i}\delta_{i}, (1-p_{i})\delta_{i})}
+\begin{equation}\label{eq:3}
+P(D_{w}|p_j,\delta_j,N_w) = \binom{N_w}{D_w}\frac{B(D_w+p_j \delta_{j}, N_w-D_w+ \delta_{j}(1-p_{j}))}{ B(p_{j}\delta_{j}, (1-p_{j})\delta_{j})}
 \end{equation}
 
 
@@ -162,36 +165,36 @@ The value of $\delta$ is unknown to start with, and is randomly assigned, such t
 
 \paragraph{Expectation step}
 
-In this step, using the standard forward-backward algorithm, we calculate the posterior probability of each IBD state in each window $\gamma_{wi}$. Expectation step, among other parameters, requires emission probabilities. We calculate emission probabilities for each case of $Z_w$ and $H_w$ from $\delta$ and $p$ using equation 3, and we get the total emission probabilities for each $Z_w$ as $\sum_{H_w} P(D_w|Z_w,N_w,H_w) P(H_w|\theta)$
+In this step, using the standard forward-backward algorithm, we calculate the posterior probability of each IBD state in each window ($\gamma_{wi}$). Expectation step, among other parameters, requires emission probabilities. We calculate emission probabilities for each case of $Z_w$ and $H_w$ from $\delta$ and $p$ using equation \ref{eq:3}, and we get the total emission probabilities for each $Z_w$ as $\sum_{H_w} P(D_w|Z_w,N_w,H_w) P(H_w|\theta)$
 
 \paragraph{Maximization step}
 
-The only free parameters we estimate in the M-step are the overdispersion parameters $\delta_j$. We do this optimization using a cost function, which is the log-emission probability weighted by the posterior probabilities of the hidden states $\gamma_wi$ and the ROH state-probabilities and $h_{w\omega}$.
+The only free parameters we estimate in the M-step are the overdispersion parameters $\delta_j$. We do this optimization using a cost function, which is the log-emission probability weighted by the posterior probabilities of the hidden states $\gamma_{wi}$ and the ROH state-probabilities and $h_{w\omega}$.
 
 
-\begin{equation}
+\begin{equation}\label{eq:4}
 \mathcal{C} = \sum_{w=1}^L \sum_{i=0}^2\sum^2_{\omega=0} \log P(D_{w}|Z_w, H_w, N_w, \delta, p)h_{w\omega}\gamma_{wi}
 \end{equation}
 
 
-Using equation \ref{eq:p}, we simplify this by grouping all the terms that would result in the same $p$, i.e.
+Using equation \ref{eq:2}, we simplify this by grouping all the terms that would result in the same $p$, i.e.
 
 \begin{align*}
 k_{w0} &= \gamma_{w0}\\
 k_{w1} &= \gamma_{w1} h_{w0}\\
 k_{w2} &= \gamma_{w2} h_{w0} + \gamma_{w1} h_{w1}\\
-k_{w4} &= \gamma_{w2} h_{w1} + \gamma_{w2} h_{w2} + \gamma_{w1} h_{w2}
+k_{w3} &= \gamma_{w2} h_{w1} + \gamma_{w2} h_{w2} + \gamma_{w1} h_{w2}
 \end{align*}
 
-So we can rewrite Eqn 4 as:
+So we can rewrite equation \ref{eq:4} as:
 \begin{align}
-\mathcal{C} &= \sum_{w=0}^L\sum_{j=0}^4  \log P(D_{w}|Z_w, H_w, N_w, \delta_j, p_j)k_{wj}
+\mathcal{C} &= \sum_{w=1}^L\sum_{j=0}^3 \log P(D_{w}|Z_w, H_w, N_w, \delta_j, p_j)k_{wj}
 \end{align}
 
-Since each term in this equation depends on only one $\delta_j$, we can optimize for them independently.
+Since each term in this equation depends on only one $\delta_j$, we can optimize for them independently. For convenience, we refer to these four states corresponding to different $p$ as $x$ states.
 
 
-We observed that estimating the $\delta_j$ without constraints can result in wide Beta distributions with very high variance, leading to over fitting of data. For example, a parent  shares exactly one chromosome IBD with its child throughout the genome, so we expect only one IBD state. However,  running an unconstrained model could use this data to fit a pair of siblings with a very wide beta-distribution (with a very high $\delta_1$, which causes problems in differentiating between parent-child and siblings.
+We observed that estimating the $\delta_j$ without constraints can result in wide Beta distributions with very high variance, leading to over fitting of data (fig. \ref{figS4:bndsbeta}), and resulting in incorrect posterior probabilities for $Z_w$ (fig. \ref{figS3:bnds}). For example, a parent shares exactly one chromosome IBD with its child throughout the genome, so we expect only one IBD state. However, running an unconstrained model could use this data to fit a pair of siblings with a very wide beta-distribution (with a very high $\delta_1$, which may result in problems in differentiating between parent-child and siblings.
 
 We avoid this problem by constraining the parameter space of $\delta$. 
 In particular, 
@@ -207,12 +210,13 @@ We solve the following equation for $\delta$:
     \frac{p(1-p)}{\delta + 1}  < t
 \end{equation}
 
-We choose t for each beta distribution to be proportional to the mean ($p$), since the variances of beta distribution corresponding to different $x$ states follow the same relation as the distribution means (supplement figure). 
+We choose t for each beta distribution to be proportional to the mean ($p$), since the variances of beta distribution corresponding to different $x$ states follow the same relation as the distribution means. 
 \begin{align}
     Var(X_{x_1}) = 3/4 Var(X_{x_0})\\
     Var(X_{x_2}) = 1/2 Var(X_{x_0})
 \end{align}
 
+Even though this may not hold true when we bin sites in large windows, we still find that $Var(X_{x_0}) > Var(X_{x_1}) > Var(X_{x_2})$ (fig. \ref{FigS1:binom}).
 
 Ideally, t for $x_4$ should be zero, but since our genomic windows may not coincide with the IBD fragments or ROH, the variance can be much higher. We find that fixing t for $x_4$ at the same value as $x_0$ works well.
 
@@ -237,25 +241,25 @@ Our HMM to detect ROH tracts works similar to the relatedness model described ab
 In this case, transitions are not known, and both transitions and emissions are estimated with standard EM algorithm. The emissions are calculated using betabinomial likelihood, and the mean of the distributions are constrained at expected proportion of differences in a ROH tract ($\rho_{0}$) and expected proportion of differences in a non-ROH tract $\rho_{1}$. Parameters $\rho_{1}$ and $\rho_{0}$ are the same as $p_{2}$ and $p_4$ in previous model. 
 
 \subsection{Emissions}
-Similar to our relatedness model, we estimate emissions using EM algorithm with expectation and maximization steps. The expectation step outputs the posterior probability $\Gamma$ of being in $y_0$ and $y_1$ in each window. Maximization step uses the $\Gamma$ to optimize the $\Delta$ and $\rho$ parameters with a betabinomial cost function:
+Similar to our relatedness model, we estimate emissions using EM algorithm with expectation and maximization steps. The expectation step outputs the posterior probability $\Gamma$ of being in $y_0$ and $y_1$ in each window. Maximization step uses the $\Gamma$ to optimize overdispersion parameter $\eta$ with a betabinomial cost function:
 
 \begin{align}
 \mathcal{C} = \sum_{w} \sum_{y} P(\Delta_w|\eta_{wy},\rho_{wy}) \Gamma_{wy} 
 \end{align}
 
-In case of very noisy data, we see high pairwise differences in some windows that are not explained with the beta binomial distributions estimated for $y_0$ and $y_1$. To avoid our distributions from flattening to explain these high differences, we force these high difference windows to $y_1$ (see supplement figure). 
+In case of very noisy data, we see high pairwise differences in some windows that are not explained with the betabinomial distributions estimated for $y_0$ and $y_1$. To avoid our distributions from flattening to explain these high differences, we force these high difference windows to $y_1$ (fig. S\ref{figS5:ROHforced}). 
 
 \subsection{Transitions}
 Transitions are estimated using standard Baum-Welch algorithm. Expectation step is the same as that for emissions, and gives the posterior probability. In maximization step, we use the posterior probability to count how many times transitions are made from state i to j, normalized by the total number of times we are in state i. We observe that the final results are not affected by initial guess of the transition probabilities and assign a probability of 0.8 to stay in the same state for both $y_0$ and $y_1$. 
 
 \subsection{Contamination}
 
-Contamination by present-day people is a common feature in ancient DNA \cite{peyregne_present-day_2020} . Even low levels of contamination may make samples look less similar, and thus distort relatedness analyses. This issue is particularly pronounced  when analyzing populations with  low diversity, where even $<5\%$ contamination can cause loss of power to detect family relations (supplementary figure with READ?, lcMLkin at 4x). To address this issue, we  adjust the  pairwise differences $D_w$, given the contamination estimates of both samples and the average divergence between the target population and a putative contaminating population.
+Contamination by present-day people is a common feature in ancient DNA \cite{peyregne_present-day_2020} . Even low levels of contamination may make samples look less similar, and thus distort relatedness analyses. This issue is particularly pronounced  when analyzing populations with  low diversity, where even $<5\%$ contamination can cause loss of power to detect family relations. To address this issue, we  adjust $D_w$ and $N_w$, given the contamination estimates of both samples and the average divergence between the target population and a putative contaminating population.
 
-For each pair of individuals $i$ and $j$ we approximate the contamination $C_{i,j}$ as the sum of contamination for each individual $C_i + C_j$. Then, $C_{i,j}$ represents the probability of comparing a contaminant read from an individual to an endogenous read from the other individual. Throughout, we assume that contamination levels are low, so that we can ignore comparison between contaminant reads, i.e. $C_iC_j \approx 0$.  We denote the average divergence between target and contaminating populations as $p_c$, and the observed proportion of differences between individuals $i$ and $j$ as $p_{aij}$. We calculate average endogenous pairwise difference $p_eij$ for individuals i and j as follows \cite{noauthor_ancient_nodate}:
+For each pair of individuals $i$ and $j$ we approximate the contamination $C_{i,j}$ as the sum of contamination for each individual $C_i + C_j$. Then, $C_{i,j}$ represents the probability of comparing a contaminant read from an individual to an endogenous read from the other individual. Throughout, we assume that contamination levels are low, so that we can ignore comparison between contaminant reads, i.e. $C_iC_j \approx 0$.  We denote the average divergence between target and contaminating populations as $p_c$, and the observed proportion of differences between individuals $i$ and $j$ as $p_{oij}$. We calculate average endogenous pairwise difference $p_{eij}$ for individuals i and j as follows \cite{noauthor_ancient_nodate}:
 \begin{align}
-    p_{aij} = C_{ij}  p_c + (1-C_{ij})  p_{eij}\\
-    or, p_{eij} = \frac{p_{aij} - C_{ij}  p_c}{1-C_{ij}} 
+    p_{oij} = C_{ij}  p_c + (1-C_{ij})  p_{eij}\\
+    or, p_{eij} = \frac{p_{oij} - C_{ij}  p_c}{1-C_{ij}} 
 \end{align}
 
 Given $p_{eij}$, we would ideally like to calculate the complete data log likelihood for the relatedness model while summing over all possible differences we could have in a window weighted by the probability of seeing that difference. 
@@ -263,10 +267,10 @@ Given $p_{eij}$, we would ideally like to calculate the complete data log likeli
 
 
 \paragraph{Short version}
-With contamination, we do not observe the number of differences $D$ and total number of comparisons directly $N$, but instead need to approximate them. The window-subscript is omitted in the following for clarity:
+With contamination, we do not observe the number of differences $D_{true}$ and total number of comparisons $N_{true}$ directly, but instead need to approximate them. The window-subscript is omitted in the following for clarity:
 \begin{equation}
-    P(D_{\text{obs}} | Z, N_\text{obs}, \theta) \approx 
-    P( \hat{D_w} | \hat{N_w}, Z, \theta)
+    P(D_{\text{obs}} | N_\text{obs}, Z, \theta) \approx 
+    P( \hat{D} | \hat{N}, Z, \theta)
 \end{equation}
 We do that by calculating the probability that a single read is endogenous given it has a difference.
 \begin{align}
@@ -332,6 +336,10 @@ $$N_{cor,w} = D_{cor,w} + S_{cor,w}$$
 
 This model outputs the contamination corrected number of differences and overlapping sites in each window.
 
+
+
+
+
 \subsection{Simulations}
 
 \paragraph{ Simulations for estimation of transition matrix}
@@ -369,10 +377,15 @@ From the steps described above, we got genotypes of 17 individuals in pop1 in pr
 Notation used in the paper:
 
 \begin{itemize}
-\item W: Total number of windows
+\item L: Total number of windows
 \item w: Index of window
-\item $I$:IBD states base
-\item $Z_w$: IBD state in window w
+\item $N_w$: Number of sites in w
+\item $D_{w}$: Number of pairwise differences in w
+\item $Z_w$: Hidden IBD state in window w
+\item $H_w$: ROH state in window w
+\item A: Transition matrix
+\item $\pi$: Vector of initial transition probabilities
+\item $\theta$: Vector of $\pi$, A, $N_w$
 \item $\mathbf{Z}$: Vector of $Z_w$'s
 \item $\omega$:ROH states base
 \item $H_{w\omega}$: ROH state in $w$
@@ -422,50 +435,50 @@ Notation used in the paper:
 
 \section{Results}
 
-We predict the following categories of relatedness with KIn: Identical individuals (twins), First degree (parent-child), First degree (siblings), Second degree, Third degree, Unrelated (including higher than third degree relatives). We show the working of Relatedness HMM with fig.1 showing performance of each model, when applied to a pair of siblings. 
+We predict the following categories of relatedness with KIn: Identical individuals (twins), First degree (parent-child), First degree (siblings), Second degree, Third degree, Unrelated (including higher than third degree relatives). We show the working of Relatedness HMM with Fig.\ref{fig1:ibd} showing performance of each model, when applied to a pair of siblings. 
 
 
 \begin{figure}[h]
     \centering
     \includegraphics[width=18cm]{plots/plotimg/IBDplot.png}
     \caption{Comparison of IBD fragments predicted by different relatedness models. Top panel shows the proportion of differences in each window along the genome for a pair of simulated siblings. Dashed lines in this panel represent $p_0$, $p_1$ and $p_2$ estimates. The panel just below shows the true IBD state for each window. Each panel below shows the IBD states predicted by a particular relatedness model. The log likelihood value for each model is shown on upper left corner of the panel. }
-    \label{fig:ibd}
+    \label{fig1:ibd}
 \end{figure}
 
 
-We see that in this case, the siblings model predictions match true IBD states the most. This is reflected in the log likelihoods values (LL) of the models as well, where siblings model has the highest value. We take a loglikelihood ratio ($\Lambda$) of the two most likely models to get a confidence in the relatedness estimate (in this case $\Lambda$ = 22.48). All the models in fig.1 utilize information about ROH given by the ROH-HMM. 
+We see that in this case, the siblings model predictions match true IBD states the most. This is reflected in the log likelihoods values (LL) of the models as well, where siblings model has the highest value. We take a loglikelihood ratio ($\Lambda$) of the two most likely models to get a confidence in the relatedness estimate (in this case $\Lambda$ = 22.48). All the models in Fig.\ref{fig1:ibd} utilize information about ROH given by the ROH-HMM. 
 
 
-Performance of ROH-HMM under different cases of ascertainment, contamination and long ROH, and for different coverages is shown in fig 2. We applied the ROH-HMM and relatedness HMM on 60 runs of simulations, to get relatedness estimates, and compared the final relatedness estimates to the true relatedness for different pairs at coverages ranging from 4x to 0.1x. 
+Performance of ROH-HMM under different cases of ascertainment, contamination and long ROH, and for different coverages is shown in Fig.\ref{fig2:ROH}. We applied the ROH-HMM and relatedness HMM on 60 runs of simulations, to get relatedness estimates, and compared the final relatedness estimates to the true relatedness for different pairs at coverages ranging from 4x to 0.1x. 
 
 \begin{figure}[h]
     \centering
     \includegraphics[width=18cm]{plots/inkscape_finalImg/ROHplot.png}
     \caption{Estimation of ROH probabilities along the genome in simulations with different cases of ROH, contamination, and ascertainment. Top panel shows proportion of differences in a simulated individual along the genome, and the bottom panel shows probability of seeing no ROH. (A) Simulation with no ascertainment, contamination, or ROH. (B) Simulation with ROH. (C) Simulation with ROH and ascertainment. (D) Simulation with ROH and contamination.}
-    \label{fig:galaxy}
+    \label{fig2:ROH}
 \end{figure}
 
 
-We plotted the true positive and false positive rates with a cutoff on the loglikelihood ratio in fig.3. Here, and in fig.4, we have two relatedness labels: 'Unrelated' and 'Unrelated w/o 3rd Degree'. Unrelated label here refers to KIn performance results when all unrelated, degree5, degree4, degree3 pairs are labelled as unrelated. This is useful for comparison to READ, since READ classifies relatedness upto degree2. 'Unrelated w/o degree3'  refers to the performance results when degree 3 is considered as separate from the unrelated individuals. Fig.3 shows that for identical, 1st degree, unrelated pairs, the false positive rate is below $5\%$ even when no cut off is used. For second degree, at 0.1x we see a high false positive rate, that does not go down much with an increase in cutoff. For the same relationship, at a coverage of 0.2x, a cutoff of 1 seems appropriate to reduce false positive rate to below $5\%$. Similarly, for siblings at 0.1x, a cutoff of 1 works well to keep false positives low. For parent-child, we find that a cutoff of about 2 is a better choice. Degree 3 shows higher false positive rates in general, and we see that only for 4x coverage and a cutoff of 2, do we see a false positive rate of around $5\%$. In conclusion, it is recommended to use a cutoff of 1 for most cases, with the exception of differentiation between parent-child and siblings, where a cutoff of 2 may be more appropriate, and degree 3 where cutoff of 2 at 4x coverage seems reasonable. 
+We plotted the true positive and false positive rates with a cutoff on the loglikelihood ratio in Fig.\ref{fig3:cutoff}. Here, and in Fig.\ref{fig4:Comparison_READ_KIn}, we have two relatedness labels: 'Unrelated' and 'Unrelated w/o 3rd Degree'. Unrelated label here refers to KIn performance results when all unrelated, degree5, degree4, degree3 pairs are labelled as unrelated. This is useful for comparison to READ, since READ classifies relatedness upto degree2. 'Unrelated w/o degree3'  refers to the performance results when degree 3 is considered as separate from the unrelated individuals. Fig.\ref{fig3:cutoff} shows that for identical, 1st degree, unrelated pairs, the false positive rate is below $5\%$ even when no cut off is used. For second degree, at 0.1x we see a high false positive rate, that does not go down much with an increase in cutoff. For the same relationship, at a coverage of 0.2x, a cutoff of 1 seems appropriate to reduce false positive rate to below $5\%$. Similarly, for siblings at 0.1x, a cutoff of 1 works well to keep false positives low. For parent-child, we find that a cutoff of about 2 is a better choice. Degree 3 shows higher false positive rates in general, and we see that only for 4x coverage and a cutoff of 2, do we see a false positive rate of around $5\%$. In conclusion, it is recommended to use a cutoff of 1 for most cases, with the exception of differentiation between parent-child and siblings, where a cutoff of 2 may be more appropriate, and degree 3 where cutoff of 2 at 4x coverage seems reasonable. 
 
 \begin{figure}[h]
     \centering
     \includegraphics[width=18cm]{plots/plotimg/contam0_inbred0_model_performance_allroc_asc0_plot.png}
     \caption{False positive and True Positive rates as a function of cutoff on log likelihood ratio. In top panel, dotted line represents $5\%$}.
-    \label{fig3}
+    \label{fig3:cutoff}
 \end{figure}
 
-We use a cutoff of 1 to compare our method performance to READ, while using a cutoff of 1 standard deviation for READ. Fig.4 shows this comparison using false positive and true positive rates for both the methods at different coverages under different simulations. We show that both methods have similar performance in the control case (except for 0.1x coverage, where KIn has higher power to detect degree1 and degree2, and higher false positive rate for degree 2). However, in case of ascertainment, ROH, or comtamination KIn shows higher power to detect relatedness cases while maintaining a low false positive rate. 
+We use a cutoff of 1 to compare our method performance to READ, while using a cutoff of 1 standard deviation for READ. Fig.\ref{fig4:Comparison_READ_KIn} shows this comparison using false positive and true positive rates for both the methods at different coverages under different simulations. We show that both methods have similar performance in the control case (except for 0.1x coverage, where KIn has higher power to detect degree1 and degree2, and slightly higher false positive rate for degree 2). However, in case of ascertainment, ROH, or comtamination KIn shows higher power to detect relatedness cases while maintaining a low false positive rate. 
 
 \begin{figure}[h]
     \centering
     \includegraphics[width=18cm]{plots/plotimg/comparison_plot.png}
     \caption{Comparison of KIn with READ using simulations with different coverages, and different cases of ascertainment, contamination and ROH}
-    \label{fig4}
+    \label{fig4:Comparison_READ_KIn}
 \end{figure}
 
 
-To test KIn on real ancient dataset, we applied it to look for neandertal specimens from Chagyrskaya cave in Siberia, Russia. This dataset comprised of 14 specimens that came from neighbouring layers, and hence could possibly belong to contemporary neandertals who occupied the cave 63 ± 4 to 48 ± 3 kya \cite{kolobova_archaeological_2020-1}. These specimens showed low coverage of nuclear genome, with 8 samples out of 14 showing $<1x$ coverage. Some of these specimens showed signs of long ROH, and contamination from modern humans as well as Hyena. All these samples were captured with an array targeting for Neanderthal variation, and we further ascertained this data to variable sites in high coverage Neanderthal genomes: Altai Neanderthal (Denisova 5) (Prüfer et al., 2014) and Vindija 33.19 (Prüfer et al., 2017). This dataset had all the issues that KIn deals with, and hence we decided to apply it here to see if we could find family relationships that would not be possible with other available methods. Our results for pairwise relatedness for these individuals is shown in fig.5. We found that identical individuals (Chagyrskaya13-Chagyrskaya19-Chagyrskaya1141), first degree relatives (Chagyrskaya07-Chagyrskaya17, Chagyrskaya06-Chagyrskaya14), and a second degree relative (Chagyrskaya01-Chagyrskaya60). These results agree with READ (supplementary fig). However, we find that Chagyrskaya07-Chagyrskaya17 are parent-child. This matches with the conclusions of the authors based on additional information from mtDNA. Further, we find a possible third degree relative (Chagyrskaya07-Chagyrskaya60). We compare our results to lcMLkin, and show that the software does not perform well with these low coverage samples since it is not possible to obtain reliable genotype likelihoods for many of these samples (supplementary fig).
+To test KIn on real ancient dataset, we applied it to neandertal specimens from Chagyrskaya cave in Siberia, Russia. This dataset comprised of 14 specimens that came from neighbouring layers, and hence could possibly belong to contemporary neandertals who occupied the cave 63 ± 4 to 48 ± 3 kya \cite{kolobova_archaeological_2020-1}. These specimens showed low coverage of nuclear genome, with 8 samples out of 14 showing $<1x$ coverage. Some of these specimens showed signs of long ROH, and contamination from modern humans as well as Hyena. All these samples were captured with an array targeting for Neanderthal variation, and we further ascertained this data to variable sites in high coverage Neanderthal genomes: Altai Neanderthal (Denisova 5) (Prüfer et al., 2014) and Vindija 33.19 (Prüfer et al., 2017). This dataset had all the issues that KIn deals with, and hence we decided to apply it here to see if we could find family relationships that would not be possible with other available methods. Our results for pairwise relatedness for these individuals is shown in Fig.\ref{fig5:Chagyrskaya_kin}. We found identical individuals (Chagyrskaya13-Chagyrskaya19-Chagyrskaya1141), first degree relatives (Chagyrskaya07-Chagyrskaya17, Chagyrskaya06-Chagyrskaya14), and a second degree relative (Chagyrskaya01-Chagyrskaya60). These results agree with READ (fig. S\ref{figS2:Chagyrskaya_READ}). Interestingly, for the pair of Chagyrskaya07-Chagyrskaya17, READ shows that they are first degree relatives, while KIn further identifies them as parent-child. Our result matches with the conclusions of the authors based on additional information from mtDNA. Further, we find a possible third degree relative (Chagyrskaya07-Chagyrskaya60). We compare our results to lcMLkin, and show that the software does not perform well with these low coverage samples since it is not possible to obtain reliable genotype likelihoods for many of these samples (fig. S\ref{figS6:Chagyrskaya_ibd}).
 
 
 
@@ -473,11 +486,11 @@ To test KIn on real ancient dataset, we applied it to look for neandertal specim
     \centering
     \includegraphics[width=18cm]{plots/plotimg/fil0_relatable_plot.png}
     \caption{Application of KIn on Neandertal specimens from Chagyrskaya. Color of a square represents the relatedness, while the number denotes loglikelihood ratio between the two maximum likelihood models.}
-    \label{fig5}
+    \label{fig5:Chagyrskaya_kin}
 \end{figure}
 
-We further applied KIn to a genome-wide dataset of 118 ancient individuals sequenced and analyzed by Mittnik et al.,2019. We compared our relatedness estimates to those obtained from the authors using READ and lcMLkin, and found that in most cases the three methods agree. Out of 6903 pairs, 346 pairs show different relatedness for KIn and READ (suppl table2). However, there are only 31 pairs where KIn has $log likelihood >1$. We looked in detail at some of these pairs, and we found that it is possible to deduct the correct relatedness for several of these pairs by plotting the proportion of differences along the genome. In all the pairs that we analyzed in this way, KIn seems to predict the true relatedness. We show few examples of such cases in supple fig. We found 20 pairs in this subset of 346 pairs where lcMLkin has sufficient data. Among these 20 pairs, we found that lcMLkin matches KIn estimate in all cases except for pair POST131-POST28 (READ predicts unrelated individuals, lcMLkin predicts 3rd-5th degree, KIn predicts second degree) and pair AITI72-AITI77A (READ and lcMLKin predict unrelated, while KIn estimates 3rd degree with log likelihood=1.7).  
-We found 43 pairs for which READ estimates first degree, and compared the estimates of lcMLkin and KIn for these cases (suppl table3). There were a total of 20 pairs where lcMLkin had sufficient data, and 26 pairs where $loglikelihood ratio>2$ for KIn. Among the 19 overlapping pairs, we found four pairs where KIn and lcMLkin differ, and a visual inspection shows that in these cases, KIn seems to have the correct estimate (supp fig).  
+We further applied KIn to a genome-wide dataset of 118 ancient individuals sequenced and analyzed by Mittnik et al.,2019. We compared our relatedness estimates to those obtained from the authors using READ and lcMLkin, and found that in most cases the three methods agree. Out of 6903 pairs, 346 pairs show different relatedness for KIn and READ (table S2). However, there are only 31 pairs where KIn has $log likelihood >1$. We looked in detail at some of these pairs, and we found that it is possible to deduct the correct relatedness for several of these pairs by plotting the proportion of differences along the genome. In all the pairs that we analyzed in this way, KIn seems to predict the true relatedness. We show few examples of such cases in fig. S\ref{figS8:eg1}. We found 20 pairs in this subset of 346 pairs where lcMLkin has sufficient data. Among these 20 pairs, we found that lcMLkin matches KIn estimate in all cases except for pair POST131-POST28 (READ predicts unrelated individuals, lcMLkin predicts 3rd-5th degree, KIn predicts second degree) and pair AITI72-AITI77A (READ and lcMLKin predict unrelated, while KIn estimates 3rd degree with log likelihood=1.7).  
+We found 43 pairs for which READ estimates first degree, and compared the estimates of lcMLkin and KIn for these cases (suppl table3). There were a total of 20 pairs where lcMLkin had sufficient data, and 26 pairs where $loglikelihood ratio>2$ for KIn. Among the 19 overlapping pairs, we found four pairs where KIn and lcMLkin differ, and a visual inspection shows that in these cases, KIn seems to have the correct estimate (fig. S\ref{figS9:eg2}).  
 
 
 
@@ -486,7 +499,7 @@ We found 43 pairs for which READ estimates first degree, and compared the estima
 
 Several methods are available to estimate relatedness from modern as well as ancient DNA data. We develop a new method to estimate genetic kinship from low coverage data. We show that it is possible to accurately infer relatedness, along with IBD tracts, from such data in presence of long ROH, contamination, as well as ascertainment bias. Our method utilizes Hidden Markov Models to estimate IBD tracts, conditional on a particular relatedness, and we use log likelihoods of these HMMs to find the best fit. This approach of using Hidden Markov Model makes use of the fact that DNA is inherited in blocks, and hence the IBD state in a given window is dependent on the IBD state in the previous window. We use this approach to identify the following relatives: Identical individuals, Parent-Child, Siblings, Second degree, Third degree, Unrelated individuals. We show that it is possible to differentiate between avuncular and grand-parent-grandchild relations. We have developed a similar Hidden Markov Model to infer long ROH, and use the posterior probabilities to make better relatedness inference. We further use a simple model to correct the pairwise differences in genomic windows for contamination. 
 
-We demonstrate using simulations, that our method performs well at low coverage. We compared KIn's model performance to a widely used software READ to show that our approach works at least as good as READ on ideal data without long ROH, ascertainment and contamination, while additionally distinguishing between parent-child and siblings, and identifying third degree relatives. We demonstrate that at low coverage (0.1x) we have higher power to detect first degree relatives compared to READ with similar false positives, while a higher power to identify second degree relatives at the cost of slightly higher false positive rate. Contrary to the intuition, we see that adding long ROH ($~17\%$) to simulations improves the performance of both KIn and READ. READ's performance improves because ROH does not cause any change in pairwise differences between unrelated individuals, while decreasing pairwise differences between related individuals. More is the relatedness, the more is the decrease in pairwise differences in presence of ROH. And so long ROH causes higher power for READ which otherwise is a conservative method. KIn performs well for the same reasons, but can miss-classify second degree individuals with ROH as siblings, if ROH is not accounted for. Hence, we implement ROH states in the relatedness model to avoid such miss classifications. Contamination, on the other hand can make the performance of READ much worse depending on the amount of contamination, and the number of individuals contaminated. We show that even at contamination levels  $<=3\%$, and contamination in only 8 out of 17 individuals, READ performance falls dramatically. Contamination in more individuals will cause a shift in median difference in the population and may case non contaminated individuals to look more related, thus increasing the false positive rates. On the other hand, increase in amount of contamination in few individuals can make them look more unrelated. KIn, with the implementation of a model to account for contamination performs well in this case. Ascertainment causes a decrease in power for both the methods, since it reduces the amount of data. However, the decrease in power is more for READ compared to KIn.
+We demonstrate using simulations, that our method performs well at low coverage. We compared KIn's model performance to a widely used software READ to show that our approach works at least as good as READ on ideal data without long ROH, ascertainment and contamination, while additionally distinguishing between parent-child and siblings, and identifying third degree relatives. We demonstrate that at low coverage (0.1x) we have higher power to detect first degree relatives compared to READ with similar false positives, while a higher power to identify second degree relatives at the cost of slightly higher false positive rate. Contrary to the intuition, we see that adding long ROH ($~17\%$) to simulations improves the performance of both KIn and READ. READ's performance improves because ROH does not cause any change in pairwise differences between unrelated individuals, while decreasing pairwise differences between related individuals. More is the relatedness, the more is the decrease in pairwise differences in presence of ROH. And so long ROH causes higher power for READ which otherwise is a conservative method. KIn performs well for the same reasons, but can miss-classify second degree individuals with ROH as siblings, if ROH is not accounted for. Hence, we implement ROH states in the relatedness model to avoid such miss classifications. Contamination, on the other hand can make the performance of READ much worse depending on the amount of contamination, and the number of individuals contaminated. We show that even at contamination levels  $<=3\%$, and contamination in only 8 out of 17 individuals, READ performance falls dramatically. Contamination in more individuals will cause a shift in median difference in the population and may cause non contaminated individuals to look more related, thus increasing the false positive rates. On the other hand, increase in amount of contamination in few individuals can make them look more unrelated. KIn, with the implementation of a model to account for contamination performs well in this case. Ascertainment causes a decrease in power for both the methods, since it reduces the amount of data. However, the decrease in power is more for READ compared to KIn.
 
 DNA data from Bronze age, Lech valley has low contamination, and no ROH. We demonstrate that KIn matches the results from READ and lcMLkin for pairs with good amount of overlaps, while adds more information for low coverage samples. As expected from the simulations, KIn is helpful in differentiating between parent-child from siblings, and identifying second and third degree individuals in cases where there is an overlap of only few thousand sites or less, and the other methods are not informative. We show that when applied to neandertal specimens from Chagyrskaya cave, READ and KIn agree in relatedness estimates for all pairs where both methods have sufficient data. KIn additionally identifys a pair of first degree relatives as parent-child, which is also confirmed with mtDNA. In addition, KIn identifies a third degree relative. We compare IBD estimates from KIn to lcMLkin and show that KIn's IBD estimates are much closer to the expected estimates, given the relatedness between individuals that has been estimated with both READ and KIn. 
 Output of KIn is a table which shows for each pair, the most likely model, and the second best guess, along with a confidence level represented by the log likelihood ratio. Due to the tabular output, KIn is easy to automatise and apply on large datasets. 
@@ -495,11 +508,14 @@ One limitation with our approach is that this method assumes a single population
 
 \section{Supplementary Information}
 Beta binomial distribution is a better fit compared to Binomial distribution for proportion of differences in windows.
+
+\renewcommand{\figurename}{Fig. S}
 \begin{figure}[h]
     \centering
     \includegraphics[width=18cm]{supplementary_info/plots/binom.png}
     \caption{Comparison of fit with Betabinomial and Binomial distributions. Data is represented by the histogram of proportion of differences from all windows of a (A) unrelated, (B) Parent-Child, (C) Identical pair of individuals. Binomial parameter p is calculated from the data, while Betabinomial parameters are estimated with the relatedness HMM.}
-    \label{figS1}
+    \label{FigS1:binom}
+    
 \end{figure}
 
 Results from KIn agree with results from READ, and provide some more information about siblings/parent-child, and $3^{rd}$ Degree relatedness. 
@@ -507,7 +523,7 @@ Results from KIn agree with results from READ, and provide some more information
     \centering
     \includegraphics[width=18cm]{supplementary_info/plots/fil0_read_plot.png}
     \caption{Application of READ on Neandertal specimens from Chagyrskaya cave. Color of a square represents the relatedness, while the number denotes standard deviations away from the upper threshold (we show lower threshold for unrelated pairs since upper threshold is not available).}
-    \label{figS2}
+    \label{figS2:Chagyrskaya_READ}
 \end{figure}
 
 Constraining variance of beta distributions in case of an identical pair, when identical relatedness hmm is applied, gives more accurate emission probabilities.
@@ -515,23 +531,23 @@ Constraining variance of beta distributions in case of an identical pair, when i
     \centering
     \includegraphics[width=18cm]{supplementary_info/plots/contam0_inbred1_run57_coverage0.2_asc0_inputMode_hapProbs_fil0_pair0_15_relid_emissions_bnds.png}
     \caption{Application of identical relatedness HMM on a pair of identical individuals with low coverage (0.2x), and ROH tracts. Top panel shows pairwise proportion of differences is close to expectation, but dips in some windows due to presence of ROH tracts. Bottom two panels show $P(Data|Z=2)$ without constraints and with constraints respectively.}
-    \label{figS3}
+    \label{figS3:bnds}
 \end{figure}
 
 In figS4, the emissions improve in accuracy with constraints on variance of Beta distributions. figS5 shows why we see this improvement. With variance constraints, beta distributions corresponding to Z=1 and Z=2 do not overfit the data, and higher emission probabilities seen in (A) at $D_w/N_w$=0.05 disappear. All probability distributions are scaled by the same factor so they are visible with the data histogram.
 \begin{figure}[h]
     \centering
     \includegraphics[width=18cm]{supplementary_info/plots/contam0_inbred1_run57_coverage0.2_asc0_inputMode_hapProbs_fil0_pair0_15_relid_betaplot.png}
-    \caption{Comparison of beta distributions estimated with the HMM (A) without and (B) with variance constraints.}
-    \label{figS3}
+    \caption{Comparison of beta distributions estimated with the HMM (left) without and (right) with variance constraints.}
+    \label{figS4:bndsbeta}
 \end{figure}
 
 Restricting the emission probabilities at 1 for Y=1, in windows that have higher than $p_0$ difference improves the estimated Beta parameters. 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=18cm]{supplementary_info/plots/contam0_inbred1_run57_coverage0.2_asc0_inputMode_hapProbs_fil0_ind0_foreced_roh.png}
-    \caption{Comparison of Beta distributions (A) without and (B) with modified emissions}
-    \label{figS3}
+    \includegraphics[width=18cm]{supplementary_info/plots/contam0_inbred1_run57_coverage0.2_asc0_inputMode_hapProbs_fil0_ind0_forced_roh.png}
+    \caption{Comparison of Beta distributions (left) without and (right) with modified emissions}
+    \label{figS5:ROHforced}
 \end{figure}
 
 *Remember to use updated lcMLkin in the plot.
@@ -540,7 +556,7 @@ Restricting the emission probabilities at 1 for Y=1, in windows that have higher
     \includegraphics[width=18cm]{supplementary_info/plots/lcPlot.png}
     \caption{Comparison of IBD states estimated for Chagyrskaya specimens using (A) lcMLkin and (B) KIn.
     The relatedness shown with different colors is estimated with and matched with READ and KIn.}
-    \label{figS4}
+    \label{figS6:Chagyrskaya_ibd}
 \end{figure}
 
 This figure shows that it is possible to differentiate between Avuncular and Grandparent-Grandchild pairs.
@@ -550,7 +566,7 @@ However, differentiating between Half-siblings may not be possible with our appr
     \centering
     \includegraphics[width=18cm]{supplementary_info/plots/degree2_10Mwin.png}
     \caption{Avuncular and Grandparent-grandchild form different clusters, when total number of IBD fragments are plotted against total length of IBD fragments.}
-    \label{figS5}
+    \label{figS7:second_degree}
 \end{figure}
 
 -READ and KIn differ
@@ -561,14 +577,14 @@ However, differentiating between Half-siblings may not be possible with our appr
     \includegraphics[width=18cm]{supplementary_info/plots/egplot1.png}
     \caption{Plots showing proportion of differences in windows along the genome for some of the pairs of relatives for which KIn differs from READ. (A) AITI62B-OTTM156 (READ estimates Identical individuals, lcMLkin does not have sufficient data, and KIn predicts parent-child. (B) UNTA5867-UNTA5868Sk1 (READ estimates Second Degree, lcMLkin does not have sufficient data, and KIn predicts parent-child). (C) AITI40-AITI72 (READ estimates Unrelated individuals, lcMLkin shows 3rd-5th degree, and KIn predicts 3rd degree.)
     (D) AITI2-AITI55 (READ estimates Unrelated individuals, lcMLkin and KIn predicts predict second degree.)}
-    \label{figS5}
+    \label{figS8:eg1}
 \end{figure}
 
 \begin{figure}[h]
     \centering
     \includegraphics[width=18cm]{supplementary_info/plots/egplot2.png}
     \caption{Plots showing proportion of differences in windows along the genome for some of the pairs of relatives for which KIn differs from lcMLkin. (A) AITI43-AITI55 (READ estimates First degree, lcMLkin predicts siblings, while KIn predicts parent-child. (B) AITI70-AITI72 (READ estimates First degree, lcMLkin predicts parent-child, while KIn predicts siblings.}
-    \label{figS5}
+    \label{figS9:eg2}
 \end{figure}
 
 \bibliographystyle{plain}
