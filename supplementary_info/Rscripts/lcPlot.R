@@ -33,6 +33,9 @@ lcplot <- function(lcres,likf,kinf,outplot){
   lc[lc$pair=='Chagyrskaya1141_Chagyrskaya19','Relatedness'] <- 'Identical'
   lc[lc$pair=='Chagyrskaya01_Chagyrskaya60','Relatedness'] <- 'Degree2'
   lc[lc$pair=='Chagyrskaya06_Chagyrskaya14','Relatedness'] <- 'Identical'
+
+  lc=lc[lc$pair!='Chagyrskaya06_Chagyrskaya14',]
+
   colors1 <- c("Unrelated" = "grey80", "Degree2" = "darkorchid1", "Parent-Child" = "orangered3", "Identical" = "darkgoldenrod1")
 
   panel1<-ggplot(data=lc[which(lc$loglik_ratio >=1),], mapping=aes(x=k0_hat, y=r_hat, color=Relatedness)) +
@@ -57,7 +60,7 @@ lcplot <- function(lcres,likf,kinf,outplot){
   newdf[newdf$pair=='Chagyrskaya01_Chagyrskaya60','Relatedness'] <- 'Degree2'
   newdf[newdf$pair=='Chagyrskaya06_Chagyrskaya14','Relatedness'] <- 'Identical'
 
-
+  newdf=newdf[newdf$pair!='Chagyrskaya06_Chagyrskaya14',]
 
 
   newdf$r_prop <- newdf$k1_prop/2 + newdf$k2_prop
