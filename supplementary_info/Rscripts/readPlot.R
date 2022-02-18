@@ -66,12 +66,12 @@ bubbleplot_read <- function(overlap_table, relatable, out_rel, out_over) {
   gfig_rel=ggplot(matr1, aes(lib1, lib2), col= "white") +
     geom_tile(aes(fill=relatedness), col="white")  +
     scale_fill_manual(values = c("khaki1","orangered3","mediumorchid4","gray80")) +
-    labs(title = "relatedness", x = "lib_ID", y = "lib_ID")+
     theme(
       panel.border = element_blank(), panel.grid.major = element_blank(),panel.grid.minor = element_blank(),
       panel.background = element_rect(fill = "white",colour = "white", size = 0.5, linetype = "solid"))+
     theme(axis.text.x = element_text(angle = 90,hjust = 1, colour = colors, size = 14)) +
     theme(axis.text.y = element_text(angle = 0,hjust = 1, colour = colors, size = 14)) +
+    theme(axis.title.x=element_blank(), axis.title.y=element_blank()) +
     geom_text(aes(lib1, lib2, label = matr1$dist_thresh), color = "black", size = 5) + #Plot overlap
     theme(legend.text = element_text(size=14),
           legend.title=element_text(size=15))
@@ -79,14 +79,15 @@ bubbleplot_read <- function(overlap_table, relatable, out_rel, out_over) {
   gfig_over=ggplot(matr1, aes(lib1, lib2), col= "white") +
     geom_tile(aes(fill=overlap), col="white")  +
     scale_fill_manual(values = c("gray90","darkslateblue","dodgerblue3","mediumseagreen","palegreen","yellowgreen","skyblue4","khaki1","firebrick")) +
-    labs(title = "Overlap filter", x = "lib_ID", y = "lib_ID")+
     theme(
       panel.border = element_blank(), panel.grid.major = element_blank(),panel.grid.minor = element_blank(),
       panel.background = element_rect(fill = "white",colour = "white", size = 0.5, linetype = "solid"))+
     theme(axis.text.x = element_text(angle = 90,hjust = 1, colour = colors, size = 14)) +
     theme(axis.text.y = element_text(angle = 0,hjust = 1, colour = colors, size = 14)) +
+    theme(axis.title.x=element_blank(), axis.title.y=element_blank()) +
     theme(legend.text = element_text(size=14),
           legend.title=element_text(size=15))
+
 
 
   ggsave(out_rel,height=12,width=14, plot = gfig_rel)
