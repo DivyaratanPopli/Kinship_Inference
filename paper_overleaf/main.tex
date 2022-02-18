@@ -53,13 +53,11 @@ Commonly, pairs of relateded individuals are  identified by looking for parts of
 However, it is not possible to directly observe IBD segments, and so most methods infer them by first identifying segments of the genome that are Identical by State (IBS) and using population allele frequencies to calculate the probability of IBD given IBS \cite{vai_kinship_2020}.  One exception is SNPduo, a software that uses IBS direclty to visualize and analyze pairwise relatedness. \cite{roberson_visualization_2009}. Most methods, however, use IBD as an intermediary in inferring relatedness \cite{boehnke_accurate_1997,lynch_estimation_1999,mcpeek_statistical_2000}. For a non-inbred population, there are three IBD states possible: either no chromosomes are shared, only one chromosome is shared, or both chromosomes are shared. The genome-wide proportions of these states (usually referred to as $k_0$, $k_1$, $k_2$, so that $k_0+k_1+k_2=1$) can be used to infer the degree and nature of relatedness for a pair of individuals. For example, a pair of siblings are expected to have all three possible IBD states with probabilities (0.25,0.5,0.25) as shown in Fig \ref{fig0:schematic}. These IBD probabilities can directly be used to categorize a pair of individuals as related by a certain degree and nature of relatedness as shown in table \ref{tab:Table 1}. One can also use these probabilities to estimate the coefficient of relatedness as $r= k_1/2 + k_2$. The coefficient of relatedness (r) is defined as the proportion of genome IBD for a pair of individuals.
 
 \begin{figure}[h!]
-    \includegraphics[width=18cm]{plots/inkscape_finalImg/schematic1.png}
+    \includegraphics[width=18cm]{plots/inkscape_finalImg/schematic_sib.png}
     \centering
-    \caption{Overview of KIn. A. In top row, recombined chromosomes inherited from parents by a pair of siblings are shown. On left, the parents have unrelated chromosomes, and on right one parent has homozygous pair of chromosomes. Bottom row shows the expected proportion of differences along the chromosome in both the cases. B. Overall schematic of the method. Blue boxes show the data files, while green boxes represent scripts.}
+    \caption{IBD sharing between siblings with and without ROH. In top row, recombined chromosomes inherited from parents by a pair of siblings are shown. On left, the parents have unrelated chromosomes, and on right one parent has homozygous pair of chromosomes. Bottom row shows the expected proportion of differences along the chromosome in both the cases.}
     \label{fig0:schematic}
 \end{figure}
-
-
 
 
 There are numerous methods that utilize population allele frequencies, phase information, recombination maps, or genotype calls to estimate the relatedness coefficient \cite{huff_maximum-likelihood_2011,li_relationship_2014,li_accurate_2014,thornton_estimating_2012}. PLINK, a popular tool to infer relatedness coefficient in  diploid genotype data, estimates IBD probabilities from average of observed IBS, and using the allele frequencies at each SNP in samples \cite{purcell_plink_2007}. KING is another widely used software that allows relatedness inference with genotype data in homogeneous populations using population allele frequencies (KING homo), but can also work with structured populations with no good population allele frequencies using heterozygosity estimates from each sample (KING robust) \cite{manichaikul_robust_2010}. . 
@@ -232,9 +230,8 @@ Ideally, t for $x_4$ should be zero, but since our genomic windows may not coinc
 
 
 \subsection{Relatedness classes}
-This model is run for all the different cases of relatedness using the corresponding transition matrix, and the likelihood for all the relatedness models is compared. The relatedness for the maximum likelihood model is reported, and the confidence is given by the log likelihood ratio between the two highest likelihood models.  
-Hidden state of each window (IBD state) is estimated using standard Viterbi algorithm, and the IBD states corresponding to the most likely model are returned. 
-
+This model is run for different cases of relatedness including (Unrelated, $5^{th}$ Degree, $4^{th}$ Degree, $3^{rd}$ Degree, Grandparent-Grandchild, Avuncular, Half-siblings, Parent-Child, Siblings, Identical) using the corresponding transition matrix, and the likelihood for all the relatedness models is compared. We realized that we have low power to detect $4^{th}$ and $5^{th}$ degree and we can not always differentiate these from unrelated. In our final output, we show classifications of $4^{th}$ and $5^{th}$ degrees as unrelated. Similarly, we observe that we have low power to differentiate between half-siblings, avuncular and grandparent-grandchild, and we merge these classifications as $2^{nd}$ Degree in the final results. The relatedness for the maximum likelihood model is reported, and the confidence is given by the log likelihood ratio between the two highest likelihood models.  
+Hidden IBD state of each window ($Z_w$) is estimated using standard Viterbi algorithm, and $\BZ$ corresponding to the most likely model are returned. 
 
 
 \subsection{ROH estimation model}
@@ -347,19 +344,17 @@ This model outputs the contamination corrected number of differences and overlap
 
 \subsection{Simulations}
 
-\paragraph{ Simulations for estimation of transition matrix}
 We use simulations both for estimating the transition matrices for all our models, and for testing and validating our algorithm. All simulations are performed using \textt{msprime} \cite{kelleher_efficient_2016}, followed by simulations of related individuals using a predetermined pedigree (Figure S1).
+
+\paragraph{ Simulations for estimation of transition matrix}
 
 For our simulations of background diversity, we simulated a haploid population (pop1) with constant effective size of 10,000 and sampled 16 haploids from 2500 generations ago to randomly combine into 8 unrelated diploid ancient individuals. For each individual, we simulated 22 chromosomes with length $L=100$ Mb. The mutation rate was set as $\mu= 10^{-8}$ per base pair per generation and recombination rate used was $r=10^{-8}$ 
 
-For artificially mating two individuals, we simulated a recombined chromosome from each individual to be passed on to the progeny. For simulating a recombined chromosome from a diploid individual, we drew the number of recombination points from a Poisson distribution with parameter $rL$ as the recombination rate, and used a uniform distribution to sample the positions of recombination points. We estimated transition matrices corresponding to different cases of relatedness by counting transition between IBD states for a pair of  individuals at a particular relatedness level. We realize that we have low power to detect $4^{th}$ and $5{th}$ degree and cna differentiate these from unrelated. In our final output, we show classifications of $4_{th}$ and $5_{th}$ degrees as unrelated.   
+For artificially mating two individuals, we simulated a recombined chromosome from each individual to be passed on to the progeny. For simulating a recombined chromosome from a diploid individual, we drew the number of recombination points from a Poisson distribution with parameter $rL$ as the recombination rate, and used a uniform distribution to sample the positions of recombination points. We estimated transition matrices corresponding to different cases of relatedness by counting transition between IBD states for a pair of  individuals at a particular relatedness level. We compared the transition matrices for grandparent-grandchild and siblings estimated in this way to a theoretical calculation, and verified that they are very close. However, it is difficult to theoretically calculate transition matrices for other cases like third degree, and so for these cases we use the transition matrices obtained from simulations.
 
 \paragraph{Model Comparison}
-model with maximum likelihood is reported, and log likelihood ratio is calculated with the two highest likelihood models. 
+Model with maximum likelihood is reported, and log likelihood ratio is calculated with the two highest likelihood models. 
 
-
-
-#### Simulations for model evaluation
 Apart from the related and unrelated individuals in pop1, we simulated more haploids in three other populations to create scenarios with ascertainment and contamination. We simulated two haploids to form an individual each from two other populations (pop2, pop3) with split time of 3500 and 4500 generations with pop1, and sampling time of 4000 generations and 2000 generations ago respectively. We identified the sites that were polymorphic among these two individuals, and used these sites to ascertain the genomes of individuals from pop1. We test out the performance of our method in presence of long ROH ($\sim17\%$), by simulating regions of homozygosity with a markov chain using transition matrix shown below: 
 
 $$\mathbf{A} = \left[\begin{array}
@@ -451,6 +446,16 @@ One limitation with our approach is that this method assumes a single population
 
 
 \section{Supplementary Information}
+
+Pipeline of KIn
+\begin{figure}[h!]
+    \includegraphics[width=18cm]{plots/inkscape_finalImg/schematic_sup.png}
+    \centering
+    \caption{Overall schematic of the method. Blue boxes show the data files, while green boxes represent scripts.}
+    \label{figS0:schematic}
+\end{figure}
+
+
 Beta binomial distribution is a better fit compared to Binomial distribution for proportion of differences in windows.
 
 \renewcommand{\figurename}{Fig. S}
