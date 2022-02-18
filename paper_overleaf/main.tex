@@ -348,14 +348,14 @@ We use simulations both for estimating the transition matrices for all our model
 
 \paragraph{ Simulations for estimation of transition matrix}
 
-For our simulations of background diversity, we simulated a haploid population (pop1) with constant effective size of 10,000 and sampled 16 haploids from 2500 generations ago to randomly combine into 8 unrelated diploid ancient individuals. For each individual, we simulated 22 chromosomes with length $L=100$ Mb. The mutation rate was set as $\mu= 10^{-8}$ per base pair per generation and recombination rate used was $r=10^{-8}$ 
+For our simulations of background diversity, we simulated a haploid population (Pop1) with constant effective size of 10,000 and sampled 16 haploids from 2500 generations ago to randomly combine into 8 unrelated diploid ancient individuals (fig. \ref{figS10:pedigree}). For each individual, we simulated 22 chromosomes with length $L=100$ Mb. The mutation rate was set as $\mu= 10^{-8}$ per base pair per generation and recombination rate used was $r=10^{-8}$ 
 
 For artificially mating two individuals, we simulated a recombined chromosome from each individual to be passed on to the progeny. For simulating a recombined chromosome from a diploid individual, we drew the number of recombination points from a Poisson distribution with parameter $rL$ as the recombination rate, and used a uniform distribution to sample the positions of recombination points. We estimated transition matrices corresponding to different cases of relatedness by counting transition between IBD states for a pair of  individuals at a particular relatedness level. We compared the transition matrices for grandparent-grandchild and siblings estimated in this way to a theoretical calculation, and verified that they are very close. However, it is difficult to theoretically calculate transition matrices for other cases like third degree, and so for these cases we use the transition matrices obtained from simulations.
 
 \paragraph{Model Comparison}
 Model with maximum likelihood is reported, and log likelihood ratio is calculated with the two highest likelihood models. 
 
-Apart from the related and unrelated individuals in pop1, we simulated more haploids in three other populations to create scenarios with ascertainment and contamination. We simulated two haploids to form an individual each from two other populations (pop2, pop3) with split time of 3500 and 4500 generations with pop1, and sampling time of 4000 generations and 2000 generations ago respectively. We identified the sites that were polymorphic among these two individuals, and used these sites to ascertain the genomes of individuals from pop1. We test out the performance of our method in presence of long ROH ($\sim17\%$), by simulating regions of homozygosity with a markov chain using transition matrix shown below: 
+Apart from the related and unrelated individuals in pop1, we simulated more haploids in three other populations to create scenarios with ascertainment and contamination (fig. \ref{figS10:pedigree}). We simulated two haploids to form an individual each from two other populations (pop2, pop3) with split time of 3500 and 4500 generations with pop1, and sampling time of 4000 generations and 2000 generations ago respectively. We identified the sites that were polymorphic among these two individuals, and used these sites to ascertain the genomes of individuals from pop1. We test out the performance of our method in presence of long ROH ($\sim17\%$), by simulating regions of homozygosity with a markov chain using transition matrix shown below: 
 
 $$\mathbf{A} = \left[\begin{array}
 {rr}
@@ -364,7 +364,7 @@ $$\mathbf{A} = \left[\begin{array}
 \end{array}\right]
 $$
 
-From the steps described above, we got genotypes of 17 individuals in pop1 in presence/absence of ROH and ascertainment. We further simulated 10 haploids (5 diploid individuals) from another population (pop4) with split time of 20,000 generations with pop1, sampled from the present time. We calculated the allele frequency for pop4 at each site, and used it to introduce contamination (with fixed contamination percentage for each individual ($<5\%$) in samples from pop1. We generated reads (derived/ancestral) for different genomic coverages ranging from 4x to 0.03x at each position for each individual. We specifically generated reads for four different cases: Ancestral-Endogenous, Ancestral-Contaminant, Derived-Endogenous, Derived-Contaminant. The number of reads for each case was sampled from a Poisson distribution with $\lambda$ calculated from the coverage, allele frequency or genotype (G $\in$ 0,0.5,1), and contamination estimate:
+Here, l is length of the chromosome. From the steps described above, we got genotypes of 17 individuals in pop1 in presence/absence of ROH and ascertainment. We further simulated 10 haploids (5 diploid individuals) from pop4 with split time of 20,000 generations with pop1, sampled from the present time. We calculated the allele frequency for pop4 at each site, and used it to introduce contamination (with fixed contamination percentage for each individual ($<5\%$) in samples from pop1. We generated reads (derived/ancestral) for different genomic coverages ranging from 4x to 0.03x at each position for each individual. We specifically generated reads for four different cases: Ancestral-Endogenous, Ancestral-Contaminant, Derived-Endogenous, Derived-Contaminant. The number of reads for each case was sampled from a Poisson distribution with $\lambda$ calculated from the coverage $\zeta$, allele frequency or genotype (G $\in$ 0,0.5,1), and contamination estimate:
 
 \begin{align}
     \lambda_{DE} = \zeta (1-c) G\nonumber\\
@@ -388,7 +388,7 @@ We predict the following categories of relatedness with KIn: Identical individua
 We see that in this case, the siblings model predictions match true IBD states the most. This is reflected in the log likelihoods values (LL) of the models as well, where siblings model has the highest value. We take a loglikelihood ratio ($\Lambda$) of the two most likely models to get a confidence in the relatedness estimate (in this case $\Lambda$ = 22.48). All the models in Fig.\ref{fig1:ibd} utilize information about ROH given by the ROH-HMM. 
 
 
-Performance of ROH-HMM under different cases of ascertainment, contamination and long ROH, and for different coverages is shown in Fig.\ref{fig2:ROH}. We applied the ROH-HMM and relatedness HMM on 60 runs of simulations, to get relatedness estimates, and compared the final relatedness estimates to the true relatedness for different pairs at coverages ranging from 4x to 0.1x. 
+Performance of ROH-HMM under different cases of ascertainment, contamination and long ROH, and for different coverages is shown in Fig.\ref{fig2:ROH}. We observe that as coverage decreases, data becomes more noisy. This causes ROH HMM to predict some probability of ROH in few windows when there is no ROH in data. However, at 4x and 0.5x, this is very rare. In presence of ROH, we see a similar trend. At 4x the model can estimate ROH probability well, but loses accuracy at 0.2x. In presence of ascertainment, overlapping sites are reduced, but they are informative. We see that the model performs well at 0.5x. New plot for contamination to be included. We applied the ROH-HMM and relatedness HMM on 60 runs of simulations, to get relatedness estimates, and compared the final relatedness estimates to the true relatedness for different pairs at coverages ranging from 4x to 0.1x. 
 
 \begin{figure}[h!]
     \includegraphics[width=16cm]{plots/inkscape_finalImg/ROHplot.png}
@@ -398,7 +398,7 @@ Performance of ROH-HMM under different cases of ascertainment, contamination and
 \end{figure}
 
 
-We plotted the true positive and false positive rates with a cutoff on the loglikelihood ratio in Fig.\ref{fig3:cutoff}. Here, and in Fig.\ref{fig4:Comparison_READ_KIn}, we have two relatedness labels: 'Unrelated' and 'Unrelated w/o 3rd Degree'. Unrelated label here refers to KIn performance results when all unrelated, degree5, degree4, degree3 pairs are labelled as unrelated. This is useful for comparison to READ, since READ classifies relatedness upto degree2. 'Unrelated w/o degree3'  refers to the performance results when degree 3 is considered as separate from the unrelated individuals. Fig.\ref{fig3:cutoff} shows that for identical, 1st degree, unrelated pairs, the false positive rate is below $5\%$ even when no cut off is used. For second degree, at 0.1x we see a high false positive rate, that does not go down much with an increase in cutoff. For the same relationship, at a coverage of 0.2x, a cutoff of 1 seems appropriate to reduce false positive rate to below $5\%$. Similarly, for siblings at 0.1x, a cutoff of 1 works well to keep false positives low. For parent-child, we find that a cutoff of about 2 is a better choice. Degree 3 shows higher false positive rates in general, and we see that only for 4x coverage and a cutoff of 2, do we see a false positive rate of around $5\%$. In conclusion, it is recommended to use a cutoff of 1 for most cases, with the exception of differentiation between parent-child and siblings, where a cutoff of 2 may be more appropriate, and degree 3 where cutoff of 2 at 4x coverage seems reasonable. 
+We plotted the true positive and false positive rates with a cutoff on the loglikelihood ratio in Fig.\ref{fig3:cutoff}. Here, and in Fig.\ref{fig4:Comparison_READ_KIn}, we have two relatedness labels: 'Unrelated' and 'Unrelated w/o 3rd Degree'. Unrelated label here refers to KIn performance results when all Unrelated, Fifth Degree, Fourth Degree, Third Degree pairs are labelled as Unrelated. This is useful for comparison to READ, since READ classifies relatedness upto Second Degree. 'Unrelated w/o $3^{rd}$ Degree' refers to the performance results when Third Degree is considered as separate from the unrelated individuals. Fig.\ref{fig3:cutoff} shows that for Identical, First Degree, Unrelated pairs, the false positive rate is below $5\%$ even when no cut off is used. For second degree, at 0.1x we see a high false positive rate, that does not go down much with an increase in cutoff. For the same relationship, at a coverage of 0.2x, a cutoff of 1 seems appropriate to reduce false positive rate to below $5\%$. Similarly, for siblings at 0.1x, a cutoff of 1 works well to keep false positives low. For parent-child, we find that a cutoff of about 2 is a better choice. Degree 3 shows higher false positive rates in general, and we see that only for 4x coverage and a cutoff of 2, do we see a false positive rate of around $5\%$. In conclusion, it is recommended to use a cutoff of 1 for most cases, with the exception of differentiation between parent-child and siblings, where a cutoff of 2 may be more appropriate, and degree 3 where cutoff of 2 at 4x coverage seems reasonable. 
 
 \begin{figure}[h!]
     \includegraphics[width=16cm]{plots/plotimg/contam0_inbred0_model_performance_allroc_asc0_plot.png}
@@ -407,7 +407,7 @@ We plotted the true positive and false positive rates with a cutoff on the logli
     \label{fig3:cutoff}
 \end{figure}
 
-We use a cutoff of 1 to compare our method performance to READ, while using a cutoff of 1 standard deviation for READ. Fig.\ref{fig4:Comparison_READ_KIn} shows this comparison using false positive and true positive rates for both the methods at different coverages under different simulations. We show that both methods have similar performance in the control case (except for 0.1x coverage, where KIn has higher power to detect degree1 and degree2, and slightly higher false positive rate for degree 2). However, in case of ascertainment, ROH, or comtamination KIn shows higher power to detect relatedness cases while maintaining a low false positive rate. 
+We use a cutoff of 1 to compare our method performance to READ, while using a cutoff of 1 standard deviation for READ. Fig.\ref{fig4:Comparison_READ_KIn} shows this comparison using false positive and true positive rates for both the methods at different coverages under different simulations. We show that both methods have similar performance in the control case (except for 0.1x coverage, where KIn has higher power to detect First Degree and Second Degree, and slightly higher false positive rate for degree 2). However, in case of ascertainment, ROH, or contamination KIn shows higher power to detect relatedness cases while maintaining a low false positive rate. 
 
 \begin{figure}[h!]
     \includegraphics[width=16cm]{plots/plotimg/comparison_plot.png}
@@ -417,7 +417,7 @@ We use a cutoff of 1 to compare our method performance to READ, while using a cu
 \end{figure}
 
 
-To test KIn on real ancient dataset, we applied it to neandertal specimens from Chagyrskaya cave in Siberia, Russia. This dataset comprised of 14 specimens that came from neighbouring layers, and hence could possibly belong to contemporary neandertals who occupied the cave 63 ± 4 to 48 ± 3 kya \cite{kolobova_archaeological_2020-1}. These specimens showed low coverage of nuclear genome, with 8 samples out of 14 showing $<1x$ coverage. Some of these specimens showed signs of long ROH, and contamination from modern humans as well as Hyena. All these samples were captured with an array targeting for Neanderthal variation, and we further ascertained this data to variable sites in high coverage Neanderthal genomes: Altai Neanderthal (Denisova 5) (Prüfer et al., 2014) and Vindija 33.19 (Prüfer et al., 2017). This dataset had all the issues that KIn deals with, and hence we decided to apply it here to see if we could find family relationships that would not be possible with other available methods. Our results for pairwise relatedness for these individuals is shown in Fig.\ref{fig5:Chagyrskaya_kin}. We found identical individuals (Chagyrskaya13-Chagyrskaya19-Chagyrskaya1141), first degree relatives (Chagyrskaya07-Chagyrskaya17, Chagyrskaya06-Chagyrskaya14), and a second degree relative (Chagyrskaya01-Chagyrskaya60). These results agree with READ (fig. S\ref{figS2:Chagyrskaya_READ}). Interestingly, for the pair of Chagyrskaya07-Chagyrskaya17, READ shows that they are first degree relatives, while KIn further identifies them as parent-child. Our result matches with the conclusions of the authors based on additional information from mtDNA. Further, we find a possible third degree relative (Chagyrskaya07-Chagyrskaya60). We compare our results to lcMLkin, and show that the software does not perform well with these low coverage samples since it is not possible to obtain reliable genotype likelihoods for many of these samples (fig. S\ref{figS6:Chagyrskaya_ibd}).
+To test KIn on real ancient dataset, we applied it to Neandertal specimens from Chagyrskaya cave in Siberia, Russia. This dataset comprised of 14 specimens that came from neighbouring layers, and hence could possibly belong to contemporary neandertals who occupied the cave 63 ± 4 to 48 ± 3 kya \cite{kolobova_archaeological_2020-1}. These specimens showed low coverage of nuclear genome, with 8 samples out of 14 showing $<1x$ coverage. Some of these specimens showed signs of long ROH, and contamination from modern humans as well as Hyena. All these samples were captured with an array targeting for Neanderthal variation, and we further ascertained this data to variable sites in high coverage Neanderthal genomes: Altai Neanderthal (Denisova 5) \cite{prufer_complete_2014} and Vindija 33.19 \cite{prufer_high-coverage_2017}. This dataset had all the issues that KIn deals with, and hence we decided to apply it here to see if we could find family relationships that would not be possible with other available methods. Our results for pairwise relatedness for these individuals is shown in Fig.\ref{fig5:Chagyrskaya_kin}. We found identical individuals (Chagyrskaya13-Chagyrskaya19-Chagyrskaya1141), first degree relatives (Chagyrskaya07-Chagyrskaya17, Chagyrskaya06-Chagyrskaya14), and a second degree relative (Chagyrskaya01-Chagyrskaya60). These results agree with READ (fig. S\ref{figS2:Chagyrskaya_READ}). Interestingly, for the pair of Chagyrskaya07-Chagyrskaya17, READ shows that they are first degree relatives, and KIn further identifies them as parent-child. Our result matches with the conclusions of the authors based on additional information from mtDNA. Further, we find a possible third degree relative (Chagyrskaya07-Chagyrskaya60). We compared our results to lcMLkin, and show that the software does not perform well with these low coverage samples since it is not possible to obtain reliable genotype likelihoods for many of these samples (fig. S\ref{figS6:Chagyrskaya_ibd}).
 
 
 
@@ -448,6 +448,8 @@ One limitation with our approach is that this method assumes a single population
 \section{Supplementary Information}
 
 Pipeline of KIn
+
+\renewcommand{\figurename}{Fig. S}
 \begin{figure}[h!]
     \includegraphics[width=18cm]{plots/inkscape_finalImg/schematic_sup.png}
     \centering
@@ -458,14 +460,24 @@ Pipeline of KIn
 
 Beta binomial distribution is a better fit compared to Binomial distribution for proportion of differences in windows.
 
-\renewcommand{\figurename}{Fig. S}
+
 \begin{figure}[h!]
     \includegraphics[width=18cm]{supplementary_info/plots/binom.png}
     \centering
     \caption{Comparison of fit with Betabinomial and Binomial distributions. Data is represented by the histogram of proportion of differences from all windows of a (A) unrelated, (B) Parent-Child, (C) Identical pair of individuals. Binomial parameter p is calculated from the data, while Betabinomial parameters are estimated with the relatedness HMM.}
-    \label{FigS1:binom}
+    \label{figS1:binom}
     
 \end{figure}
+
+
+\begin{figure}[h!]
+    \includegraphics[width=18cm]{plots/inkscape_finalImg/pedigree.png}
+    \centering
+    \caption{Overview of simulated dataset. We simulate pop1, and artificially mate unrelated individuals to make a family with upto 5th degree relatives, along with other unrelated and identical individuals (not shown here). Pop2 and Pop3 are simulated so as to introduce ascertainment, while Pop4 is a present day population used to simulate contamination. Split times and age of the populations are shown in generations.}
+    \label{figS10:pedigree}
+    
+\end{figure}
+
 
 Results from KIn agree with results from READ, and provide some more information about siblings/parent-child, and $3^{rd}$ Degree relatedness. 
 \begin{figure}[h!]
@@ -578,11 +590,15 @@ Notation used in the paper:
 \item $p_c$: Average proportion of differences between endogenous and contaminating reads
 \item $p_e$:Average proportion of differences between endogenous reads
 \item $p_a$: Average observed proportion of differences
-\item $D_{cor,w}$ Contamination corrected number of differences in $w$
-\item $N_{cor,w}$ Contamination corrected number of overlapping sites in $w$
+\item $D_{cor,w}$: Contamination corrected number of differences in $w$
+\item $N_{cor,w}$: Contamination corrected number of overlapping sites in $w$
 \item $\Xi$: Endogenous read
 \item $S_{cor,w}$ $N_{cor,w}$ - $D_{cor,w}$
-\item $/mathbf{D_cor}$ Vector of $D_{cor,w}$ 
+\item $/mathbf{D_cor}$ Vector of $D_{cor,w}$
+\item $G$: Genotype (0,0.5,1)
+\item $\lambda$: Expected rate following Poisson distribution
+\item $\nu$: Population allele frequency
+\item $Lambda$: Log likelihood ratio
 \item E: Expectation
 \item P: Probability
 \end{itemize}
