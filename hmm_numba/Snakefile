@@ -60,15 +60,14 @@ rule hmm:
         pfile=datafolder+"hmm_parameters_fil{Mfil}/p1_file",
         dfile=datafolder+"mergedwin_remHighdiv_fil{Mfil}/pw_diff.csv",
         tfile=datafolder+"mergedwin_remHighdiv_fil{Mfil}/pw_total.csv",
-        Afile=paramfolder+"transition_matrix_{rel}.csv",
+        Afiles=expand(paramfolder+"transition_matrix_{rel}.csv", rel=allrel)
 
 
 
     output:
-        resfile="filtered{Mfil}/relation_{rel}_file/res/pw_{listind}.csv",
-        likfile="filtered{Mfil}/relation_{rel}_file/res/lik/pw_{listind}.csv",
-        gammafile="filtered{Mfil}/relation_{rel}_file/res/gamma/pw_{listind}.csv",
-
+        resfiles=expand("filtered{{Mfil}}/relation_{rel}_file/res/pw_{{listind}}.csv", rel=allrel),
+        likmerged="filtered{Mfil}/allLikelihoods/pw_{listind}.csv",
+        gammafiles=expand("filtered{{Mfil}}/relation_{rel}_file/res/gamma/pw_{{listind}}.csv", rel=allrel),
 
     run:
         l=wildcards.listind
@@ -84,66 +83,9 @@ rule hmm:
 
         hmm(difffile=input.dfile, totalfile=input.tfile, listind=wildcards.listind,
                         listf=np.array(listf), targets=np.array(libraries),pfile=input.pfile,
-                        Afile=input.Afile, resfile=output.resfile, likfile=output.likfile, gammafile=output.gammafile,
-                        upA=wildcards.rel, pairf1=pairf1, pairf2=pairf2,
-                        p1thresh=p1thresh, thresh=10, instates=instates)
-
-
-rule short1:
-    input:
-        h=expand("filtered{Mfil}/relation_{rel}_file/res/lik/pw_{listind}.csv", Mfil=Mfilist, rel=['gr'], listind=listf)
-
-
-rule short2:
-    input:
-        h=expand("filtered{Mfil}/relation_{rel}_file/res/lik/pw_{listind}.csv", Mfil=Mfilist, rel=['un'], listind=listf)
-
-
-rule short3:
-    input:
-        h=expand("filtered{Mfil}/relation_{rel}_file/res/lik/pw_{listind}.csv", Mfil=Mfilist, rel=['pc'], listind=listf)
-
-rule short4:
-    input:
-        h=expand("filtered{Mfil}/relation_{rel}_file/res/lik/pw_{listind}.csv", Mfil=Mfilist, rel=['sib'], listind=listf)
-
-
-rule short5:
-    input:
-        h=expand("filtered{Mfil}/relation_{rel}_file/res/lik/pw_{listind}.csv", Mfil=Mfilist, rel=['id'], listind=listf)
-
-
-rule short6:
-    input:
-        h=expand("filtered{Mfil}/relation_{rel}_file/res/lik/pw_{listind}.csv", Mfil=Mfilist, rel=['deg3'], listind=listf)
-
-rule short7:
-    input:
-        h=expand("filtered{Mfil}/relation_{rel}_file/res/lik/pw_{listind}.csv", Mfil=Mfilist, rel=['hsib'], listind=listf)
-
-
-rule short8:
-    input:
-        h=expand("filtered{Mfil}/relation_{rel}_file/res/lik/pw_{listind}.csv", Mfil=Mfilist, rel=['deg4'], listind=listf)
-
-
-rule short9:
-    input:
-        h=expand("filtered{Mfil}/relation_{rel}_file/res/lik/pw_{listind}.csv", Mfil=Mfilist, rel=['deg5'], listind=listf)
-
-rule short10:
-    input:
-        h=expand("filtered{Mfil}/relation_{rel}_file/res/lik/pw_{listind}.csv", Mfil=Mfilist, rel=['avu'], listind=listf)
-
-
-rule merge_lik:
-    input:
-        liklist=expand("filtered{{Mfil}}/relation_{rel}_file/res/lik/pw_{{listind}}.csv",rel=allrel),
-    output:
-        likmerged="filtered{Mfil}/allLikelihoods/pw_{listind}.csv",
-    run:
-
-        mergestat(input.liklist, output.likmerged)
+                        Afiles=input.Afiles, resfiles=output.resfiles, likfile=output.likmerged,
+                        gammafiles=output.gammafiles, pairf1=pairf1, pairf2=pairf2,
+                        p1thresh=p1thresh, thresh=10, instates=instates, rels=allrel)
 
 
 
@@ -153,7 +95,7 @@ rule get_relatable:
     output:
         liktab="filtered{Mfil}/relatable_{myfolder}.csv"
     run:
-        getRelatable(filist=input.likfile, relatable=output.liktab)
+        getRelatable(filist=input.likfile, relatable=output.liktab, pairs=listf, rels=allrel)
 
 
 

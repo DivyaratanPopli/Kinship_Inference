@@ -240,7 +240,7 @@ def bnd_calc(mean_p, dist, propvar):
     low_bnd=-1 * (t + (t*r*r) + r*((2*t)-1))/(t+ (3*t*r) + (3*r*r*t) + (r*r*r*t))
     return low_bnd
 
-def baum_welch(data, hbd, A, B, pos, p1avg, update_transition, inbr, x0, max_iter=1000):
+def baum_welch(data, hbd, A, B, pos, p1avg, inbr, x0, max_iter=1000):
     #print(data)
     chrm_no=len(pos)-1
     n_iter=0
@@ -331,8 +331,7 @@ def viterbi(data, A, B, pi):
     S[S==0]=3/4
     return S
 
-def hmm(difffile, targets, totalfile, listind, listf, pfile, Afile, resfile, likfile, gammafile, upA, pairf1, pairf2, instates, p1thresh, thresh):
-
+def hmm(difffile, targets, totalfile, listind, listf, pfile, Afiles, resfiles, gammafiles, likfile, pairf1, pairf2, instates, p1thresh, thresh, rels):
 
     inbr_states=len(instates)
     ind=np.where(listf==listind)[0][0]
@@ -420,42 +419,50 @@ def hmm(difffile, targets, totalfile, listind, listf, pfile, Afile, resfile, lik
         pi= np.array([1/3,1/3,1/3])
 
         #A=A1
-        A=np.array(pd.read_csv(Afile,sep=',',header=None,index_col=False))
+        likall=[]
+        for rel_cnt in range(len(rels)):
 
-        Bu = np.zeros((inbr_states,np.shape(A)[0],win)) #Emission probability
-        #for st in instates:
-         #   for re in range(np.shape(A)[0]):
-         #       Bu[st,re,:]=binom.pmf(data[:,0], data[:,1], initial_p[st,re])
+            Afile=Afiles[rel_cnt]
+            A=np.array(pd.read_csv(Afile,sep=',',header=None,index_col=False))
 
-        [b0, b1, b2, b3]=[1000,1000,1000,1000]
-        [a0,a1,a2,a3]=[b0*initial_p[0,0]/(1-initial_p[0,0]), b1*initial_p[0,1]/(1-initial_p[0,1]), b2*initial_p[0,2]/(1-initial_p[0,2]), b3*initial_p[2,2]/(1-initial_p[2,2])]
-        x0 = [a0,b0,a1,b1,a2,b2,a3,b3]
+            Bu = np.zeros((inbr_states,np.shape(A)[0],win)) #Emission probability
+            #for st in instates:
+             #   for re in range(np.shape(A)[0]):
+             #       Bu[st,re,:]=binom.pmf(data[:,0], data[:,1], initial_p[st,re])
 
-        xin0=makexin(x=x0)
-        Bu=makeB(data=data,xin=xin0, M=A.shape[0], T=len(data), inbr=inbr_states)
+            [b0, b1, b2, b3]=[1000,1000,1000,1000]
+            [a0,a1,a2,a3]=[b0*initial_p[0,0]/(1-initial_p[0,0]), b1*initial_p[0,1]/(1-initial_p[0,1]), b2*initial_p[0,2]/(1-initial_p[0,2]), b3*initial_p[2,2]/(1-initial_p[2,2])]
+            x0 = [a0,b0,a1,b1,a2,b2,a3,b3]
 
-
-
-        #print(A)
-        #[B, log_bscale]= scaleB(Bu, instates)
-        B=Bu
-
-        np.argwhere(np.isnan(B))
+            xin0=makexin(x=x0)
+            Bu=makeB(data=data,xin=xin0, M=A.shape[0], T=len(data), inbr=inbr_states)
 
 
 
-        gamma,A,B,up_p,lik, pi= baum_welch(data=data, hbd=hbd, A=A, B=B, pos=pos, p1avg=initial_p, update_transition=upA, inbr=inbr_states, x0=x0)
-        res=viterbi(data, A, B, pi)
+            #print(A)
+            #[B, log_bscale]= scaleB(Bu, instates)
+            B=Bu
+
+            np.argwhere(np.isnan(B))
+
+
+
+            gamma,A,B,up_p,lik, pi= baum_welch(data=data, hbd=hbd, A=A, B=B, pos=pos, p1avg=initial_p, inbr=inbr_states, x0=x0)
+            res=viterbi(data, A, B, pi)
+            likall.append(lik)
+            np.savetxt(fname=resfiles[rel_cnt], X=res,delimiter=',')
+            np.savetxt(fname=gammafiles[rel_cnt], X=gamma.T,delimiter=',')
 
     else:
-        res=np.ones(len(data))*-9
-        lik=float('-inf')
-        gamma=np.ones([len(data),3])*-9
-    np.savetxt(fname=resfile, X=res,delimiter=',')
-    np.savetxt(fname=gammafile, X=gamma.T,delimiter=',')
+        likall=list([float('-inf')]*len(rels))
+        for rel_cnt in range(len(rels)):
+            res=np.ones(len(data))*-9
+            gamma=np.ones([len(data),3])*-9
 
-    with open(likfile,'w') as f:
-        f.write(str(lik))
+            np.savetxt(fname=resfiles[rel_cnt], X=res, delimiter=',')
+            np.savetxt(fname=gammafile[rel_cnt], X=gamma.T, delimiter=',')
+
+    np.savetxt(fname=likfile, X=likall,delimiter=',')
 
 
 
@@ -514,40 +521,21 @@ upA=rel
 """
 
 
-
-def mergestat(statlist, statmerged):
-    relno=(len(statlist))
-    lik=np.zeros(relno)
-    filist=statlist
-    model=[]
-
-    for i in range(len(filist)):
-        with open(filist[i],'r') as f:
-            lik[i]=float(f.read())
-            xx=filist[i].split('relation_')[1].split('_file')[0]
-            if xx=='initial':
-                xx=filist[i].split('/post_')[1].split('/pw_')[0]
-            model.append(xx)
-    df_l=pd.DataFrame(lik.reshape(-1,relno), columns=model)
-
-    with pd.option_context('display.max_rows', len(df_l.index), 'display.max_columns', len(df_l.columns)):
-            df_l.to_csv(statmerged, sep=',')
-
-
-
-
-def getRelatable(filist, relatable):
+def getRelatable(filist, relatable, pairs, rels):
 
     cols=["pair", "relatedness","second_guess", "loglik_ratio", "withinDeg_second_guess", "withinDeg_ll"]
     df=pd.DataFrame(columns=cols)
 
     for i,fi in enumerate(filist):
-        pair=fi.split('pw_')[1].split('.cs')[0]
-        data=pd.read_csv(fi, sep=',',index_col=0,header=0)
+        pair=pairs[i]
+        lik=np.loadtxt(fi,dtype='float', delimiter = ",")
+        data=pd.DataFrame(lik.reshape(-1,len(rels)), columns=rels)
+        print(data)
 
         reldeg =	{
         "identical": "id",
-        "first": ["sib","pc"],
+        "siblings": "sib",
+        "parent-child": "pc",
         "second": ["gr","hsib","avu"],
         "deg3": "deg3",
         "un": ["deg4","deg5", "un"],
@@ -580,6 +568,7 @@ def getRelatable(filist, relatable):
 
     with pd.option_context('display.max_rows', len(df.index), 'display.max_columns', len(df.columns)):
             df.to_csv(relatable, sep=',')
+
 
 
 def IBDstates(gammafs, relatable, IBDfile,fil,dfolder):
