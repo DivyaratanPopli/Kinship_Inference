@@ -52,6 +52,7 @@ elif is_contam==0:
     contam_ind1='none'
     phased1='none'
     contam_diff_vcf="contam_diff.vcf.gz"
+    tc_diff=0
     with open(contam_diff_vcf,'w') as f:
         print("NA")
     contam_diff_ind=contam_diff_vcf+'.tbi'
