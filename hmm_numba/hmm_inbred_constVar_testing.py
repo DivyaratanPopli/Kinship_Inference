@@ -460,7 +460,7 @@ def hmm(difffile, targets, totalfile, listind, listf, pfile, Afiles, resfiles, g
             gamma=np.ones([len(data),3])*-9
 
             np.savetxt(fname=resfiles[rel_cnt], X=res, delimiter=',')
-            np.savetxt(fname=gammafile[rel_cnt], X=gamma.T, delimiter=',')
+            np.savetxt(fname=gammafiles[rel_cnt], X=gamma.T, delimiter=',')
 
     np.savetxt(fname=likfile, X=likall,delimiter=',')
 
