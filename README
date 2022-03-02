@@ -70,7 +70,7 @@ mkdir autosnake
 conda deactivate
 #run this on command line:
 
-bash looprel.sh n=100 #for running on a number cruncher with 100 cores
+snakemake all --cores 100 #for running on a number cruncher with 100 cores
 
 #Our model uses python3 but READ uses python2, so make sure that if you use conda env, it allows both versions (environment here does not).
 
