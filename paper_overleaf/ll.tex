@@ -1,0 +1,42 @@
+\documentclass[12pt, letterpaper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}
+\usepackage[super]{nth}
+\usepackage{hyperref}
+\usepackage{lineno}
+\usepackage[
+singlelinecheck=false
+]{caption}
+\usepackage{amsmath}
+\usepackage{bm}
+\usepackage{bbm}
+\usepackage{graphicx}
+\usepackage{csvsimple}
+\usepackage[section]{placeins}
+
+\title{Method to infer relatedness using low coverage ancient DNA}
+\author{Divya Ratan Popli, Benjamin M. Peter}
+\date{5 August 2021}
+\linenumbers
+
+\setlength{\parskip}{1em}
+\setlength{\parindent}{0em}
+
+\newcommand{\BZ}{\mathbf{Z}}
+\newcommand{\BD}{\mathbf{D}}
+\newcommand{\BN}{\mathbf{N}}
+\newcommand{\BH}{\mathbf{H}}
+\newcommand{\Btheta}{\pmb{\theta}}
+
+
+\begin{document}
+\begin{align}
+    P(D_w) &= \sum_{\BZ} P(\BD | \BZ)P(\BZ)\\
+    P(\BD) &= \sum_{\BZ}\sum_{\BH} P(\BD | \BZ, \BH)P(\BZ) P(\BH)\\
+    P(\BD) &= \sum_{\BZ}[\sum_{\BH} P(\BD | \BZ, \BH)P(\BH)]P(\BZ)] \\
+    P(\BD) &= \sum_{\BZ}[\sum_{\BH}  P(D_1, D_w, D_L) | \BZ, \BH)P(\BH)]P(\BZ)] \\    
+    P(\BD) &= \sum_{\BZ}[\sum_{\BH}  \left[\prod_w P(D_w) | \BZ, \BH)\right] P(\BH)]P(\BZ)] \\       
+\end{align}
+    
+
+\end{document}
