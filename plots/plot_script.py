@@ -11,12 +11,12 @@ def ROH_plotf(fold,outfold):
     ind=0
     cov=4
     f=0
-    rohf=fold+"hbd_hmm_corr/contam%s/inbred%s/run%s/coverage%s/filtered%s/asc%s_res/gamma_hapProbs/pw_%s.csv.gz" %(c,i,r,cov,f,a,ind)
+    rohf=fold+"hbd_hmm/contam%s/inbred%s/run%s/coverage%s/filtered%s/asc%s_res/gamma_hapProbs/pw_%s.csv.gz" %(c,i,r,cov,f,a,ind)
     roh=pd.read_csv(rohf, sep=",", header=0,index_col=0)
     roh.loc[roh['g_noin']>1,'g_noin']=np.nan
 
-    difff=fold+"contam%s/inbred%s/run%s/coverage%s/asc%s/inputMode_idhapProbs_fil%s/id_remHighdiv_diff.csv.gz" %(c,i,r,cov,a,f)
-    totalf=fold+"contam%s/inbred%s/run%s/coverage%s/asc%s/inputMode_idhapProbs_fil%s/id_remHighdiv_total.csv.gz" %(c,i,r,cov,a,f)
+    difff=fold+"contam%s/inbred%s/run%s/coverage%s/asc%s/inputMode_idhapProbs_fil%s/id_wind.csv.gz" %(c,i,r,cov,a,f)
+    totalf=fold+"contam%s/inbred%s/run%s/coverage%s/asc%s/inputMode_idhapProbs_fil%s/id_wint.csv.gz" %(c,i,r,cov,a,f)
 
     diff=np.loadtxt(difff, dtype='float', delimiter = ",")[:,ind]
     total=np.loadtxt(totalf, dtype='float', delimiter = ",")[:,ind]
@@ -28,9 +28,9 @@ def ROH_plotf(fold,outfold):
     hbdd=np.loadtxt(truedf, dtype='float', delimiter = ",")[:,ind]
     hbdt=np.loadtxt(truetf, dtype='float', delimiter = ",")[:,ind]
 
-    plt.plot(diff/total)
-    plt.plot(roh['g_noin']/20)
-    plt.plot(hbdd/hbdt/20)
+    #plt.plot(diff/total)
+    #plt.plot(roh['g_noin']/20)
+    #plt.plot(hbdd/hbdt/20)
 
     df1=pd.DataFrame(
         columns=['Chrm', 'Prop', 'Coverage',
@@ -57,14 +57,14 @@ def ROH_plotf(fold,outfold):
             inb=1
 
         acr=str(a)+ '_'+ str(cnt)+ '_'+ str(inb)
-        for cov in [4,0.5,0.2]:
+        for cov in [4,0.2,0.1]:
 
-            rohf=fold+"hbd_hmm_corr/contam%s/inbred%s/run%s/coverage%s/filtered%s/asc%s_res/gamma_hapProbs/pw_%s.csv.gz" %(cnt,inb,r,cov,f,a,ind)
+            rohf=fold+"hbd_hmm/contam%s/inbred%s/run%s/coverage%s/filtered%s/asc%s_res/gamma_hapProbs/pw_%s.csv.gz" %(cnt,inb,r,cov,f,a,ind)
             roh=pd.read_csv(rohf, sep=",", header=0,index_col=0)
             roh.loc[roh['g_noin']>1,'g_noin']=np.nan
 
-            difff=fold+"contam%s/inbred%s/run%s/coverage%s/asc%s/inputMode_idhapProbs_fil%s/id_remHighdiv_diff.csv.gz" %(cnt,inb,r,cov,a,f)
-            totalf=fold+"contam%s/inbred%s/run%s/coverage%s/asc%s/inputMode_idhapProbs_fil%s/id_remHighdiv_total.csv.gz" %(cnt,inb,r,cov,a,f)
+            difff=fold+"contam%s/inbred%s/run%s/coverage%s/asc%s/inputMode_idhapProbs_fil%s/id_wind.csv.gz" %(cnt,inb,r,cov,a,f)
+            totalf=fold+"contam%s/inbred%s/run%s/coverage%s/asc%s/inputMode_idhapProbs_fil%s/id_wint.csv.gz" %(cnt,inb,r,cov,a,f)
 
             diff=np.loadtxt(difff, dtype='float', delimiter = ",")[:,ind]
             total=np.loadtxt(totalf, dtype='float', delimiter = ",")[:,ind]
@@ -112,12 +112,12 @@ def IBD_plotf(fold,outfold):
     total=np.loadtxt(totalf, dtype='float', delimiter = ",")[:,pair]
     plt.plot(diff/total)
 
-    res_unf=fold+"hmm_numba_incorrect_roh_i1_i1_insteadOf_i1_i2/contam0/inbred0/run1/coverage4/filtered0/asc0/relation_un_file/res_inphapProbs/pw_9_10.csv.gz"
-    res_deg3f=fold+"hmm_numba_incorrect_roh_i1_i1_insteadOf_i1_i2/contam0/inbred0/run1/coverage4/filtered0/asc0/relation_deg3_file/res_inphapProbs/pw_9_10.csv.gz"
-    res_secf=fold+"hmm_numba_incorrect_roh_i1_i1_insteadOf_i1_i2/contam0/inbred0/run1/coverage4/filtered0/asc0/relation_gr_file/res_inphapProbs/pw_9_10.csv.gz"
-    res_pcf=fold+"hmm_numba_incorrect_roh_i1_i1_insteadOf_i1_i2/contam0/inbred0/run1/coverage4/filtered0/asc0/relation_pc_file/res_inphapProbs/pw_9_10.csv.gz"
-    res_sibf=fold+"hmm_numba_incorrect_roh_i1_i1_insteadOf_i1_i2/contam0/inbred0/run1/coverage4/filtered0/asc0/relation_sib_file/res_inphapProbs/pw_9_10.csv.gz"
-    res_idf=fold+"hmm_numba_incorrect_roh_i1_i1_insteadOf_i1_i2/contam0/inbred0/run1/coverage4/filtered0/asc0/relation_id_file/res_inphapProbs/pw_9_10.csv.gz"
+    res_unf=fold+"hmm_numba_corrA_relSim_fast_theoretical_sib_grA/contam0/inbred0/run1/coverage4/filtered0/asc0/relation_un_file/res_inphapProbs/pw_9_10.csv.gz"
+    res_deg3f=fold+"hmm_numba_corrA_relSim_fast_theoretical_sib_grA/contam0/inbred0/run1/coverage4/filtered0/asc0/relation_deg3_file/res_inphapProbs/pw_9_10.csv.gz"
+    res_secf=fold+"hmm_numba_corrA_relSim_fast_theoretical_sib_grA/contam0/inbred0/run1/coverage4/filtered0/asc0/relation_gr_file/res_inphapProbs/pw_9_10.csv.gz"
+    res_pcf=fold+"hmm_numba_corrA_relSim_fast_theoretical_sib_grA/contam0/inbred0/run1/coverage4/filtered0/asc0/relation_pc_file/res_inphapProbs/pw_9_10.csv.gz"
+    res_sibf=fold+"hmm_numba_corrA_relSim_fast_theoretical_sib_grA/contam0/inbred0/run1/coverage4/filtered0/asc0/relation_sib_file/res_inphapProbs/pw_9_10.csv.gz"
+    res_idf=fold+"hmm_numba_corrA_relSim_fast_theoretical_sib_grA/contam0/inbred0/run1/coverage4/filtered0/asc0/relation_id_file/res_inphapProbs/pw_9_10.csv.gz"
 
     res_un=np.loadtxt(res_unf, dtype='float', delimiter = ",")
     res_deg3=np.loadtxt(res_deg3f, dtype='float', delimiter = ",")
@@ -229,7 +229,7 @@ def all_manipulation(t1):
 def cutoff_plotf(a,cnt,inb,hmmfold,outfold):
 
     models=["allLikelihoods.withdeg3_inphapProbs","allLikelihoods.nodeg3_inphapProbs","read_inppshap"]
-    covs=[4,0.5,0.2,0.1]
+    covs=[4,0.2,0.1,0.05]
     outf=outfold+"contam%s_inbred%s_model_performance_allroc_asc%s.csv.gz" %(cnt,inb,a)
 
 
@@ -256,7 +256,7 @@ def cutoff_plotf(a,cnt,inb,hmmfold,outfold):
                 elif model1.split('_')[0]=="read":
                     un_flag=0
                     model=model1
-                    table=hmmfold+"roc/contam%s/inbred%s/model_performance_%s/coverage%s/asc%s/filtered0_cut%s.csv.gz" %(cnt,inb,model,cov,a,ct)
+                    table=hmmfold+"rocNo3deg/contam%s/inbred%s/model_performance_%s/coverage%s/asc%s/filtered0_cut%s.csv.gz" %(cnt,inb,model,cov,a,ct)
 
                 t= pd.read_csv(table, sep=",", header=0,index_col=0)
                 t=all_manipulation(t)
@@ -336,7 +336,7 @@ def cutoff_plotf(a,cnt,inb,hmmfold,outfold):
 def comparison_table(a,cnt,inb,hmmfold):
 
     models=["allLikelihoods.withdeg3_inphapProbs","allLikelihoods.nodeg3_inphapProbs","read_inppshap"]
-    covs=[4,0.5,0.2,0.1]
+    covs=[4,0.2,0.1,0.05]
     #outf=outfold+"contam%s_inbred%s_model_performance_allroc_asc%s.csv.gz" %(cnt,inb,a)
 
 
@@ -363,7 +363,7 @@ def comparison_table(a,cnt,inb,hmmfold):
             elif model1.split('_')[0]=="read":
                 un_flag=0
                 model=model1
-                table=hmmfold+"roc/contam%s/inbred%s/model_performance_%s/coverage%s/asc%s/filtered0_cut%s.csv.gz" %(cnt,inb,model,cov,a,ct)
+                table="/mnt/diversity/divyaratan_popli/100arc/inbreeding/fastsim_gz_highDiversity/hmm_numba_corrA_relSim_fast_theoretical_sib_grA/rocNo3deg/contam%s/inbred%s/model_performance_%s/coverage%s/asc%s/filtered0_cut%s.csv.gz" %(cnt,inb,model,cov,a,ct)
 
             t= pd.read_csv(table, sep=",", header=0,index_col=0)
             t=all_manipulation(t)

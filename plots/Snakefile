@@ -1,9 +1,9 @@
 from plot_script import ROH_plotf, IBD_plotf, cutoff_plotf, comparison_table, comparison_plotf
 
-infold="/mnt/diversity/divyaratan_popli/100arc/inbreeding/fastsim_gz/"
+infold="/mnt/diversity/divyaratan_popli/100arc/inbreeding/fastsim_gz_highDiversity/"
 plotdata="./plotdata/"
 plotimg="./plotimg/"
-hmmfold="/mnt/diversity/divyaratan_popli/100arc/inbreeding/fastsim_gz/hmm_numba_incorrect_roh_i1_i1_insteadOf_i1_i2/"
+hmmfold="/mnt/diversity/divyaratan_popli/100arc/inbreeding/fastsim_gz_highDiversity/hmm_numba_id_corr/"
 Chagfold="/mnt/diversity/divyaratan_popli/100arc/inbreeding/laurits_writeup/Ch9_rem/neavar/newSim_ibd/"
 
 #hmmdeg3="hmm_numba_incorrect_roh_i1_i1_insteadOf_i1_i2/rocNo3deg/"
