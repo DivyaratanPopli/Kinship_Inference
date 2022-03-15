@@ -256,7 +256,7 @@ def cutoff_plotf(a,cnt,inb,hmmfold,outfold):
                 elif model1.split('_')[0]=="read":
                     un_flag=0
                     model=model1
-                    table=hmmfold+"rocNo3deg/contam%s/inbred%s/model_performance_%s/coverage%s/asc%s/filtered0_cut%s.csv.gz" %(cnt,inb,model,cov,a,ct)
+                    table="/mnt/diversity/divyaratan_popli/100arc/inbreeding/fastsim_gz_highDiversity/hmm_numba_corrA_relSim_fast_theoretical_sib_grA/rocNo3deg/contam%s/inbred%s/model_performance_%s/coverage%s/asc%s/filtered0_cut%s.csv.gz" %(cnt,inb,model,cov,a,ct)
 
                 t= pd.read_csv(table, sep=",", header=0,index_col=0)
                 t=all_manipulation(t)
