@@ -14,6 +14,8 @@ singlelinecheck=false
 \usepackage{graphicx}
 \usepackage{csvsimple}
 \usepackage[section]{placeins}
+\usepackage{lineno}
+\linenumbers
 
 \title{Method to infer relatedness using low coverage ancient DNA}
 \author{Divya Ratan Popli, Benjamin M. Peter}
@@ -119,7 +121,7 @@ We compute the complete data likelihood for the HMM:
 &= \sum_w \log P(D_w|Z_w,H_w, \theta) + \sum_w \log P(Z_w |Z_{w-1},\theta) + \log P(Z_0|\theta)
 \end{align}
 
-\subsection{Emission probability}
+\subsubsection{Emission probability}
 Using this set up, we can isolate the emissions $P(D_w | Z_w, H_w ,\theta)$ from equation \ref{eq:1} and optimize them alone. The number of shared sites $N_w$ is the only parameter in $\theta$ that affects the emissions. 
 
 Assuming sites are equally distributed and independent would result in the binomial likelihood:
@@ -155,7 +157,7 @@ P(D_{w}|p_i,\delta_i,N_w) &\sim BB[D_w; N_w, p_i, \delta_i] \nonumber\\
 
 This parameterization of the beta distribution in terms of expected value $p$ and overdispersion $\delta$ is also called the Balding-Nichols-model \cite{balding_method_nodate}, and is distinct from the more common parametrization in terms of $\alpha$ and $\beta$. It is worth mentioning here that $D_w$ is estimated as a sum of probabilities (see section XX), while both $D_w$ and $N_w$ may undergo contamination correction, which causes these estimates to be non-integral. We calculate factorials required in Beta Binomial likelihood with Gamma function, which is continuous and hence does not require integral values.   
 
-\subsection{Estimation}
+\subsubsection{Estimation}
 
 
 Emission probabilities are estimated with Expectation-Maximization (EM) algorithm. In each iteration of the algorithm, the Expectation step involves forward-backward algorithm to calculate $P(D, Z| H, \theta, \delta)$. 
@@ -209,13 +211,13 @@ We constrain $\delta$ such that  the variance is less than a threshold T:
 
 We choose T for each beta distribution such that the distributions do not overlap much.
 
-\subsection{Relatedness cases}
+\subsubsection{Relatedness cases}
 We run our model for the following relatedness cases: Unrelated, $5^{th}$ Degree, $4^{th}$ Degree, $3^{th}$ Degree, Grandparent-Grandchild, Avuncular, Half-siblings, Parent-Child, Siblings, Identical.
 We estimated the transition matrix corresponding to each relatedness case using simulations (see section XX). While testing KIN on simulations, we found that classification performance for $4^{th}$ and $5^{th}$ degree relatives is poor, and we have low power to distinguish them from unrelated pairs of individuals. However, we would like to classify 4-th and 5-th degree relatives as unrelated, and so we include these cases in the algorithm. Similarly, we observe that we have low power to differentiate between half-siblings, avuncular and grandparent-grandchild, and we merge these classifications as $2^{nd}$ degree in the final results. We report the final pairwise classification in the following categories: Unrelated, Third Degree, Second Degree, Parent-Child, Siblings, Identical individuals. We output the relatedness corresponding to the maximum likelihood model, and the confidence as given by the log likelihood ratio between the two highest likelihood models.  
 
 Hidden IBD state of each window ($Z_w$) is estimated using standard Viterbi algorithm, and $\BZ$ corresponding to the most likely model are returned. 
 
-\subsection{ROH estimation model}
+\subsubsection{ROH estimation model}
 Our HMM to detect ROH tracts works similar to the relatedness model described above, but we only consider one individual at a time, and only positions covered by at least two reads. For each site, we calculate the proportion of reads that carry different alleles, and sum them up in windows along the genome. We call the vector with the number of differences $\mathbf{\Delta}$, and the vector with the number of sites with at least two reads $\mathbf{N}$.   Our model has two possible hidden states: homozygous (state $3$), and non homozygous (state $2$). As above, we collect the hidden states in a vector $\mathbf{Y} = (Y_1, \dots Y_w, \dots, Y_L)$. The complete data likelihood for the model in this case is then:
 
 \begin{align}\label{eq:10}
@@ -234,7 +236,7 @@ where $P(\Delta_w|\eta_{i},p_{i})$ is a beta-binomial probability given by eq. \
 
 While testing this method on low coverage data, we observed that some pair of individuals may have few sites in each window, resulting in the proportion of differences to become close to 0 or 1. This may result in a high variance, and can potentially influence our estimation of $\eta$. To avoid the estimated Beta distributions from flattening to fit this high variance data, we set $Y_w=0$ for windows with high differences (fig. S\ref{figS5:ROHforced}). Finally, to estimate transitions, we initialize the transition matrix with 0.2 for the off-diagonal entries, and update it using the standard Baum-Welch update step \cite{baum_maximization_1970}. 
 
-\subsection{Contamination}
+\subsubsection{Contamination}
 Contamination by present-day people is a common feature in ancient DNA \cite{peyregne_present-day_2020}. Even low levels of contamination may make samples look less similar, and thus distort relatedness analyses. This issue is particularly pronounced  when analyzing populations with low diversity, where even $<5\%$ contamination can cause loss of power to detect family relations (Skov et al.,2022 (in press)). To address this issue, we develop a heuristic that adjusts both $D_w$ and $N_w$ to remove contamination from the data.
 
 We conceptualize contamination in the following way. If data from individual $i$ has a known contamination rate of $C_i$, this means that any particular read drawn from this individual will actually come from that individual with probability $1-C_i$. With probability $C_i$ the read comes from a contaminant. Thus, when comparing two individuals $i$ and $j$, there are three possible cases: First, with probability $(1-C_i)(1-C_j)$, we compare endogenous reads, which we can use to infer relatedness. With probability $C_i(1-C_j) + C_j(1-C_i)$ we compare an endogenous read from an individual with a contaminant read from the other individual. Finally, with probability $C_iC_j$ we compare contaminant reads from both the samples. If we make the simplifying assumption that both $C_i$ and $C_j$ are small, the terms of the order of $C^2$ can be ignored. Then, we compare contaminant read to endogenous read with the probability $C_{ij} = C_i + C_j$.
@@ -245,7 +247,7 @@ Our goal then, is to estimate an expectation of differences from comparison of e
     P(c=0|d=1) &= \frac{P(d=1|c=0)P(c=0)}{P(d=1)} \nonumber\\
 \end{align}
 
-Here, $P(d=1|c=0)$, referred afterwards to as $\rho_{ij}$ for simplicity, is equivalent to the proportion of differences when we compare endogenous reads from individuals $i$ and $j$. This can be estimated by considering that proportion of pairwise differences ($\frac{\sum_w D_w}{\sum_w N_w}$), referred to as $o_{ij}$ afterwards, can be expressed as a sum of proportion of differences between endogenous reads and that between endogenous and contaminant reads \cite{peyregne_present-day_2020}. 
+Here, $P(d=1|c=0)$, referred later to as $\rho_{ij}$ for simplicity, is equivalent to the proportion of differences when we compare endogenous reads from individuals $i$ and $j$. This can be estimated by considering that proportion of pairwise differences ($\frac{\sum_w D_w}{\sum_w N_w}$), referred to as $o_{ij}$ later, can be expressed as a sum of proportion of differences between endogenous reads and that between endogenous and contaminant reads \cite{peyregne_present-day_2020}. 
 \begin{align}\label{eq:13}
     o_{i,j} = (1-C_{ij}) \rho_{ij} + C_{ij} \phi \nonumber\\
     or, \rho_{ij} = \frac{o_{ij} - C_{ij} \phi} {1 - C_{ij}}
@@ -383,16 +385,18 @@ This model outputs the contamination-corrected number of differences and overlap
 
 \subsection{Simulations}
 
-We use simulations both for estimating the transition matrices for all our models, and for testing and validating our algorithm. All simulations are performed using \textt{msprime} \cite{kelleher_efficient_2016}, followed by formation of related individuals using a predetermined pedigree (Figure S\ref{figS10:pedigree}).
+We use simulations both for estimating the transition matrices for all relatedness cases, and for testing and validating our algorithm. All simulations are performed by simulating unrelated individuals using \textt{msprime} \cite{kelleher_efficient_2016}, followed by an additional step where we simulate related individuals using a predetermined pedigree (Figure S\ref{figS10:pedigree}).
 
 \paragraph{Simulations for estimation of transition matrix}
 
-For our simulations of background diversity, we formed a haploid population (Pop1) with constant effective size of 10,000 and, sampled 16 haploids from 2500 generations ago to randomly combine into 8 unrelated diploid ancient individuals (fig. \ref{figS10:pedigree}). For each individual, we simulated 22 chromosomes with length $L=100$ Mb. The mutation rate was set as $\mu= 10^{-8}$ per base pair per generation and recombination rate used was $r=10^{-8}$ 
+For our simulations of background diversity, we form a population (Pop1) with constant effective size of 10,000 and sample eight diploid individuals (each made up of two haploid individuals) from 2500 generations ago  (fig. \ref{figS10:pedigree}). For each individual, we simulate 22 chromosomes with length $L=100$ Mb and a recombination rate of $r=10^{-8}$ per base pair per generation. We introduce mutations using an infinite sites model with rate  $\mu= 10^{-8}$ per base pair per generation. 
 
-For artificially mating two individuals, we simulated a recombined chromosome from each individual to be passed on to the progeny. To simulate a recombined chromosome from a diploid individual, we drew the number of recombination points from a Poisson distribution with parameter $rL$ as the recombination rate, and used a uniform distribution to sample the positions of recombination points. We estimated transition matrices corresponding to different cases of relatedness by counting transition between IBD states for a pair of  individuals at a particular relatedness level. We compared the transition matrices for grandparent-grandchild and siblings estimated in this way to a theoretical calculation, and verified that they are very close. However, it is difficult to theoretically calculate transition matrices for other cases like third degree, and so for these cases we use the transition matrices obtained from simulations.
+For the pedigree simulations, we first simulate a recombined set of chromosomes for either parent, and combine them to create the progeny. We simulate recombination by first drawing the number of breakpoints as a  Poisson random variable with parameter $rL$, and use a uniform distribution on $[1, L]$ to sample the positions of recombination points. 
 
-\paragraph{Model Comparison}
-A model with maximum likelihood is reported, and log likelihood ratio is calculated with the two highest likelihood models. 
+\paragraph{Estimating transition matrices}
+KIn requires a transition matrix for each relatedness case. For the simplest cases like grandparent-grandchild and siblings, it is possible to calculate the transition matrix from first principles, but for most cases this is difficult  because the relatedness cases include multiple cases, or they are non-Markovian, and so  and so for these cases we obtain transition matrices from our simulations.
+
+For each relatedness case, we estimate the transition matrix  by counting the transition between IBD states for all pairs of individuals at that relatedness level in a training set of XX simulations.
 
 Apart from the related and unrelated individuals in Pop1, we simulated more haploids in three other populations to create scenarios with ascertainment and contamination (fig. \ref{figS10:pedigree}). We simulated two haploids to form an individual each from two other populations (Pop2, Pop3) with split time of 3500 and 4500 generations with Pop1, and sampling time of 4000 generations and 2000 generations ago respectively. We identified the sites that were polymorphic among these two individuals, and used these sites to ascertain the genomes of individuals from Pop1. We test out the performance of our method in presence of long ROH ($\sim17\%$), by simulating regions of homozygosity with a Markov chain using transition matrix shown below: 
 
@@ -414,20 +418,23 @@ From the steps described above, we got genotypes of 17 individuals in Pop1 in pr
 
 \section{Results}
 
-We predict the following categories of relatedness with KIN: Identical individuals (twins), First degree (parent-child), First degree (siblings), Second degree, Third degree, Unrelated (including higher than third degree relatives). We show the output of different Relatedness HMMs in Fig.\ref{fig1:ibd}, when they are applied to a pair of siblings.
+
+
+\paragraph{Motivating Example}
+We predict different categories of relatedness with KIN, and test it's performance on simulated pedigrees. We use these simulations to find the limits of our method, and compare it to READ, a widely used method. We introduce cases of contamination, ascertainment, low coverages, and ROH to compare the two methods. Finally we apply KIN to published data and show that it can give reliable information about genetic kinship, that may not be available from other available methods. We show the output of different Relatedness HMMs in Fig.\ref{fig1:ibd}, when they are applied to a pair of siblings.
 
 \begin{figure}[h!]
     \includegraphics[width=16cm]{plots/plotimg/IBDplot.png}
     \centering
-    \caption{Comparison of IBD fragments predicted by different relatedness models. Top panel shows the proportion of differences in each window along the genome for a pair of simulated siblings. Dashed lines in this panel represent $p_0$, $p_1$ and $p_2$ estimates. The panel just below shows the true IBD state for each window. Each panel below shows the IBD states predicted by a particular relatedness model. The log likelihood value for each model is shown on upper left corner of the panel. }
+    \caption{\textbf{Comparison of pairwise difference data  and inferred IBD fragments}:  The top panel shows the proportion of differences in each window along the genome for a pair of simulated siblings. Dashed lines represent $p_0$, $p_1$ and $p_2$ estimates. The second panel shows the true IBD state for each window. The remaining panels show the IBD states predicted by particular relatedness models. The log likelihood value for each model is shown on upper left corner of the panel. Light and shaded background represent distinct chromosomes.}
     \label{fig1:ibd}
 \end{figure}
 
+We see that in this case, the siblings model predictions match true IBD states the most, as reflected by the highest log-likelihood, and the close match between the estimated and true IBD states. 
 
-We see that in this case, the siblings model predictions match true IBD states the most. This is reflected in the log likelihoods values (LL) of the models as well, where siblings model has the highest value. We take a log likelihood ratio ($\Lambda$) of the two most likely models to get a confidence in the relatedness estimate (in this case $\Lambda$ = 22.48). All the models in Fig.\ref{fig1:ibd} utilize information about ROH given by the ROH-HMM. 
-
-
-Performance of ROH-HMM under different cases of ascertainment, contamination and long ROH, and for different coverages is shown in Fig.\ref{fig2:ROH}. We observe that as coverage decreases, data becomes more noisy. This causes ROH HMM to predict some probability of ROH in few windows when there is no ROH in data. However, at 4x and 0.5x, this is very rare. In presence of ROH, we see a similar trend. At 4x the model can estimate ROH probability well, but loses accuracy at 0.2x. In presence of ascertainment, overlapping sites are reduced, but they are informative. We see that the model performs well at 0.5x. New plot for contamination to be included. We applied the ROH-HMM and relatedness HMM on 60 runs of simulations, to get relatedness estimates, and compared the final relatedness estimates to the true relatedness for different pairs at coverages ranging from 4x to 0.1x. 
+\paragraph{Evaluating the ROH detection}
+We applied the ROH-HMM and relatedness HMM on 60 runs of simulations, to get relatedness estimates, and compared the final relatedness estimates to the true relatedness for different pairs at coverages ranging from 4x to 0.05x. 
+Performance of ROH-HMM under scenarios of ascertainment bias, contamination and long ROH (described in section Simulations), and for different coverages is shown in Fig.\ref{fig2:ROH}. We observe that as coverage decreases, the raw heterozygosity estimates become more noisy. In the case of no ROH in the data (Fig \ref{fig2:ROH}A, we correctly infer that there is no ROH for coverage of 0.2x and 4x, but at the lowest coverage of 0.1x there are few regions where we erroneously call some ROH. In all three scenarios with ROH ((Fig \ref{fig2:ROH}), the model prediction deviates from the true ROH probability by 8-12 \%) for the three coverages. Hence, we do not see any large adverse effects of ascertainment bias and contamination on the performance of ROH HMM.
 
 \begin{figure}[h!]
     \includegraphics[width=16cm]{plots/inkscape_finalImg/ROHplot.png}
@@ -436,8 +443,8 @@ Performance of ROH-HMM under different cases of ascertainment, contamination and
     \label{fig2:ROH}
 \end{figure}
 
-
-We plotted the true positive and false positive rates with a cutoff on the log likelihood ratio in Fig.\ref{fig3:cutoff}. Here, and in Fig.\ref{fig4:Comparison_READ_KIN}, we have two relatedness labels: 'Unrelated' and 'Unrelated w/o 3rd Degree'. Unrelated label here refers to KIN performance results when all Unrelated, Fifth Degree, Fourth Degree, Third Degree pairs are labelled as Unrelated. This is useful for comparison to READ, since READ classifies relatedness up to Second Degree. 'Unrelated w/o $3^{rd}$ Degree' refers to the performance results when Third Degree is considered as separate from the unrelated individuals. Fig.\ref{fig3:cutoff} shows that for Identical, First Degree, Unrelated pairs, the false positive rate is below $5\%$ even when no cut off is used. For second degree, at 0.1x we see a high false positive rate, that does not go down much with an increase in cutoff. For the same relationship, at a coverage of 0.2x, a cutoff of 1 seems appropriate to reduce false positive rate to below $5\%$. Similarly, for siblings at 0.1x, a cutoff of 1 works well to keep false positives low. For parent-child, we find that a cutoff of about 2 is a better choice. Degree 3 shows higher false positive rates in general, and we see that only for 4x coverage and a cutoff of 2, do we see a false positive rate of around $5\%$. In conclusion, it is recommended to use a cutoff of 1 for most cases, with the exception of differentiation between parent-child and siblings, where a cutoff of 2 may be more appropriate, and degree 3 where cutoff of 2 at around 4x coverage seems reasonable. 
+\paragraph{Critical Values}
+The log likelihood-ratio ($\Lambda$) is commonly used in likelihood-ratio tests to compare nested models. However, in our cases, models are not nested, and so standard likelihood-ratio theory does not apply. For this reason, we use the log likelihood ratio between the two best models as a statistic to assess the confidence in our classifications, and use simulations to obtain critical values. We plotted the true positive and false positive rates with a cutoff on the log likelihood ratio in Fig.\ref{fig3:cutoff}. Here, and in Fig.\ref{fig4:Comparison_READ_KIN}, we have two relatedness labels: 'Unrelated' and 'Unrelated w/o 3rd Degree'. Unrelated label here refers to KIN performance results when all Unrelated, Fifth Degree, Fourth Degree, Third Degree pairs are labelled as Unrelated. This is useful for comparison to READ, since READ classifies relatedness up to Second Degree. 'Unrelated w/o $3^{rd}$ Degree' refers to the performance results when $3^{rd}$ Degree is considered as separate from the unrelated individuals. Fig.\ref{fig3:cutoff} shows that for all relatedness cases except for $3^{rd}$ Degree, the false positive rate is below $5\%$ even when no cut off is used. We observe that for $3^{rd}$ Degree relation, using a cutoff of 1 brings down the false positive rate close to $5\%$ for all coverages except 0.05x. In conclusion, it is recommended to use a cutoff of 1 for most cases.
 
 \begin{figure}[h!]
     \includegraphics[width=16cm]{plots/plotimg/contam0_inbred0_model_performance_allroc_asc0_plot.png}
@@ -446,7 +453,7 @@ We plotted the true positive and false positive rates with a cutoff on the log l
     \label{fig3:cutoff}
 \end{figure}
 
-We use a cutoff of 1 to compare our method performance to READ, while using a cutoff of 1 standard deviation for READ. Fig.\ref{fig4:Comparison_READ_KIN} shows this comparison using false positive and true positive rates for both the methods at different coverages under different simulations. We show that both methods have similar performance in the control case (except for 0.1x coverage, where KIN has higher power to detect First Degree and Second Degree, and slightly higher false positive rate for degree 2). However, in case of ascertainment, ROH, or contamination KIN shows higher power to detect relatedness cases while maintaining a low false positive rate. 
+We use a cutoff of 1 to compare our method performance to READ, while using a cutoff of 1 standard deviation for READ. Fig.\ref{fig4:Comparison_READ_KIN} shows this comparison using false positive and true positive rates for both the methods at different coverages under different simulations. We show that both methods have similar performance in the control case, and cases with ROH and ascertainment, except for $2^{nd}$ Degree relation, where KIN has higher power, especially at low coverages. We show that adding contamination adversely affects both the False Positve and True Positive rates corresponding to 1st and 2nd Degree relations for READ, while this has no effect on KIN performance.
 
 \begin{figure}[h!]
     \includegraphics[width=16cm]{plots/plotimg/comparison_plot.png}
@@ -456,7 +463,7 @@ We use a cutoff of 1 to compare our method performance to READ, while using a cu
 \end{figure}
 
 
-To test KIN on real ancient dataset, we applied it to Neandertal specimens from Chagyrskaya cave in Siberia, Russia. This dataset comprised of 14 specimens that came from neighbouring layers, and hence could possibly belong to contemporary Neandertals who occupied the cave 63 ± 4 to 48 ± 3 kya \cite{kolobova_archaeological_2020-1}. These specimens showed low coverage of nuclear genome (ranging from 0.01x to 12.34x), with 8 samples out of 14 showing $<1x$ coverage. Some of these specimens showed signs of long ROH, and contamination from modern humans as well as Hyena. All these samples were captured with an array targeting for variable sites in high coverage Neandertal and Denisovan genomes and common variations in Africans (Laurits et al.,2022), and we further ascertained this data to variable sites in high coverage Neandertal genomes: Altai Neandertal (Denisova 5) \cite{prufer_complete_2014} and Vindija 33.19 \cite{prufer_high-coverage_2017}. This dataset had all the issues that KIN deals with, and hence we decided to apply it here to see if we could find family relationships that would not be possible with other available methods. Our results for pairwise relatedness for these individuals is shown in Fig.\ref{fig5:Chagyrskaya_KIN}. We found identical individuals (Chagyrskaya13-Chagyrskaya19-Chagyrskaya1141), first degree relative (Chagyrskaya07-Chagyrskaya17), and a second degree relative (Chagyrskaya01-Chagyrskaya60). These results agree with READ (fig. S\ref{figS2:Chagyrskaya_READ}). Chagyrskaya06-Chagyrskaya14 were estimated to be First Degree by both the methods (table S1), but have been classified as Identical pair in the original study, since Chagyrskaya06 is a tooth sample that fits in mandible which is Chagyrskaya14. We believe that the contradiction is due to non human contamination present in these libraries ($1\%$ and $2.9\%$ respectively). Interestingly, for the pair of Chagyrskaya07-Chagyrskaya17, READ shows that they are first degree relatives, and KIN further identifies them as parent-child. Our result matches with the conclusions of the authors based on additional information from mtDNA. Further, we find a possible third degree relative (Chagyrskaya07-Chagyrskaya60). We compared our IBD estimates to lcMLKIN for all pairs for whom READ results (with s.d. >1) and KIN results ($\Lambda$>1) match (fig. S\ref{figS6:Chagyrskaya_ibd}). Chagyrskaya06-Chagyrskaya14 is removed from the analysis. We find that lcMLKIN does create four different clusters for different relatedness. However, the clusters are quite deviated from the expected values, which makes it difficult to identify the relatedness. Identical individuals, for example, are expected to be at $k_0 = 0$ and $r = 1$, and Parent-Child at $k_0 = 0$ and $r = 0.5$. These deviations can be due to ascertainment, contamination, ROH as well as low coverage of samples.
+To test KIN on real ancient dataset, we applied it to Neandertal specimens from Chagyrskaya cave in Siberia, Russia. This dataset comprised of 14 specimens that came from neighbouring layers, and hence could possibly belong to contemporary Neandertals who occupied the cave 63 ± 4 to 48 ± 3 kya \cite{kolobova_archaeological_2020-1}. These specimens showed low coverage of nuclear genome (ranging from 0.01x to 12.34x), with 8 samples out of 14 showing $<1x$ coverage. Some of these specimens showed signs of long ROH, and contamination from modern humans as well as Hyena. All these samples were captured with an array targeting for variable sites in high coverage Neandertal and Denisovan genomes and common variations in Africans (Laurits et al.,2022), and we further ascertained this data to variable sites in high coverage Neandertal genomes: Altai Neandertal (Denisova 5) \cite{prufer_complete_2014} and Vindija 33.19 \cite{prufer_high-coverage_2017}. This dataset had all the issues that KIN deals with, and hence we decided to apply it here to see if we could find family relationships that would not be possible with other available methods. Our results for pairwise relatedness for these individuals is shown in Fig.\ref{fig5:Chagyrskaya_KIN}. We found Identical individuals (Chagyrskaya13-Chagyrskaya19-Chagyrskaya1141), $1^{st}$ Degree relative (Chagyrskaya07-Chagyrskaya17), and a $2^{nd}$ Degree relative (Chagyrskaya01-Chagyrskaya60). These results agree with READ (fig. S\ref{figS2:Chagyrskaya_READ}). Both the methods classified Chagyrskaya06-Chagyrskaya14 to be $1^{st}$ Degree relatives with low confidence (table S1), but have been classified as Identical pair in the original study, since Chagyrskaya06 is a tooth sample that fits in mandible which is Chagyrskaya14. We believe that the contradiction is due to non human contamination present in these libraries ($1\%$ and $2.9\%$ respectively). Interestingly, for the pair of Chagyrskaya07-Chagyrskaya17, READ shows that they are first degree relatives, and KIN further identifies them as parent-child. Our result matches with the conclusions of the authors based on additional information from mtDNA. Further, we find a possible $3^{rd}$ degree relative (Chagyrskaya07-Chagyrskaya60). We compared our IBD estimates to lcMLKIN for all pairs for whom READ results (with s.d. >1) and KIN results ($\Lambda$>1) match (fig. S\ref{figS6:Chagyrskaya_ibd}). Chagyrskaya06-Chagyrskaya14 is removed from the analysis. We find that lcMLKIN does create four different clusters for different relatedness. However, the clusters are quite deviated from the expected values, which makes it difficult to identify the relatedness. Identical individuals, for example, are expected to be at $k_0 = 0$ and $r = 1$, and Parent-Child at $k_0 = 0$ and $r = 0.5$. These deviations can be due to ascertainment, contamination, ROH as well as low coverage of samples.
 
 
 
