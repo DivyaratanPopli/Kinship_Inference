@@ -1,0 +1,19 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cores: 1 (use --cores to define parallelism)
+Rules claiming more threads will be scaled down.
+Job counts:
+	count	jobs
+	1	ROHlegend
+	1
+
+[Thu Feb 24 15:07:48 2022]
+rule ROHlegend:
+    input: plotdata/plot_ROH.csv
+    output: inkscape/ROHlegend.png
+    jobid: 0
+
+[Thu Feb 24 15:07:50 2022]
+Finished job 0.
+1 of 1 steps (100%) done
+Complete log: /mnt/diversity/divyaratan_popli/100arc/inbreeding/model_git/plots/.snakemake/log/2022-02-24T150748.153479.snakemake.log

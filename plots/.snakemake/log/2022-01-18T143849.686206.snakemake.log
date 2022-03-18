@@ -1,0 +1,18 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cores: 1 (use --cores to define parallelism)
+Rules claiming more threads will be scaled down.
+Job counts:
+	count	jobs
+	1	IBDplotf
+	1
+
+[Tue Jan 18 14:38:51 2022]
+rule IBDplotf:
+    input: README
+    output: plotdata/plot_IBD.csv
+    jobid: 0
+
+Shutting down, this might take some time.
+Exiting because a job execution failed. Look above for error message
+Complete log: /mnt/diversity/divyaratan_popli/100arc/inbreeding/model_git/plots/.snakemake/log/2022-01-18T143849.686206.snakemake.log

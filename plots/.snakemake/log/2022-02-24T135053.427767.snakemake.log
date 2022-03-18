@@ -1,0 +1,19 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cores: 10
+Rules claiming more threads will be scaled down.
+Job counts:
+	count	jobs
+	1	ROHplotf
+	1
+
+[Thu Feb 24 13:50:54 2022]
+rule ROHplotf:
+    input: README
+    output: plotdata/plot_ROH1.csv
+    jobid: 0
+    resources: mem_mb=1000
+
+Shutting down, this might take some time.
+Exiting because a job execution failed. Look above for error message
+Complete log: /mnt/diversity/divyaratan_popli/100arc/inbreeding/model_git/plots/.snakemake/log/2022-02-24T135053.427767.snakemake.log

@@ -1,0 +1,20 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cores: 1 (use --cores to define parallelism)
+Rules claiming more threads will be scaled down.
+Job counts:
+	count	jobs
+	1	cutoffplot
+	1
+
+[Wed Mar  9 21:10:24 2022]
+rule cutoffplot:
+    input: plotdata/contam0_inbred0_model_performance_allroc_asc0.csv.gz
+    output: plotimg/contam0_inbred0_model_performance_allroc_asc0_plot.png
+    jobid: 0
+    wildcards: cnt=0, inb=0, asc=0
+
+[Wed Mar  9 21:10:26 2022]
+Finished job 0.
+1 of 1 steps (100%) done
+Complete log: /mnt/diversity/divyaratan_popli/100arc/inbreeding/model_git/plots/.snakemake/log/2022-03-09T211023.902038.snakemake.log
