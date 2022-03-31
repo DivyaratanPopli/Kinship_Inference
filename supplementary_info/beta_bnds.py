@@ -658,6 +658,9 @@ def plot_betas(dfile, tfile, pair, thresh, rel, libraries, listf, Afile, pfile, 
         ax[i].hist(diff/total,alpha=0.3,weights=np.ones(len(total)) / len(total))
         ax[i].set_ylim(0,0.4)
 
+    ax[0].set_title('Without Constraint')
+    ax[1].set_title('With Constraint')
+
     ax[1].legend(loc="upper right")
     fig.text(0.5, 0.04, 'Frequency', ha='center')
     fig.text(0.04, 0.5, 'Proportion of differences', va='center', rotation='vertical')

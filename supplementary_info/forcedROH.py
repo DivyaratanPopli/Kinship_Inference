@@ -464,16 +464,19 @@ def plotbetas(dfile, tfile, ind, chrmf, p1file, upA, targets, outplot):
 
         a=betas[0]
         b=betas[1]
-        ax[i].plot(x, beta.pdf(x, a, b)/500,'b-', lw=3, alpha=0.6, label="$Y_w$=0")
+        ax[i].plot(x, beta.pdf(x, a, b)/500,'b-', lw=3, alpha=0.6, label="$Y_w$=3")
 
         a=betas[2]
         b=betas[3]
-        ax[i].plot(x, beta.pdf(x, a, b)/500,'r-', lw=3, alpha=0.6, label="$Y_w$=1")
+        ax[i].plot(x, beta.pdf(x, a, b)/500,'r-', lw=3, alpha=0.6, label="$Y_w$=2")
         ax[i].hist(diff/total,alpha=0.3, weights=np.ones(len(diff)) / len(diff))
 
         ax[i].set_ylim(0,1)
         ax[i].set_xlim(0,0.04)
-        
+
+    ax[0].set_title('Without Constraint')
+    ax[1].set_title('With Constraint')
+
     ax[1].legend(loc="upper right")
     fig.text(0.5, 0.04, 'Proportion of differences', ha='center')
     fig.text(0.04, 0.5, 'Frequency', va='center', rotation='vertical')
