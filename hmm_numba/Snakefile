@@ -25,7 +25,7 @@ folders=["allLikelihoods", "allpostprobs", "read"]
 
 readfolder="/mnt/diversity/divyaratan_popli/100arc/readscripts/"
 datafolder="../"
-paramfolder="/mnt/diversity/divyaratan_popli/100arc/inbreeding/fastsim_gz/corrected_transitions/"
+paramfolder="/mnt/diversity/divyaratan_popli/100arc/inbreeding/sim_relatedA/transitions_combined/"
 hbdfolder="../"
 
 with open(datafolder+"targets.txt") as f:
