@@ -392,7 +392,7 @@ We added $D_w^{'}$ to $S_w^{'}$ to get the corrected number of overlapping sites
 
 
 
-We predict different cases of relatedness with KIN, and test it's performance on simulated pedigrees. We use these simulations to find the limits of KIN, and compare it to READ and lcmlkin CITE, two existing methods. Finally we apply KIN to published data and show that it can give reliable information about genetic kinship.
+We predict different cases of relatedness with KIN, and test it's performance on simulated pedigrees. We use these simulations to find the limits of KIN, and compare it to READ and lcMLkin \cite{lipatov_maximum_2015}, two existing methods. Finally we apply KIN to published data and show that it can give reliable information about genetic kinship.
 
 \paragraph{Motivating Example}
 In Fig.\ref{fig1:ibd} we show the output of different relatedness cases when they are applied to data from a pair of siblings.
@@ -408,17 +408,11 @@ In this case, the siblings-model predictions match true IBD states the most, as 
 
 
 \paragraph{Critical Values}
- To investigate the limits of our method, we plotted the true-positive and false-positive rates when we use a particular difference in log-likelihood as a cutoff( Fig.\ref{fig3:cutoff},  Fig.\ref{fig4:Comparison_READ_KIN}).   Fig.\ref{fig3:cutoff} shows that for all relatedness cases except for $3^{rd}$-degree, the false positive rate is below $5\%$ even when simply selecting the model with the highest likelihood. We observe that for $3^{rd}$-degree relatives, using a cutoff of 1.0 brings down the false positive rate close to $5\%$ for all coverages except 0.05x. Thus, we  recommended to use a cutoff of 1 for all cases where ROH or contamination are not a concern.
+ To investigate the limits of our method, we plotted the true-positive and false-positive rates when we use a particular difference in log-likelihood as a cutoff( Fig.\ref{figS10:cutoff},  Fig.\ref{fig4:Comparison_READ_KIN}).   Fig.\ref{figS10:cutoff} shows that for all relatedness cases except for $3^{rd}$-degree, the false positive rate is below $5\%$ even when simply selecting the model with the highest likelihood. We observe that for $3^{rd}$-degree relatives, using a cutoff of 1.0 brings down the false positive rate close to $5\%$ for all coverages except 0.05x. Thus, we  recommended to use a cutoff of 1 for all cases where ROH or contamination are not a concern.
 
-\begin{figure}[h!]
-    \includegraphics[width=16cm]{plots/plotimg/contam0_inbred0_model_performance_allroc_asc0_plot.png}
-    \centering
-    \caption{False positive and True Positive rates as a function of cutoff on log likelihood ratio. In top panel, dotted line represents $5\%$. Unrelated label here refers to KIN performance results when all Unrelated, Fifth Degree, Fourth Degree, Third Degree pairs are labelled as Unrelated. 'Unrelated w/o $3^{rd}$ Degree' refers to the performance results when $3^{rd}$ Degree is classified separately from the unrelated individuals.}
-    \label{fig3:cutoff}
-\end{figure}
 
 \paragraph{Evaluating the ROH detection}
-We next evaluate the performance of the ROH-HMM( Fig.\ref{fig2:ROH}). We observe that as coverage decreases, the raw heterozygosity estimates become more noisy. In the case without ROH (Fig \ref{fig2:ROH}A), we correctly infer that there is no ROH for all but two windows. We observe that the model predicts ROH probabilities well in all cases, even at a coverage of 0.1 \ref{tab:Table 2}. 
+We next evaluate the performance of the ROH-HMM( Fig.\ref{fig2:ROH}). We observe that as coverage decreases, the raw heterozygosity estimates become more noisy. In the case without ROH (Fig \ref{fig2:ROH}A), we correctly infer that there is no ROH for all but two windows. We observe that the model predicts ROH probabilities well in all cases, even at a coverage of 0.1x \ref{tab:Table 2}. 
 
 
 \begin{figure}[h!]
@@ -429,7 +423,7 @@ We next evaluate the performance of the ROH-HMM( Fig.\ref{fig2:ROH}). We observe
 \end{figure}
 
 \paragraph{Comparing KIN-HMM with READ}
-In Figure Fig. \ref{fig4:Comparison_READ_KIN}, we compare the classification accuracy of KIN (cutoff: 1 log-likelihood unit) to that of READ (cutoff: 1 standard deviation)  under four different simulation scenarios. We show that both methods have similar performance for low-coverage shotgun data (``control''-case),  except for $2^{nd}$-degree relatives, where KIN has higher power, especially at low coverages. We show that adding contamination adversely affects both the False Positve and True Positive rates corresponding to 1st and 2nd Degree relations for READ, while this has no effect on KIN performance. Unrelated label here refers to KIN performance results when all Unrelated, Fifth Degree, Fourth Degree, Third Degree pairs are labelled as Unrelated. 'Unrelated w/o $3^{rd}$ Degree' refers to the performance results when $3^{rd}$ Degree is classified separately from the unrelated individuals.
+In Figure Fig. \ref{fig4:Comparison_READ_KIN}, we compare the classification accuracy of KIN (cutoff: 1 log-likelihood unit) to that of READ (cutoff: 1 standard deviation)  under four different simulation scenarios. We show that both methods have similar performance for low-coverage shotgun data (``control''-case),  except for $2^{nd}$-degree relatives, where KIN has higher power, especially at low coverages. We show that adding contamination adversely affects both the False Positve and True Positive rates corresponding to 1st and 2nd Degree relations for READ, while this does not affect KIN performance too much.
 
 \begin{figure}[h!]
     \includegraphics[width=16cm]{plots/plotimg/comparison_plot.png}
@@ -439,13 +433,13 @@ In Figure Fig. \ref{fig4:Comparison_READ_KIN}, we compare the classification acc
 \end{figure}
 
 \paragraph{Evaluating IBD prediction}
-KIN-HMM co-estimates IBD states and relatedness, and hence it has a higher power to classify $2^{nd}$ Degree relatives, and can distinguish between Siblings and Parent-Child. We investigate our limit to predict IBD states along the genome by calculating the number of genomic windows where we correctly  predict IBD state for a pair of individuals. We calculate mean and standard deviation for this accuracy over 60 simulations of a pedigree (see section \ref{simulat}). Fig. shows that in the control case we can predict IBD states very well at high coverages, and our accuracy decreases with downsampling.
+KIN-HMM co-estimates IBD states and relatedness, and hence it has a higher power to classify $2^{nd}$ Degree relatives, and can distinguish between Siblings and Parent-Child. We investigate our limit to predict IBD states along the genome by calculating the number of genomic windows where we correctly  predict IBD state for a pair of individuals. We calculate mean and standard deviation for this accuracy over 60 simulations of a pedigree (see section \ref{simulat}). Fig. shows that we can predict IBD states for Unrelated $3^{rd}$ Degree, $2^nd Degree$, and Sibling pairs very well at high coverages, and our accuracy decreases with downsampling. On the other hand, our accuracy measure for Identical individuals and Parent-Child remains very high, due to robust relatedness estimates for these cases even at 0.03 x.  
 
 
 \begin{figure}[h!]
-    \includegraphics[width=16cm]{plots/plotimg/}
+    \includegraphics[width=16cm]{plots/plotimg/plot_IBDaccuracy.png}
     \centering
-    \caption{Comparison of KIN with READ using simulations with different coverages, and different cases of ascertainment, contamination and ROH. Unrelated label here refers to KIN performance results when all Unrelated, Fifth Degree, Fourth Degree, Third Degree pairs are labelled as Unrelated. 'Unrelated w/o $3^{rd}$ Degree' refers to the performance results when $3^{rd}$ Degree is classified separately from the unrelated individuals.}
+    \caption{Evaluation of IBD estimation at different coverages. y-axis shows accuracy calculated over 60 simulations with each relatedness case and six different coverages shown on x-axis. The error bars are drawn at 1 standard deviation from the mean.}
     \label{fig4:Comparison_READ_KIN}
 \end{figure}
 
@@ -613,6 +607,14 @@ We run simulations with different cases referred to as control (with no ROH, con
     \caption{Comparison of Beta distributions estimated with ROH-HMM (left) without and (right) with constrained emissions. The histogram in each plot shows pairwise differences in genomic windows. Colored lines shows the Beta probability distribution for each homozygosity state $Y_w$.}
     \label{figS5:ROHforced}
 \end{figure}
+
+\begin{figure}[h!]
+    \includegraphics[width=16cm]{plots/plotimg/contam0_inbred0_model_performance_allroc_asc0_plot.png}
+    \centering
+    \caption{False positive and True Positive rates as a function of cutoff on log likelihood ratio. In top panel, dotted line represents $5\%$. Unrelated label here refers to KIN performance results when all Unrelated, Fifth Degree, Fourth Degree, Third Degree pairs are labelled as Unrelated. 'Unrelated w/o $3^{rd}$ Degree' refers to the performance results when $3^{rd}$ Degree is classified separately from the unrelated individuals.}
+    \label{figS10:cutoff}
+\end{figure}
+
 
 *Remember to use updated lcMLKIN in the plot.
 \begin{figure}[h!]
