@@ -1,4 +1,4 @@
-from plot_script import ROH_plotf, IBD_plotf, cutoff_plotf, comparison_table, comparison_plotf
+from plot_script import ROH_plotf, IBD_plotf, cutoff_plotf, comparison_table, comparison_plotf, IBDstates
 
 infold="/mnt/diversity/divyaratan_popli/100arc/inbreeding/fastsim_gz_highDiversity/"
 plotdata="./plotdata/"
@@ -7,6 +7,11 @@ hmmfold="/mnt/diversity/divyaratan_popli/100arc/inbreeding/fastsim_gz_highDivers
 Chagfold="/mnt/diversity/divyaratan_popli/100arc/inbreeding/laurits_writeup/Ch9_rem/neavar/newSim_ibd/"
 
 #hmmdeg3="hmm_numba_incorrect_roh_i1_i1_insteadOf_i1_i2/rocNo3deg/"
+runlist=list(range(1,61))
+list_inds={'un':'0_1','deg5':'8_14','deg4':'1_14','deg3':'1_13','gr':'1_12','hsib':'8_9','avu':'9_12','pc':'1_8','sib':'9_10','id':'0_15'}
+covlist=[4, 0.5, 0.2, 0.1, 0.05, 0.03]
+
+
 rule ROHplotf:
     input:"README"
     output:"plotdata/plot_ROH.csv"
@@ -79,6 +84,23 @@ rule Chagyrskaya:
     script: "Rscripts/kinPlot.R"
 
 
+rule ibd_accuracy:
+    input:
+        ibd_true = expand(infold+'sanity_check/inbred0/run{RID}/coverage4/contam0/asc0/inputMode_hapProbs_fil0/{rel1}_state_all.gz', RID=runlist,rel1=[ elem for elem in list(list_inds.keys()) if elem not in ['un','pc','id','gr']]),
+        ibd_pred = expand(infold+'hmm_numba_viterbi_all_win/contam0/inbred0/run{RID}/coverage{cov}/filtered0/asc0/relation_{rel1}_file/res_inphapProbs/pw_{pair}.csv.gz', RID=runlist,rel1=list(list_inds.keys()), cov=covlist, pair=list(list_inds.values()))
+    output:
+        outf="plotdata/plot_IBDaccuracy.csv"
+    run:
+        IBDstates(fold=infold, outf=output.outf, list_inds=list_inds, runlist=runlist)
+
+rule ibd_accuracy_plot:
+    input:
+        inf="plotdata/plot_IBDaccuracy.csv"
+    output:
+        outf="plotimg/plot_IBDaccuracy.png"
+    script: "Rscripts/IBD_accuracyPlot.R"
+
+
 rule all:
     input:
         o1="plotimg/ROHplot.png",
@@ -86,3 +108,4 @@ rule all:
         o3="plotimg/contam0_inbred0_model_performance_allroc_asc0_plot.png",
         o4="plotimg/comparison_plot.png",
         o5="plotimg/fil0_relatable_plot.png",
+        o6="plotimg/plot_IBDaccuracy.png"

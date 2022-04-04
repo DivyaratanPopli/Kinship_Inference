@@ -478,3 +478,55 @@ def comparison_plotf(hmmfold,outfold):
     outff=outfold+'comparison_plot_data.csv.gz'
     with pd.option_context('display.max_rows', len(dff.index), 'display.max_columns', len(dff.columns)):
                     dff.to_csv(outff, sep=',')
+
+
+
+def IBDstates(fold, outf, list_inds, runlist):
+
+    accuracy=[]
+    cov_all=[]
+    run_all=[]
+    pair_all=[]
+    rel_all=[]
+
+
+    for rel in list(list_inds.keys()):
+        pair=list_inds[rel]
+        for run in runlist:
+
+            if rel=='gr':
+                    rel1='grand'
+            else:
+                rel1=rel
+
+            if rel == 'un':
+                tr=np.ones(220)
+            elif rel == 'pc':
+                tr=np.ones(220)*0.75
+            elif rel == 'id':
+                tr=np.ones(220)*0.5
+            elif not rel in ['un','pc','id']:
+                trf=fold+'sanity_check/inbred0/run%s/coverage4/contam0/asc0/inputMode_hapProbs_fil0/%s_state_all.gz' %(run,rel1)
+                tr=np.loadtxt(trf, dtype='float', delimiter = ",")
+
+            for cov in [4,0.5,0.2,0.1,0.05,0.03]:
+                vname=fold+"hmm_numba_viterbi_all_win/contam0/inbred0/run%s/coverage%s/filtered0/asc0/relation_%s_file/res_inphapProbs/pw_%s.csv.gz" %(run,cov,rel,pair)
+                viterbi=np.loadtxt(vname, dtype='float', delimiter = ",")
+
+                ac=sum(viterbi == tr)/len(viterbi)
+                accuracy.append(ac)
+                rel_all.append(rel)
+                cov_all.append(cov)
+                pair_all.append(pair)
+                run_all.append(run)
+
+    df=pd.DataFrame({
+        'pair': pair_all,
+        'rel': rel_all,
+        'run': run_all,
+        'accuracy': accuracy,
+        'cov': cov_all
+        })
+
+    with pd.option_context('display.max_rows', len(df.index), 'display.max_columns', len(df.columns)):
+                df.to_csv(outf, sep=',',index=False)
