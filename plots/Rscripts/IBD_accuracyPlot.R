@@ -55,7 +55,7 @@ IBD_accuracy_plot <- function(infile,outfile){
     theme(legend.position = "bottom")
 
   ggsave(outfile,
-         width = 10, height = 8, dpi = 150, units = "in", device='png')
+         width = 10, height = 4, dpi = 150, units = "in", device='png')
   }
 
 IBD_accuracy_plot(infile=snakemake@input[["inf"]], outfile=snakemake@output[["outf"]])
