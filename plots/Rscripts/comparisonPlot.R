@@ -46,9 +46,9 @@ comparison_plot <- function(inf,outf){
 
   plot<-ggplot(data=data, aes(x=Coverage, y=classification_proportion, group=interaction(Simulation,Method), color=Simulation, lty=Method))
   plot<-plot+geom_line()
-  plot<- plot + facet_grid(T_F ~ Relatedness, labeller = labeller(T_F = T_F.labs, Relatedness = Relatedness.labs))
+  plot<- plot + facet_grid(T_F ~ Relatedness, labeller = labeller(T_F = T_F.labs, Relatedness = Relatedness.labs), scales="free")
   #plot + geom_hline(yintercept=0.05, linetype="dashed")
-  plot <- plot + geom_hline(data = data.frame(T_F='False_positive'), aes(yintercept = 0.05), linetype = "dotted")
+  plot <- plot + geom_hline(data = data.frame(T_F='False_positive'), aes(yintercept = 0.05), linetype = "dotted", alpha=0.5)
   plot <- plot+ labs(y="Classification Proportions", x = "Coverage")
   plot + theme_bw() + theme(
     strip.background = element_rect(
