@@ -52,7 +52,7 @@ IBD_accuracy_plot <- function(infile,outfile){
     geom_point(size = 1.5)
   f <- f + labs(y="Accuracy", x="Coverage") +
     scale_color_manual(values = colors1, name="Relatedness") + theme_bw() +geom_path(aes(x=cov, y=accuracy, group=rel)) +
-    theme(legend.position = "bottom")
+    theme(legend.position = "bottom", text = element_text(size=20))
 
   ggsave(outfile,
          width = 10, height = 4, dpi = 150, units = "in", device='png')
