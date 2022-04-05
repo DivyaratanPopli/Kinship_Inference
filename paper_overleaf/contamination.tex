@@ -1,0 +1,141 @@
+
+To estimate $\mathbb{E}[D_w^{'}]$, we first need to calculate $P(c=0|d=1)$. Here, $c$ is a binary variable with value $0$ or $1$ denoting that the comparison at a site is between endogenous reads, or between endogenous and contaminant reads respectively. Similarly $d$ is a binary variable taking values 0 and 1 for seeing no difference, or a difference, when comparing the reads at a given site. We can further expand this probability:
+
+\begin{align}\label{eq:12a}
+    P(c=0|d=1) &= \frac{P(d=1|c=0)P(c=0)}{P(d=1)} \nonumber\\
+\end{align}
+
+Here, $P(d=1|c=0)$, referred later to as $\rho_{ij}$ for simplicity, is equivalent to the proportion of differences when we compare endogenous reads from individuals $i$ and $j$. This can be estimated by considering that the proportion of pairwise differences $P(d=1) =\frac{\sum_w D_w}{\sum_w N_w}$, referred to as $o_{ij}$ later, can be expressed as a linear combination of the proportion of differences between endogenous reads and that between endogenous and contaminant reads \cite{peyregne_present-day_2020}. 
+\begin{align}\label{eq:13}
+    o_{i,j} = (1-C_{ij}) \rho_{ij} + C_{ij} \phi \nonumber\\
+    or, \rho_{ij} = \frac{o_{ij} - C_{ij} \phi} {1 - C_{ij}}
+\end{align}
+
+Here, $\phi$ is the probability of seeing a difference when an endogenous read is compared to a contaminant read, and is equivalent to the average sequence divergence between individuals of the target and contaminating populations.
+Given this information, we can rewrite eq. \ref{eq:12a}:
+\begin{align}\label{eq:12}
+    P(c=0|d=1) &= \frac{(1 - C_{ij}) \rho_{ij}}{(1 - C_{ij}) \rho_{ij} + C_{ij} \phi} \nonumber\\
+\end{align}
+We can further write $\mathbb{E}[D_w^{'}]$ as $D_w P(c=0|d=1)$:
+\begin{align}
+    \mathbb{E}[D_w^{'}] &= D_w\frac{(1-C_{ij})\rho_{ij}}{(1-C_{ij}) \rho_{ij} + C_{ij} \phi}\\
+\end{align}
+
+Similarly, we derive $\mathbb{E}[S_w^{'}]$ as the estimate for the number of sites that do not show pairwise differences.
+\begin{align}
+    \mathbb{E}[S_w^{'}] &= (N_w-D_w) P(e=1|d=0) = (N_w - D_w)\frac{(1-\rho_{ij})(1-C_{ij})}{(1-\rho_{ij})(1-C_{ij}) + C_{ij}(1-\phi)}\\
+\end{align}
+
+%adding back the previous versions:
+If we look at one site in the window, we could find either no difference in reads from individuals $i$ and $j$ ($d_s$=0), or a non-zero difference ($0<d_s<=1$). Here $d_s$ is the probability of seeing a difference at site $s$, and $\sum_{s \in w} d_s =D_w$. We ask, what is the    
+
+If we make the simplifying assumption that both $C_i$ and $C_j$ are small, terms of the order of $C^2$ can be ignored and there are just two cases: with probability $C_{i,j} =C_i + C_j$, one of the reads stems from a contaminant, and we effectively compare a contaminant fragment with an endogenous one. The probability that they differ is the average divergence between target and contaminating population, which we denote with $\phi$. The other case (w. p. $(1-C_{i,j}$) is where we compare two endogenous reads, which will differ with probability
+
+\begin{equation}
+    p_{e} = \frac{p_{obs}-\phi C_{i,j}}{1-C_{i,j}}
+\end{equation}
+
+Here, $$p_{obs} = \frac{\sum_w D_w}{\sum_w N_w}$$
+
+
+We estimate $\hat{D_c} = C_{i,j} N_{tot} \phi$ and $\hat{D_e} = (1-C_{i,j}) N_{tot} p_{obs}\phi$.
+If there are $N_{obs}$ overlapping sites in a window, $N_{c} = C_{i,j}N_{obs}$ of them will include a contaminant allele, and $N_e = (1-C_{i,j})N_{obs}$ will be between endogenous alleles.
+
+For KIN, we can use $N_e$ as an input (for each window), but we also need the proportion of differences, $D_e$. For this, we use the assumption that the proportion of sites where the contaminant differs from our samples is 
+
+$$\phi = \frac{D_c}{N_c} = \frac{D_c}{C_{i,j} N_{obs}}, $$
+and thus $D_c = C_{i,j} \phi N_{obs}$. 
+
+We can think of $p_c$ and $\rho$ as empirical likelihoods that a particular site shows a difference between two reads, given that the comparisons contain only endogenous or one contaminant read, respectively. 
+\begin{align}
+    P(E|D) &= \frac{P(D|E)P(E)}{P(D)} \nonumber\\
+    \mathbb{E}[D_e] &= D_{obs} P(E|D) = D_{obs}\frac{p_e (1-c)}{p_e(1-c) + c\rho}\\
+    \mathbb{E}[S_e] &= D_{obs} P(E|\text{not} D) = S_{obs}\frac{(1-p_e)(1-c)}{(1-p_e)(1-c) + c(1-\rho)}
+\end{align}
+
+And for calculating $N_{e}$, we added $D_{e}$ to $S_{e}$    
+
+The goal is that given $C_{i,j}, p_e, \BN and \BD$ to calculate adjusted $\hat{\BN}$ and $\hat{\BD}$ that reflect the endogenous proportion only.
+
+, and the observed proportion of differences between individuals $i$ and $j$ as $p_{oij}$. We calculate average endogenous pairwise difference $p_{eij}$ for individuals i and j as follows \cite{noauthor_ancient_nodate}:
+\begin{align}
+    p_{oij} = C_{ij}  p_c + (1-C_{ij})  p_{eij}\\
+    or, p_{eij} = \frac{p_{oij} - C_{ij}  p_c}{1-C_{ij}} 
+\end{align}
+
+Given $p_{eij}$, we would ideally like to calculate the complete data log likelihood for the relatedness model while summing over all possible differences we could have in a window weighted by the probability of seeing that difference. 
+
+
+
+\paragraph{Short version}
+With contamination, we do not observe the number of differences $D_{true}$ and total number of comparisons $N_{true}$ directly, but instead need to approximate them. The window-subscript is omitted in the following for clarity:
+\begin{equation}
+    P(D_{\text{obs}} | N_\text{obs}, Z, \theta) \approx 
+    P( \hat{D} | \hat{N}, Z, \theta)
+\end{equation}
+We do that by calculating the probability that a single read is endogenous given it has a difference.
+\begin{align}
+    \hat{D} = \mathbb{E}[D | D_{\text{obs}}, c] &= 
+    D_{\text{obs}} P(E_i | D_i=1) \\
+    &= D_\text{obs} \frac{P(D_i=1 | E_i)P(E_i)}{P(D_i=1)}\\
+    &= D_\text{obs} \frac{(1-c)p_e}{(1-c)p_e + c p_c}
+\end{align}
+
+and likewise for reads that do not have a difference
+\begin{align}
+    \hat{S} = \mathbb{E}[S | S_{\text{obs}}, c] &= 
+     S_\text{obs} \frac{(1-c)(1-p_e)}{(1-c)(1-p_e) + c (1-p_c)}
+\end{align}
+
+and $\hat{N} = \hat{S} + \hat{D}$
+
+\begin{equation}
+    P(D_{\text{obs}} | Z, N_\text{obs}, \theta) = \sum_n\sum_d P(D_{\text{obs}}, N_\text{obs} | D_w=d, N_w, C_i, C_j)\underbrace{P(D_w=d | N_w, Z, \theta)}_\text{old likelihood}
+\end{equation}
+
+i.e. we sum over all possible $D_w$, $N_w$. Instead, we use
+
+\begin{align}
+    P(D_{cor},Z|D,H,\theta,c,p_c) &= P(D_{cor}|Z,D,H,\theta,c,p_c) P(Z|D,H,\theta,c,p_c)\nonumber\\
+    &= [\prod_{w} [\sum_\kappa P(D_{cor,w}|Z_w, H_w, \theta,c,p_c) P(D_{cor,w}=\kappa)] \prod_{w} P(Z_w|Z_{w-1}, \theta)] P(Z_0| \theta)
+\end{align}
+
+
+
+We realize that this calculation would be time consuming, and would further complicate the HMM. To avoid this, instead of using weighted sum of all possible $\kappa$, we use $E(D_{cor,w}|Z_w, H_w, \theta,c,p_c)$. This simplifies the equation 21 to :
+
+\begin{align}
+    P(D_{cor},Z|D,H,\theta,c,p_c) &= P(D_{cor}|Z,D,H,\theta,c,p_c) P(Z|D,H,\theta,c,p_c)\nonumber\\
+    &= [\prod_{w} P(E(D_{cor,w})|Z_w, H_w, \theta,c,p_c) \prod_{w} P(Z_w|Z_{w-1}, \theta)] P(Z_0| \theta)
+\end{align}
+
+We calculate $E(D_{cor,w})$ as shown:
+
+\begin{align}
+    E[N_e] + E[N_c] = N\\
+    E[D_e] + E[D_c] = D
+\end{align}
+
+Probability of comparing endogenous reads at a site where we see a difference:
+$$P(\xi | N = 1,D = 1)=\frac{(1-c) p_e}{c p_c + (1-c) p_e} $$
+Probability of comparing endogenous reads at a site where we see no difference:
+$$P(\xi | N = 1,D = 0)=\frac{(1-c)(1-p_e)}{c (1-p_c) + (1-c) (1-p_e)} $$
+Expectation of number of endogenous comparisons in a window:
+\begin{align}
+    E[\xi | N, D] = D E[\xi | N=1, D=1] + (N-D) E[\xi | N=1, D=0]\\
+    = D P(\xi | N=1, D=1) + (N-D) P(\xi | N=1, D=0)
+\end{align}
+
+
+
+Total number of endogenous sites showing a difference in a window: 
+$$D_{cor,w} = D_w* \frac{p_e(1-c)}{p_e(1-c) + c p_c} $$
+Total number of endogenous sites showing 0 difference in a window: 
+$$S_{cor,w} = S_w* \frac{(1-p_e)(1-c)}{(1-p_e)(1-c) + c (1-p_c)} $$
+Total number of endogenous sites in a window:
+$$N_{cor,w} = D_{cor,w} + S_{cor,w}$$
+
+This model outputs the contamination-corrected number of differences and overlapping sites in each window.
+
+
+We added $D_w^{'}$ to $S_w^{'}$ to get the corrected number of overlapping sites $N_w^{'}$  
