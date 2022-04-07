@@ -40,7 +40,7 @@ lcplot <- function(lcres,likf,kinf,outplot){
 
   panel1<-ggplot(data=lc[which(lc$loglik_ratio >=1),], mapping=aes(x=k0_hat, y=r_hat, color=Relatedness)) +
   geom_point() + theme_bw() + labs(x=expression(k["0"]), y= "Coefficient of Relatedness") +
-  scale_color_manual(values = colors1) + ylim(0, 1) +
+  scale_color_manual(values = colors1) + ylim(0, 1) + xlim(0, 1) +
   theme(legend.position = "none")
 
 
@@ -71,12 +71,12 @@ lcplot <- function(lcres,likf,kinf,outplot){
   #alphas <-c("0"=0.01,"1"=1)
   panel2<-ggplot(data=newdf[which(newdf$loglik_ratio >=1),], mapping=aes(x=k0_prop, y=r_prop, color=Relatedness)) +
     geom_point() + theme_bw() + labs(x=expression(k["0"]), y= "Coefficient of Relatedness") +
-    scale_color_manual(values = colors) +  ylim(0, 1) +
+    scale_color_manual(values = colors) +  ylim(0, 1) + xlim(0, 1) +
     #scale_alpha_manual(values = alphas) +
     theme(axis.title.y = element_blank())
 
   plot_grid(panel1,panel2, labels= c("A","B"),
-            ncol=2, rel_widths = c(1,1.25), align = "hv", axis="bt")
+            ncol=2, rel_widths = c(1,1.3), align = "hv", axis="bt")
 
   ggsave(outplot,
          width = 8, height = 5, dpi = 150, units = "in", device='png')
