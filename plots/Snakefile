@@ -60,11 +60,14 @@ rule cutoffplot:
     script:"Rscripts/cutoffPlot.R"
 
 
-rule comparisonplotf:
+rule comparisonplotf_supptable4:
     input:"README"
-    output:"plotdata/comparison_plot_data.csv.gz"
+    output:
+        outf="plotdata/comparison_plot_data.csv.gz",
+        outs="../supplementary_info/tables/supplementary_table4.csv"
+
     run:
-        comparison_plotf(hmmfold=hmmfold,outfold=plotdata)
+        comparison_plotf(hmmfold=hmmfold,outfold=plotdata, outs=output.outs)
 
 rule comparisonplot:
     input:

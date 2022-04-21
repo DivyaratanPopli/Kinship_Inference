@@ -440,7 +440,7 @@ def comparison_table(a,cnt,inb,hmmfold):
 
 
 
-def comparison_plotf(hmmfold,outfold):
+def comparison_plotf(hmmfold,outfold, outs):
     dff=pd.DataFrame(
         columns=['True_positive', 'False_positive', 'Relatedness', 'Coverage', 'method',
            'cutoff', 'Ascertainment', 'Contamination', 'ROH']
@@ -479,6 +479,25 @@ def comparison_plotf(hmmfold,outfold):
     with pd.option_context('display.max_rows', len(dff.index), 'display.max_columns', len(dff.columns)):
                     dff.to_csv(outff, sep=',')
 
+    supf=dff
+    supf.loc[supf['method']=='allLikelihoods_inphapProbs','method']='KIN'
+    supf.loc[supf['method']=='read_inppshap','method']='READ'
+
+    supf.loc[supf['Relatedness']=='un_all','Relatedness']='Unrelated w/o 3rd Degree'
+    supf.loc[supf['Relatedness']=='un_all_withdeg3','Relatedness']='Unrelated'
+    supf.loc[supf['Relatedness']=='deg3','Relatedness']='3rd Degree'
+    supf.loc[supf['Relatedness']=='fir','Relatedness']='1st Degree'
+    supf.loc[supf['Relatedness']=='sec','Relatedness']='2nd Degree'
+    supf.loc[supf['Relatedness']=='id','Relatedness']='Identical'
+    supf.loc[supf['Relatedness']=='pc','Relatedness']='Parent-Child'
+    supf.loc[supf['Relatedness']=='sib','Relatedness']='Siblings'
+
+    supf=supf.drop('contAscRoh', axis=1)
+    supf=supf.drop('cutoff', axis=1)
+    supf.columns=['True_positive', 'False_positive', 'Relatedness', 'Coverage', 'Method','Ascertainment', 'Contamination', 'ROH']
+
+    with pd.option_context('display.max_rows', len(supf.index), 'display.max_columns', len(supf.columns)):
+                    supf.to_csv(outs, sep=',',index=False)
 
 
 def IBDstates(fold, outf, list_inds, runlist):
