@@ -8,9 +8,9 @@ library(readr)
 
 ibd_plot <- function(inf,p1f,outf){
 
-  p1 <- read_file(p1f)
-  p1 <- as.double(gsub("[\r\n]", "", p1))
-
+  #p1 <- read_file(p1f)
+  #p1 <- as.double(gsub("[\r\n]", "", p1))
+  p1=0.021
   p12=p1/2
   p34=p1*3/4
 
@@ -70,7 +70,7 @@ ibd_plot <- function(inf,p1f,outf){
     theme_void() +
     geom_line() + facet_grid(name_f~., scales='free') +
     scale_y_continuous(breaks=c(0.5,0.75,1.0), labels = c("2","1","0")) +theme_bw() + labs(y="IBD state", x = "Windows along the genome") +
-    theme(strip.text = element_text(size = 8), legend.position = "none") +
+    theme(strip.text = element_text(size = 10), legend.position = "none") +
     theme(panel.grid.major = element_blank(),
           panel.grid.minor = element_blank(),
           strip.background = element_blank(),
@@ -97,7 +97,7 @@ ibd_plot <- function(inf,p1f,outf){
     geom_line() + facet_grid(name_f~., scales='free') +
     geom_segment(aes(x=0,xend=220,y=p1,yend=p1),linetype='dotted') + geom_segment(aes(x=0,xend=220,y=p12,yend=p12),linetype='dotted') +
     geom_segment(aes(x=0,xend=220,y=p34,yend=p34),linetype='dotted') +theme_bw()+
-    theme(legend.position = "none", axis.title.x = element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank(), strip.text = element_text(size = 8))+
+    theme(legend.position = "none", axis.title.x = element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank(), strip.text = element_text(size = 10))+
     labs(y=expression(D[w]/N[w])) +
     theme(panel.grid.major = element_blank(),
           panel.grid.minor = element_blank(),
@@ -115,7 +115,7 @@ ibd_plot <- function(inf,p1f,outf){
 
 
   ggsave(outf,
-         width = 8, height = 5, dpi = 150, units = "in", device='png')
+         width = 8, height = 8, dpi = 150, units = "in", device='png')
 }
 
 ibd_plot(inf=snakemake@input[["infile_ibd"]], p1f=snakemake@input[["p1_file"]], outf=snakemake@output[["output_ibd"]])

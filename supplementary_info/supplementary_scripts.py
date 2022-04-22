@@ -1,4 +1,7 @@
 import pandas as pd
+import numpy as np
+
+
 
 def suppTable2(resultsf,kinf,outf2,outf3):
     res = pd.read_excel(resultsf,usecols=(0,1,5,6,7,8,16,17),header=None)

@@ -33,14 +33,14 @@ cutoff_plot <- function(infile,outfile){
 
   plot<-ggplot(data=data, aes(x=cutoff, y=classification_proportion, color=Coverage))
   plot<-plot+geom_line()
-  plot<- plot + facet_grid(T_F ~ Relatedness, labeller = labeller(T_F = T_F.labs, Relatedness = Relatedness.labs))
+  plot<- plot + facet_grid(T_F ~ Relatedness, labeller = labeller(T_F = T_F.labs, Relatedness = Relatedness.labs), scales="free")
   #plot + geom_hline(yintercept=0.05, linetype="dashed")
   plot <- plot + geom_hline(data = data.frame(T_F='False_positive'), aes(yintercept = 0.05), linetype = "dotted")
   plot <- plot+ labs(y="Classification Proportions", x = "Log likelihood Ratio Cutoff")
   plot + theme_bw() + theme(
     strip.background = element_rect(
       color="transparent", fill="transparent", size=1.5, linetype="solid"
-    ), legend.position="bottom", text = element_text(size=10)
+    ), legend.position="bottom", text = element_text(size=12)
   )
   ggsave(outfile, width = 8, height = 5, dpi = 150, units = "in", device='png')
 

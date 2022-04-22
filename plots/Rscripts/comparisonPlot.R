@@ -53,7 +53,7 @@ comparison_plot <- function(inf,outf){
   plot + theme_bw() + theme(
     strip.background = element_rect(
       color="transparent", fill="transparent", size=1.5, linetype="solid"
-    ), legend.position="bottom", text = element_text(size=10)
+    ), legend.position="bottom", text = element_text(size=12), axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)
   )
   ggsave(outf,
          width = 8, height = 5, dpi = 150, units = "in", device='png')
