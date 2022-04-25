@@ -3,7 +3,7 @@ from plot_script import ROH_plotf, IBD_plotf, cutoff_plotf, comparison_table, co
 infold="/mnt/diversity/divyaratan_popli/100arc/inbreeding/fastsim_gz_highDiversity/"
 plotdata="./plotdata/"
 plotimg="./plotimg/"
-hmmfold="/mnt/diversity/divyaratan_popli/100arc/inbreeding/fastsim_gz_highDiversity/hmm_numba_id_corr/"
+hmmfold="/mnt/diversity/divyaratan_popli/100arc/inbreeding/fastsim_gz_highDiversity/hmm_numba_viterbi_all_win/"
 Chagfold="/mnt/diversity/divyaratan_popli/100arc/inbreeding/laurits_writeup/Ch9_rem/neavar/newSim_ibd/"
 
 #hmmdeg3="hmm_numba_incorrect_roh_i1_i1_insteadOf_i1_i2/rocNo3deg/"
