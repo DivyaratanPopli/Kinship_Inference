@@ -9,7 +9,7 @@ paramfolder="/mnt/diversity/divyaratan_popli/100arc/inbreeding/fastsim_gz/transi
 hbdfolder="/mnt/diversity/divyaratan_popli/100arc/inbreeding/fastsim_gz_highDiversity/hbd_hmm/"
 Chagfold="/mnt/diversity/divyaratan_popli/100arc/inbreeding/laurits_writeup/Ch9_rem/neavar/newSim_ibd/"
 lcfold="/mnt/diversity/divyaratan_popli/100arc/inbreeding/laurits_writeup/Ch9_rem/neavar/"
-deg2fold="/mnt/diversity/divyaratan_popli/100arc/inbreeding/fastsim_gz/"
+deg2fold="/mnt/diversity/divyaratan_popli/100arc/inbreeding/fastsim_gz_highDiversity/"
 bronze_age_folder="/mnt/diversity/divyaratan_popli/100arc/inbreeding/bronze_age_newSim/"
 
 inds=list(range(17))
@@ -92,7 +92,7 @@ rule lcMLkin:
 
 rule degree2_plot:
     input:
-        fnames=expand(deg2fold+"hmm_numba_corr_IBD/contam0/inbred0/run{r}/coverage4/filtered0/asc0/IBDstates_allLikelihoods_inphapProbs.csv.gz", r=runlist),
+        fnames=expand(deg2fold+"1M_win/hmm_numba/contam0/inbred0/run{r}/coverage4/filtered0/asc0/IBDstates_allLikelihoods_inphapProbs.csv.gz", r=runlist),
     output:
         outplot="plots/degree2_10Mwin.png",
     script:"Rscripts/degree2_cluster.R"
