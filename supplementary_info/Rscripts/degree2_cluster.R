@@ -36,7 +36,7 @@ deg2_plot <- function(fnames, outplot){
     }
 
 
-  colors <- c("avu" = "red", "hsib" = "blue", "gr" = "green")
+  colors <- c("avu" = "cadetblue3", "hsib" = "blueviolet", "gr" = "chocolate1")
   #alphas <-c("0"=0.01,"1"=1)
 
   ggplot(data=list_all, aes(x=IBD_len, y=IBD_num, color=rel)) +
