@@ -40,7 +40,7 @@ deg2_plot <- function(fnames, outplot){
   #alphas <-c("0"=0.01,"1"=1)
 
   ggplot(data=list_all, aes(x=IBD_len, y=IBD_num, color=rel)) +
-    geom_point(alpha=0.5) + theme_bw() + labs(x="Total length of IBD fragments", y= "Total number of IBD fragments") +
+    geom_point(alpha=0.5) + theme_bw() + labs(x="Total length of IBD fragments (Mb)", y= "Total number of IBD fragments") +
     scale_color_manual("Relatedness",values = colors, labels = c("avu" = "Avuncular", "hsib" = "Half-siblings", "gr" = "Grandparent-Grandchild"))
 
   ggsave(outplot,
