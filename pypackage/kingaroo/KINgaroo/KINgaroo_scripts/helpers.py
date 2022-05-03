@@ -1,0 +1,214 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Tue Apr 26 11:49:28 2022
+
+@author: divyaratan_popli
+"""
+import pysam
+import pandas as pd
+import numpy as np
+import os
+import input_preparation_functions as inp
+import hbd_hmm_functions as hbd
+import subprocess
+import multiprocessing as mp
+import constants as C
+    
+
+def prep_function(targetsfile, splitbams, bedfiles, hapProbs, hmm_param, hbd, lik):
+    
+    with open(targetsfile) as f:
+        libraries = [line.strip() for line in f]
+
+    listf=[]
+    for i, l1 in enumerate(libraries):
+        for l2 in libraries[(i+1):]:
+            s = '%s_%s' %(str(l1).strip("['']"), str(l2).strip("['']"))
+            listf.append(s)
+
+    
+    if not(os.path.isdir(splitbams)):
+        os.mkdir(splitbams)
+    if not(os.path.isdir(bedfiles)):
+        os.mkdir(bedfiles)
+    if not(os.path.isdir(hapProbs)):
+        os.mkdir(hapProbs)
+    if not(os.path.isdir(hmm_param)):
+        os.mkdir(hmm_param)
+    if not(os.path.isdir(hbd)):
+        os.mkdir(hbd) 
+    if not(os.path.isdir(lik)):
+        os.mkdir(lik) 
+    
+    return libraries, listf
+
+def split_bed(bedfile, totalch, bedfiles):
+    bed=pd.read_csv(bedfile, sep="\t", header=None, index_col=False, low_memory=False)
+    for b in totalch:
+        chrm_bed=bed.loc[bed[0].astype(str)==str(b),:]
+        
+        bed_chrmf=bedfiles+'bedfile_chrm%s.bed' %(str(b))
+        with pd.option_context('display.max_rows', len(chrm_bed.index), 'display.max_columns', len(chrm_bed.columns)):
+            chrm_bed.to_csv(bed_chrmf, sep='\t', header=None, index=False)
+
+
+#creating initial indexes:
+def init_index(rawbams, lib):
+    bamf=rawbams + lib + '.bam'
+    print("Indexing %s...\n" %(lib))
+    pysam.index(bamf)
+
+def create_lib_chrm(libraries,totalch):  
+    lib_chrm_all=[]
+    for lib in libraries:       
+        for ch in totalch:
+            lib_chrm_all.append((lib,ch))
+    return lib_chrm_all
+    
+    
+def bam_filter(rawbams, splitbams, bedfiles, hapProbs, lib_chrm):
+    
+    lib=lib_chrm[0]
+    chrm=int(lib_chrm[1])
+    print("sorting and removing duplicates for library %s chromosome %s...\n" %(lib,chrm))
+    bamsplit_chr=splitbams+'%s_chrm%s.bam' %(lib,chrm)
+    
+    bamf=rawbams + lib + '.bam'
+    command = 'samtools view -b %s %s -o %s' %(bamf, chrm, bamsplit_chr)
+    process = subprocess.Popen(command.split(), stdout=subprocess.PIPE)
+    output, error = process.communicate()
+
+    bamsorted=splitbams+'%s_chrm%s.sorted.bam' %(lib,chrm)
+    bamrmdup=splitbams+'%s_chrm%s.sorted.rmdup.bam' %(lib,chrm)
+
+    pysam.sort("-o", bamsorted, bamsplit_chr)
+
+    command = "bam-rmdup %s -r -o %s" %(bamsorted, bamrmdup)
+    process = subprocess.Popen(command.split(), stdout=subprocess.PIPE)
+    output, error = process.communicate()
+    pysam.index(bamrmdup)
+
+    #input file generation
+    bedfile=bedfiles + 'bedfile_chrm%s.bed' %(chrm)
+    baifile=bamrmdup+'.bai'
+    
+    outprob=hapProbs + 'hapProbs_%s_chrm%s_probs.csv' %(lib,chrm)
+    outdiff=hapProbs + 'hapProbs_%s_chrm%s_diffs.csv' %(lib,chrm)
+
+    inp.makeHapProbs(inbam=bamrmdup, inbai=baifile, inbed=bedfile, outprob=outprob, outdiff_id=outdiff)
+
+#getting splitbams for all libs and chrm in parallel
+def parallel_indexes(rawbams, libraries, cores):
+    pool = mp.Pool(cores)
+    [pool.apply_async(init_index, args=(rawbams, lib)) for lib in libraries]
+    pool.close()
+    pool.join()     
+
+
+def parallel_bamfilter(rawbams, splitbams, bedfiles, hapProbs, lib_chrm_all, cores):
+    pool = mp.Pool(cores)
+    [pool.apply_async(bam_filter, args=(rawbams, splitbams, bedfiles, hapProbs, lib_chrm)) for lib_chrm in lib_chrm_all]
+    pool.close()
+    pool.join()       
+
+ 
+def get_merged_chrm(libraries, chrm, interval):  
+    
+    pslist=[("hapProbs/hapProbs_{}_chrm%s_probs.csv" %(chrm)).format(n) for n in libraries]         
+    probs_list, pos_list, chrm_list = inp.hapProbsAll(haplist=pslist, hap='noid') 
+
+    id_diffs =[("hapProbs/hapProbs_{}_chrm%s_diffs.csv" %(chrm)).format(n) for n in libraries] 
+    id_diffs_list= inp.hapProbsAll(haplist=id_diffs, hap='id') 
+    
+    diffs_list = inp.findDiff(inds=probs_list, posall=pos_list)
+    id_diffs_list[id_diffs_list==-9]=np.nan
+    dwins, twins = inp.getWin(df=diffs_list, pos=pos_list,interval=interval)
+    id_dwins, id_twins = inp.getWin(df=id_diffs_list, pos=pos_list,interval=interval)
+    
+    return dwins,twins,id_dwins,id_twins, np.ones(len(twins)) * chrm
+
+def parallel_mergedchrm(libraries, totalch, interval, cores):
+    pool = mp.Pool(cores)
+    res=[pool.apply_async(get_merged_chrm, args=((libraries, chrm, interval))) for chrm in totalch]
+    pool.close()
+    pool.join()   
+    
+    allf = [p.get() for p in res]
+    df0, tf0, id_df0, id_tf0 = allf[0][0], allf[0][1], allf[0][2], allf[0][3]
+    chrmf=allf[0][4].tolist()
+    for i in range(1,len(allf)):
+        df0 = np.concatenate((df0, allf[i][0]), axis=0)
+        tf0 = np.concatenate((tf0, allf[i][1]), axis=0)
+        id_df0 = np.concatenate((id_df0, allf[i][2]), axis=0)
+        id_tf0 = np.concatenate((id_tf0, allf[i][3]), axis=0)
+        chrmf.extend(allf[i][4])
+        
+    return df0, tf0, id_df0, id_tf0, chrmf
+
+
+def divergence_vcf(vcf_file, bedfile, target_ind, contam_ind):
+
+    command = """bcftools view %s -R %s -s %s,%s -U -o intermediate.vcf""" %(vcf_file,bedfile,target_ind,contam_ind)
+    process = subprocess.Popen(command.split(), stdout=subprocess.PIPE)
+    output, error = process.communicate()
+
+    command = "bcftools query -f %CHROM\t%POS[\t%GT]\n intermediate.vcf -o filtered_vcf.txt"
+    process = subprocess.Popen(command.split(' '), stdout=subprocess.PIPE)
+    output, error = process.communicate()
+    
+    divergence= inp.nhFile(alldiff='filtered_vcf.txt')
+    
+    return divergence
+        
+        
+def data2p(divergence, diff_cor, total_cor, id_diff_cor, id_total_cor, libraries, listf, hmm_param, thresh, outdiff, outtotal, id_outdiff, id_outtotal):  
+      
+    rem_wins=inp.getHighDiv(alld=diff_cor, allt=total_cor)
+    diff_cor[rem_wins,:] = 0
+    total_cor[rem_wins,:] = 0
+    
+    id_diff_cor[rem_wins,:] = 0
+    id_total_cor[rem_wins,:] = 0
+    
+    p1=inp.getP(obsd=diff_cor, obst=total_cor, targets=listf,
+        pfile=hmm_param+'p_0.txt',goodpairs='goodpairs.csv',
+        allp=hmm_param+'p_all.csv', overf='overlap.csv',  thresh=thresh)
+    
+    inp.getP(obsd=id_diff_cor, obst=id_total_cor, targets=libraries,
+        pfile=hmm_param + 'p_2.txt',goodpairs='goodlibraries.csv',
+        allp=hmm_param + 'identical_p_all.csv', overf='identical_overlap.csv',  thresh=thresh)
+    
+    np.savetxt(fname=outdiff, X=diff_cor, delimiter=',')
+    np.savetxt(fname=outtotal, X=total_cor, delimiter=',')
+    np.savetxt(fname=id_outdiff, X=id_diff_cor, delimiter=',')
+    np.savetxt(fname=id_outtotal, X=id_total_cor, delimiter=',')
+        
+    return diff_cor, total_cor, id_diff_cor, id_total_cor, p1
+
+  
+def run_hmm(diff, total, chrm1, hbdf, likf, libraries, p1, cores):
+    pool = mp.Pool(cores)
+    [pool.apply_async(hbd.hmm, args=(diff, total, lib, np.array(chrm1), p1,
+                    hbdf + 'pw_%s.csv' %(lib), likf + 'pw_%s.txt' %(lib), libraries)) for lib in libraries]
+    pool.close()
+    pool.join()
+
+
+def pipeline1(targetsfile, bedfile, cores, rawbams, interval):
+    
+    libraries, listf = prep_function(targetsfile, C.splitbams, C.bedfiles, C.hapProbs, C.hmm_param, C.hbdf, C.likf)
+    
+    split_bed(bedfile=bedfile, totalch=C.CHRM, bedfiles=C.bedfiles)
+    
+    lib_chrm_all=create_lib_chrm(libraries=libraries, totalch=C.CHRM)
+        
+    parallel_indexes(rawbams=rawbams, libraries=libraries, cores=cores)
+       
+    parallel_bamfilter(rawbams=rawbams, splitbams=C.splitbams, bedfiles=C.bedfiles, hapProbs=C.hapProbs, lib_chrm_all=lib_chrm_all, cores=cores)
+    
+    dwins,twins,id_dwins,id_twins, chrmlist = parallel_mergedchrm(libraries=libraries, totalch=C.CHRM, interval=interval, cores=cores)
+
+    return libraries, listf, dwins, twins, id_dwins, id_twins, chrmlist
+
+
