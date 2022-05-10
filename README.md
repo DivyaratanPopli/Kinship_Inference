@@ -74,4 +74,16 @@ KIN [-h] -i  -o  -T  [-r] [-c] [-t] [-p]
 
 
 The final results are available in the file KIN_results.csv ([see example](example_files/KIN_results.csv))<br>
+The output file has following columns:<br>
+-Pair: Name of all pairs<br>
+-Relatedness: Most likely relation<br>
+-Second Guess: Second most likely relation (outside the degree of the most likely relation)<br>
+-Log Likelihood Ratio: Log likelihood ratio for above mentioned relations<br>
+-Within Degree Second Guess: Second most likely relation within the relatedness degree of most likely relation<br>
+-Within Degree Log Likelihood Ratio:Log likelihood ratio for within-degree relations<br>
+-k0: Proportion of genome with no IBD sharing<br>
+-k1: Proportion of genome with one chromosome in IBD<br>
+-k2: Proportion of genome with both chromosomes in IBD<br>
+-IBD Length: Total number of windows in IBD<br>
+-IBD Number: Total number of IBD segments<br>
 </p>
