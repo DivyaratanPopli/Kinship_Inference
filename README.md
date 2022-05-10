@@ -19,9 +19,9 @@ the list of these dependencies with the versions that we used:
 - pybedtools (version 0.9.0)
 
 We recommend a conda environment with all these dependencies:
-'''
+```
 conda create -n test1 python=3.8 scipy=1.8.0 numpy=1.21.1 pandas=1.3.1 numba=0.55.1 pysam=0.19.0 pybedtools=0.9.0
-'''
+```
 #Installation
 After downloading or cloning pypackage from this repository, you can install KINgaroo
 by typing from the terminal which should install all necessary dependencies:
