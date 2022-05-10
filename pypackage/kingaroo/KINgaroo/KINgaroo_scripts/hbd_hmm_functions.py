@@ -8,13 +8,14 @@ Created on Thu May  6 16:33:15 2021
 """
 
 
+
 import numpy as np
 import pandas as pd
 import math
 from scipy.optimize import minimize_scalar
 from numpy.linalg import matrix_power
 import numba
-
+from scipy.special import gammaln
 
 
 @numba.vectorize
@@ -235,7 +236,7 @@ def baum_welch(data, A, B, pos, p1avg, log_bscale, x0, highdiff, max_iter=1000):
             diff= last_lik - li
             last_lik=li
         n_iter=n_iter+1
-      
+
 
     return gamma, A , B, li
 
@@ -278,7 +279,7 @@ def viterbi(data, A, B, pi):
 
     # Flip the path array since we were backtracking
     S = np.flip(S, axis=0)
-   
+
     return S
 
 
@@ -342,7 +343,7 @@ def hmm(diff, total, ind, chrm1, p1, resfile, likfile, targets):
     else:
         gamma=np.ones([2,win]) * 9
         lik='9'
-  
+
     gammall=np.ones((totalwin,2))*9
     gammall[gudwin,:]=gamma.T
 
@@ -373,7 +374,7 @@ def modelPerformance(files, outf1, outf2):
             ai.extend(a)
         else:
             ani.extend(a)
-   
+
     avgi=np.mean(ai)
     avgni=np.mean(ani)
     vari=np.var(ai)
@@ -425,4 +426,3 @@ def tablef(inf, inf_noROH, inf_ROH, outf):
 
     with pd.option_context('display.max_rows', len(df.index), 'display.max_columns', len(df.columns)):
         df.to_csv(outf, sep=',')
-

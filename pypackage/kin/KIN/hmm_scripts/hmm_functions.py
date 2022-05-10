@@ -145,7 +145,7 @@ def makexin(x):
     xin[0,:,:]=np.reshape(x[0:6],(3,2))
     xin[1,:,:]=[x[4:6],x[2:4],x[6:8]]
     xin[2,:,:]=[x[6:8],x[2:4],x[6:8]]
-   
+
     return xin
 
 
@@ -209,7 +209,7 @@ def bnd_calc(mean_p, dist, propvar):
     return low_bnd
 
 def baum_welch(data, hbd, A, B, pos, p1avg, inbr, x0, max_iter=1000):
-   
+
     chrm_no=len(pos)-1
     n_iter=0
     diff=1
@@ -240,7 +240,7 @@ def baum_welch(data, hbd, A, B, pos, p1avg, inbr, x0, max_iter=1000):
             diff= last_lik - li
             last_lik=li
         n_iter=n_iter+1
-   
+
     B2final,log_bfinal1=getEmissions(B, hbd)
     return gamma, A , B2final, up_p, li, pi
 
@@ -257,7 +257,7 @@ def viterbi(data, A, B, pi):
 
     for t in range(1, T):
         for j in range(M):
-         
+
             probability = omega[t - 1] + np.log(A[:, j]) + np.log(B[j,t])
 
             prev[t - 1, j] = np.argmax(probability)
@@ -289,17 +289,17 @@ def hmm(listind, hbdfolder, difffile, totalfile, listf, targets, pfile, Afiles, 
     if not(os.path.isdir(outfold+"resfiles/pw_%s" %(listind))):
         os.mkdir(outfold+"resfiles/pw_%s" %(listind))
     if not(os.path.isdir(outfold+"gammafiles/pw_%s" %(listind))):
-        os.mkdir(outfold+"gammafiles/pw_%s" %(listind))      
-    
-    
-    
+        os.mkdir(outfold+"gammafiles/pw_%s" %(listind))
+
+
+
     in1=listind.split('_._')[0]
     in2=listind.split('_._')[1]
-    
-    pairf1=hbdfolder+"hbd_win_fil0/pw_%s.csv" %(in1)
-    pairf2=hbdfolder+"hbd_win_fil0/pw_%s.csv" %(in2)
-    
-    
+
+    pairf1=hbdfolder+"hbd_results/pw_%s.csv" %(in1)
+    pairf2=hbdfolder+"hbd_results/pw_%s.csv" %(in2)
+
+
     inbr_states=len(instates)
     ind=np.where(listf==listind)[0][0]
 
@@ -310,9 +310,10 @@ def hmm(listind, hbdfolder, difffile, totalfile, listf, targets, pfile, Afiles, 
     total= np.loadtxt(totalfile,dtype='float', delimiter = ",")[:,ind]
 
     data=np.vstack([diff,total]).T
-    if np.sum(data[:,1]>0)>10:
-        pth=np.loadtxt(p1thresh,dtype='float', delimiter = ",")[:,[i1,i2]]
 
+    if np.sum(data[:,1]>0)>10:
+
+        pth=np.loadtxt(p1thresh,dtype='float', delimiter = ",")[:,[i1,i2]]
 
         pair1=pd.read_csv(pairf1, sep=",", header=0,index_col=0)
         pair2=pd.read_csv(pairf2, sep=",", header=0,index_col=0)
@@ -325,13 +326,13 @@ def hmm(listind, hbdfolder, difffile, totalfile, listf, targets, pfile, Afiles, 
 
         pair1.loc[pair1['g_noin']<0,'g_noin']=0
         pair2.loc[pair2['g_noin']<0,'g_noin']=0
-        
+
         pair1.loc[pair1['infocount']<thresh, 'g_noin']=9
         pair2.loc[pair2['infocount']<thresh, 'g_noin']=9
 
-        pair1['ninb']=pair1['g_noin']     
+        pair1['ninb']=pair1['g_noin']
         pair1['inb']=1-pair1['g_noin']
-        pair2['ninb']=pair2['g_noin']    
+        pair2['ninb']=pair2['g_noin']
         pair2['inb']=1-pair2['g_noin']
 
 
@@ -370,22 +371,19 @@ def hmm(listind, hbdfolder, difffile, totalfile, listf, targets, pfile, Afiles, 
 
 
         pos=np.where(chrmlist[:-1] != chrmlist[1:])[0]+1
-        pos=np.append(pos,np.shape(total)[0])
+        pos=np.append(pos,np.shape(chrmlist)[0])
         pos=np.insert(pos, 0, 0, axis=0)
-
 
 
         pi= np.array([1/3,1/3,1/3])
 
-       
         likall=[]
         for rel_cnt in range(len(rels)):
 
             Afile=Afiles[rel_cnt]
             A=np.array(pd.read_csv(Afile,sep=',',header=None,index_col=False))
-
             B = np.zeros((inbr_states,np.shape(A)[0],win)) #Emission probability
-           
+
             [b0, b1, b2, b3]=[1000,1000,1000,1000]
             [a0,a1,a2,a3]=[b0*initial_p[0,0]/(1-initial_p[0,0]), b1*initial_p[0,1]/(1-initial_p[0,1]), b2*initial_p[0,2]/(1-initial_p[0,2]), b3*initial_p[2,2]/(1-initial_p[2,2])]
             x0 = [a0,b0,a1,b1,a2,b2,a3,b3]
@@ -394,16 +392,14 @@ def hmm(listind, hbdfolder, difffile, totalfile, listf, targets, pfile, Afiles, 
             B=makeB(data=data,xin=xin0, M=A.shape[0], T=len(data), inbr=inbr_states)
 
             np.argwhere(np.isnan(B))
-
-
-
+            
             gamma,A,B,up_p,lik, pi= baum_welch(data=data, hbd=hbd, A=A, B=B, pos=pos, p1avg=initial_p, inbr=inbr_states, x0=x0)
             res=viterbi(data, A, B, pi)
             likall.append(lik)
-            
-            resfile=outfold+"resfiles/pw_%s/rel_%s" %(listind,rels[rel_cnt])
-            gammafile=outfold+"gammafiles/pw_%s/rel_%s" %(listind,rels[rel_cnt])
-            
+
+            resfile=outfold+"resfiles/pw_%s/rel_%s.csv" %(listind,rels[rel_cnt])
+            gammafile=outfold+"gammafiles/pw_%s/rel_%s.csv" %(listind,rels[rel_cnt])
+
             np.savetxt(fname=resfile, X=res,delimiter=',')
             np.savetxt(fname=gammafile, X=gamma.T,delimiter=',')
 
@@ -412,14 +408,14 @@ def hmm(listind, hbdfolder, difffile, totalfile, listf, targets, pfile, Afiles, 
         for rel_cnt in range(len(rels)):
             res=np.ones(len(data))*-9
             gamma=np.ones([len(data),3])*-9
-            
-            resfile=outfold+"resfiles/pw_%s/rel_%s" %(listind,rels[rel_cnt])
-            gammafile=outfold+"gammafiles/pw_%s/rel_%s" %(listind,rels[rel_cnt])
-            
+
+            resfile=outfold+"resfiles/pw_%s/rel_%s.csv" %(listind,rels[rel_cnt])
+            gammafile=outfold+"gammafiles/pw_%s/rel_%s.csv" %(listind,rels[rel_cnt])
+
             np.savetxt(fname=resfile, X=res, delimiter=',')
             np.savetxt(fname=gammafile, X=gamma.T, delimiter=',')
-    
-    likfile=outfold+"likfiles/%s" %(listind)
+
+    likfile=outfold+"likfiles/%s.csv" %(listind)
     np.savetxt(fname=likfile, X=likall,delimiter=',')
 
     return 1
@@ -435,7 +431,7 @@ def getRelatable(filist, pairs, rels, outfolder):
         pair=pairs[i]
         lik=np.loadtxt(fi,dtype='float', delimiter = ",")
         data=pd.DataFrame(lik.reshape(-1,len(rels)), columns=rels)
-     
+
 
         reldeg =	{
         "identical": "id",
@@ -472,7 +468,7 @@ def getRelatable(filist, pairs, rels, outfolder):
 
     with pd.option_context('display.max_rows', len(df.index), 'display.max_columns', len(df.columns)):
             df.to_csv(outfolder+'relatable_allLikelihoods_fil0.csv', sep=',')
-    
+
     return outfolder+'relatable_allLikelihoods_fil0.csv'
 
 
@@ -490,15 +486,15 @@ def IBDstates(relatable, outfolder):
     k2prop=[]
     IBDlen_all=[]
     IBDnum_all=[]
-    
+
     for p in range(len(rel)):
         px=rel.loc[p,'pair']
         rx=rel.loc[p,'relatedness']
-        gname=outfolder+"gammafiles/pw_%s/rel_%s" %(px,rx)
+        gname=outfolder+"gammafiles/pw_%s/rel_%s.csv" %(px,rx)
         gamma=np.loadtxt(gname, dtype='float', delimiter = ",")
         gamma_sum=np.sum(gamma,0)/np.sum(gamma)
 
-        rname=outfolder+"resfiles/pw_%s/rel_%s" %(px,rx)
+        rname=outfolder+"resfiles/pw_%s/rel_%s.csv" %(px,rx)
         res=np.loadtxt(rname, dtype='float', delimiter = ",")
         IBD1=np.where(res==0.75)[0]
         IBDinfo=np.split(IBD1, np.where(np.diff(IBD1) != 1)[0]+1)
@@ -542,18 +538,18 @@ def mergeRelatable(relf, outfolder):
 
     print("Finishing up.")
     rel=pd.read_csv(relf, sep=",", header=0,index_col=0)
-   
-  
+
+
     rel=rel.replace(['un', 'deg4', 'deg5'], 'Unrelated')
     rel=rel.replace(['gr', 'hsib', 'avu'], 'Second Degree')
     rel=rel.replace({'deg3': 'Third Degree', 'sib': 'Siblings', 'pc': 'Parent-Child', 'id':'Identical'})
-    
+
     rel.loc[rel['Relatedness']=='Second Degree', 'Within Degree Log Likelihood Ratio'] = ''
     rel.loc[rel['Relatedness']=='Second Degree', 'Within Degree Second Guess'] = ''
     rel.loc[rel['Relatedness']=='Unrelated', 'Within Degree Log Likelihood Ratio'] = ''
     rel.loc[rel['Relatedness']=='Unrelated', 'Within Degree Second Guess'] = ''
-    
+
     rel=rel.round({'Log Likelihood Ratio' : 3, 'Within Degree Log Likelihood Ratio' : 3, 'k0' : 3, 'k1' : 3, 'k2' : 3})
-    
+
     with pd.option_context('display.max_rows', len(rel.index), 'display.max_columns', len(rel.columns)):
         rel.to_csv(outfolder+'KIN_results.csv', sep='\t')

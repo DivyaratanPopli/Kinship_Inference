@@ -102,22 +102,22 @@ def hapProbsAll(haplist,hap):
         outarr.append(x1)
 
     outarr=np.array(outarr).T
-    
+
 
     if hap=='noid':
 
         pos=x['pos'].values
         chrm=x['chrm'].values
-             
+
         return outarr, pos, chrm
-    
+
     return outarr
 
 
 
 def findDiff(inds,posall):
     """Find pairwise differences along genome for two specimen. In output file -9 is for missing data"""
-    
+
     inds[inds==-9]=np.nan
 
 
@@ -134,7 +134,7 @@ def findDiff(inds,posall):
 
 
 def getWin(df, pos, interval=1e7):
-    
+
     length=pos[-1]
 
     bounds= np.arange(0,length,interval)
@@ -165,11 +165,11 @@ def getWin(df, pos, interval=1e7):
 def nhFile(alldiff):
 
     df=pd.read_csv(alldiff, sep="\t",header=None,index_col=None, low_memory=False)
-    
+
     df=df.loc[(df[2].apply(str)).isin(['0', '1']) & (df[3].apply(str)).isin(['0', '1']),:]
-    
+
     nD,hD = np.array(df[2].apply(int)), np.array(df[3].apply(int))
-    
+
     nA,hA = 1-nD, 1-hD
 
     diff=((nA*hD)+(nD*hA)) / ((nA+nD)*(hA+hD))
@@ -178,88 +178,11 @@ def nhFile(alldiff):
     return nh_diff
 
 
-def contamFile(infile, outfile, targets, idfile):
-    cnf=pd.read_csv(infile, sep="\t",header=0,index_col=None)
-    cnf=cnf.loc[cnf['name'].isin(targets),:]
-    cnf.reset_index(drop=True, inplace=True)
-    names=[]
-    contam=[]
-    for ch1 in range(len(cnf)-1):
-        for ch2 in range(ch1+1,len(cnf)):
-            names.append(cnf.loc[ch1, 'name'] + '_._' + cnf.loc[ch2, 'name'])
-            ctotal=cnf.loc[ch1, 'contamination (%)'] + cnf.loc[ch2, 'contamination (%)']
-            contam.append(ctotal)
-
-    df = pd.DataFrame(
-        {'name': names,
-         'contam': contam
-        })
-
-    df_id = pd.DataFrame(
-        {'name': cnf['name'],
-         'contam': 2*cnf['contamination (%)']
-        })
-
-    with pd.option_context('display.max_rows', len(df.index), 'display.max_columns', len(df.columns)):
-    	    df.to_csv(outfile, sep=',')
-
-    with pd.option_context('display.max_rows', len(df_id.index), 'display.max_columns', len(df_id.columns)):
-    	    df_id.to_csv(idfile, sep=',')
-    
-    
-    
-def adjust_d(D_obs, c, p_c, p_e):
-    x1 = p_e * (1-c)
-    x2 = p_c * c
-    return D_obs * x1 / (x1 + x2)
-
-def adjust_s(S_obs, c, p_c, p_e):
-    x1 = (1-p_e) * (1-c)
-    x2 = (1-p_c) * c
-    x=S_obs * x1 / (x1 + x2)
-    x[np.isnan(x)]=0
-    return x
-
-def adjust_sd(D_obs, N_obs, *args, **kwargs):
-    d_adj = adjust_d(D_obs, *args, **kwargs)
-    s_adj = adjust_s(N_obs - D_obs, *args, **kwargs)
-    return d_adj, d_adj+s_adj
-
-
-def contamAll(diff, total, cfile, p_c):
-       
-    df=pd.read_csv(cfile, sep=",",header=0,index_col=0)
-    cnt1=np.array(df['contam'])
-
-    c=cnt1/100
-
-    propmean=np.sum(diff, axis=0)/np.sum(total, axis=0)
-
-
-    p_e = (propmean - c * p_c)/ (1-c)
-    p_e[p_e>1]=1
-
-    d_cor, n_cor = adjust_sd(D_obs=diff, N_obs=total, p_e=p_e, p_c=p_c, c=c)
-    #print(d_cor[np.isnan(d_cor)])
-
-    if np.all(np.where(np.isnan(np.sum(d_cor,0)))[0] == np.where(np.isnan(np.sum(n_cor,0)))[0]):
-        d_cor[np.isnan(d_cor)] = 0
-        n_cor[np.isnan(n_cor)] = 0
-
-
-    if(np.sum(np.isnan(d_cor))==0):
-        if(np.sum(np.isnan(n_cor))==0):
-
-            return d_cor, n_cor
-        else:
-            print("Something is wrong in contamination correction, there are nan values.")
-
-
 def getHighDiv(alld, allt):
 
     with np.errstate(divide='ignore', invalid='ignore'):
         prop=alld/allt
-    avgprop= np.nansum(prop,axis=1) / np.sum(~np.isnan(prop),1)
+        avgprop= np.nansum(prop,axis=1) / np.sum(~np.isnan(prop),1)
 
     m=np.mean(avgprop[~np.isnan(avgprop)])
     sd=np.sqrt(np.var(avgprop[~np.isnan(avgprop)]))
@@ -267,7 +190,7 @@ def getHighDiv(alld, allt):
     #print(m,sd)
     avgprop[np.isnan(avgprop)]=-9
     fres=np.where((avgprop>-9) & (avgprop>m+3*sd))[0]
-    
+
     return fres
 
 
@@ -276,9 +199,9 @@ def getP(obsd, obst, targets, pfile, goodpairs, allp, overf, thresh=10):
     med=[]
     names=[]
 
+    with np.errstate(divide='ignore', invalid='ignore'):
+        prop=np.sum(obsd, axis=0)/np.sum(obst, axis=0)
 
-    prop=np.sum(obsd, axis=0)/np.sum(obst, axis=0)
-   
     goodlibs=np.sum(obst>0, axis=0)>thresh
     prop1=prop[goodlibs]
 
@@ -294,7 +217,7 @@ def getP(obsd, obst, targets, pfile, goodpairs, allp, overf, thresh=10):
 
     with open(pfile, 'w') as f:
         print(med,file=f)
-   
+
     np.savetxt(fname=goodpairs, fmt='%s', X=names1, delimiter='/n')
 
     df = pd.DataFrame(
@@ -315,4 +238,3 @@ def getP(obsd, obst, targets, pfile, goodpairs, allp, overf, thresh=10):
                 df_over.to_csv(overf, sep=',')
 
     return med
-

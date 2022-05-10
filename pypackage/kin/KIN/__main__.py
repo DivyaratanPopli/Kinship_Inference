@@ -55,7 +55,7 @@ def main():
         cores = mp.cpu_count()
     else:
         cores = args.cores
-
+    print("something")
     helpers.hmm_all(
         targetfile=args.target_location,
         outfolder=args.output_location,
@@ -64,7 +64,9 @@ def main():
         allrel=C.RELS,
         hbdfolder=hbdfolder,
         thresh=thresh,
-        cores=cores
+        cores=cores,
+        instates=C.STATES,
+        totalch=C.CHRM
     )
 
 
