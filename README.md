@@ -86,4 +86,7 @@ The output file has following columns:<br>
 -k2: Proportion of genome with both chromosomes in IBD<br>
 -IBD Length: Total number of windows in IBD<br>
 -IBD Number: Total number of IBD segments<br>
-</p>
+
+We distinguish between the columns 'Second Guess' and 'Within Degree Second Guess' as well as between 'Log Likelihood Ratio'<br>
+and 'Within Degree Log Likelihood Ratio'. This becomes important in case of classification to siblings or parent-child,<br> where we want to know how certain we are that the pair is first degree relative as indicated by 'Log Likelihood Ratio', but<br>
+we also want to know the certainty associated with classification as parent-child compared to siblings or vice-versa.</p>
