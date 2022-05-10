@@ -39,10 +39,10 @@ You can run KINgaroo from the terminal by typing:
  KINgaroo [-h] -bam  -bed  -T  -cnt  [-c] [-i] [-t] [-cest] [-vcf.gz] [-tar] [-cont] [-r]
 ```
 Here optional inputs are shown in [].
-```
+
 -h help
 -bam Path to directory containing bamfiles with chromosomes represented by numbers 1,2,..,X,Y
--bed Path to tab-separated .bed file containing chromosome, reference and alternate alleles at all 
+-bed Path to tab-separated .bed file containing chromosome, reference and alternate alleles at all
      available positions [see example file](example_files/bedfile.bed)
 -T path to file containing list of all bamfiles to be used in the analysis
 - cnt We provide three options for contamination correction:
@@ -59,7 +59,7 @@ Here optional inputs are shown in [].
 -tar Name of individual from target population in vcf.gz
 -cont Name of individual from contaminating population in vcf.gz
 -r Enter 1 to estimate long ROH, 0 to skip (by default 1)
-```
+
 # Running KIN
 ```
 -h help
