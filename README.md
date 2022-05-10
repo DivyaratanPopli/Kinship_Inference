@@ -7,7 +7,7 @@ KINgaroo is a software to generate input files for KIN from bamfiles. Optionally
 KINgaroo incorporates an adjustment for contamination, and an additional model to estimate the
 location of long runs of homozygosity. This helps KIN to improve classification accuracy.
 
-#Conda Environment
+# Conda Environment
 KIN and KINgaroo require Python 3.8+ and rely on a number of non-standard libraries. Here is
 the list of these dependencies with the versions that we used:
 
@@ -33,7 +33,7 @@ Similarly, install kin:
 pip3 install _path_to_kin
 '''
 
-#Running KINgaroo
+# Running KINgaroo
 You can run KINgaroo from the terminal by typing:
 '''
  KINgaroo [-h] -bam  -bed  -T  -cnt  [-c] [-i] [-t] [-cest] [-vcf.gz] [-tar] [-cont] [-r]
@@ -59,7 +59,7 @@ Here optional inputs are shown in [].
 -cont Name of individual from contaminating population in vcf.gz
 -r Enter 1 to estimate long ROH, 0 to skip (by default 1)
 '''
-#Running KIN
+# Running KIN
 '''
 -h help
 -i Path to the folder where you ran KINgaroo
