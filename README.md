@@ -72,7 +72,7 @@ KIN [-h] -i  -o  -T  [-r] [-c] [-t] [-p]
 -t Minimum number of sites in a window from which ROH estimates are reliable used (by default: 10)<br>
 -p p_0 estimate given by user (by default: Estimated from the data)<br>
 
-
+# Output
 The final results are available in the file KIN_results.csv ([see example](example_files/KIN_results.csv))<br>
 The output file has following columns:<br>
 -Pair: Name of all pairs<br>
