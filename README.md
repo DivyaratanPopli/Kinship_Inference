@@ -22,24 +22,24 @@ We recommend a conda environment with all these dependencies:
 ```
 conda create -n test1 python=3.8 scipy=1.8.0 numpy=1.21.1 pandas=1.3.1 numba=0.55.1 pysam=0.19.0 pybedtools=0.9.0
 ```
-#Installation
+# Installation
 After downloading or cloning pypackage from this repository, you can install KINgaroo
 by typing from the terminal which should install all necessary dependencies:
-'''
+```
 pip3 install _path_to_kingaroo
-'''
+```
 Similarly, install kin:
-'''
+```
 pip3 install _path_to_kin
-'''
+```
 
 # Running KINgaroo
 You can run KINgaroo from the terminal by typing:
-'''
+```
  KINgaroo [-h] -bam  -bed  -T  -cnt  [-c] [-i] [-t] [-cest] [-vcf.gz] [-tar] [-cont] [-r]
-'''
+```
 Here optional inputs are shown in [].
-'''
+```
 -h help
 -bam path to directory containing bamfiles
 -bed path to .bed file containing reference and alternate alleles at all available positions
@@ -58,9 +58,9 @@ Here optional inputs are shown in [].
 -tar Name of individual from target population in vcf.gz
 -cont Name of individual from contaminating population in vcf.gz
 -r Enter 1 to estimate long ROH, 0 to skip (by default 1)
-'''
+```
 # Running KIN
-'''
+```
 -h help
 -i Path to the folder where you ran KINgaroo
 -o Output location
@@ -69,4 +69,4 @@ Here optional inputs are shown in [].
 -c Cores (by default: all available cores)
 -t Minimum number of sites in a window from which ROH estimates are reliable used (by default: 10)
 -p p_0 estimate given by user (by default: Estimated from the data)
-'''
+```
