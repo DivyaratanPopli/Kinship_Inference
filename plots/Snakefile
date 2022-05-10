@@ -1,10 +1,10 @@
 from plot_script import ROH_plotf, IBD_plotf, cutoff_plotf, comparison_table, comparison_plotf, IBDstates
 
-infold="/mnt/diversity/divyaratan_popli/100arc/inbreeding/fastsim_gz_highDiversity/"
+infold="/mnt/diversity/divyaratan_popli/100arc/inbreeding/fastsim_gz_highDiversity"
 plotdata="./plotdata/"
 plotimg="./plotimg/"
 hmmfold="/mnt/diversity/divyaratan_popli/100arc/inbreeding/fastsim_gz_highDiversity/hmm_numba_viterbi_all_win/"
-Chagfold="/mnt/diversity/divyaratan_popli/100arc/inbreeding/laurits_writeup/Ch9_rem/neavar/newSim_ibd/"
+Chagfold="/mnt/diversity/divyaratan_popli/100arc/inbreeding/laurits_writeup/Ch9_rem/neavar/copied_newSim_ibd/"
 
 #hmmdeg3="hmm_numba_incorrect_roh_i1_i1_insteadOf_i1_i2/rocNo3deg/"
 runlist=list(range(1,61))
@@ -80,7 +80,7 @@ rule comparisonplot:
 rule Chagyrskaya:
     input:
         over=Chagfold + "overlap_fil1",
-        rel=Chagfold + "hmm_numba_newA/filtered{Mfil}/merged_relatable_allLikelihoods.csv"
+        rel=Chagfold + "hmm_new/filtered{Mfil}/merged_relatable_allLikelihoods.csv"
     output:
         outfile_rel="plotimg/fil{Mfil}_relatable_plot.png",
         outfile_over="plotimg/fil{Mfil}_overlap_plot.png"
