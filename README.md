@@ -18,7 +18,7 @@ the list of these dependencies with the versions that we used:
 - pysam (version 0.19.0)
 - pybedtools (version 0.9.0)
 
-We recommend a conda environment with all these dependencies:
+We recommend using a conda environment with all these dependencies:
 ```
 conda create -n test1 python=3.8 scipy=1.8.0 numpy=1.21.1 pandas=1.3.1 numba=0.55.1 pysam=0.19.0 pybedtools=0.9.0
 ```
@@ -41,15 +41,15 @@ You can run KINgaroo from the terminal by typing:
 Here optional inputs are shown in [].
 ```
 -h help
--bam path to directory containing bamfiles
--bed path to .bed file containing reference and alternate alleles at all available positions
+-bam path to directory containing bamfiles with chromosomes represented by numbers 1,2,..,X,Y
+-bed path to .bed file containing chromosome, reference and alternate alleles at all available positions [see example file](example_files/bedfile.bed)
 -T path to file containing list of all bamfiles to be used in the analysis
 - cnt We provide three options for contamination correction:
   0: No contamination correction
   1: Contamination correction using divergence between the target population and contaminating population. We
-     use a script that uses an indexed vcf.gz file with an individual each from target and contaminating
+     implement a script that uses an indexed vcf.gz file with an individual each from target and contaminating
      populations.
-  0<cnt<1 Contamination correction using divergence already calculated
+  0<cnt<1 Contamination correction using divergence value given by cnt
 -c Number of cores (by default: all available cores)
 -i Size of genomic windows in int, Options:10000000, 1000000 (by default we use 10000000)
 -t Minimum number of nonzero windows for a library to be included in estimation for p_0 (by default:10)
@@ -70,3 +70,5 @@ Here optional inputs are shown in [].
 -t Minimum number of sites in a window from which ROH estimates are reliable used (by default: 10)
 -p p_0 estimate given by user (by default: Estimated from the data)
 ```
+
+The final results are available in the file KIN_results.csv
