@@ -41,8 +41,9 @@ You can run KINgaroo from the terminal by typing:
 Here optional inputs are shown in [].
 ```
 -h help
--bam path to directory containing bamfiles with chromosomes represented by numbers 1,2,..,X,Y
--bed path to .bed file containing chromosome, reference and alternate alleles at all available positions [see example file](example_files/bedfile.bed)
+-bam Path to directory containing bamfiles with chromosomes represented by numbers 1,2,..,X,Y
+-bed Path to tab-separated .bed file containing chromosome, reference and alternate alleles at all 
+     available positions [see example file](example_files/bedfile.bed)
 -T path to file containing list of all bamfiles to be used in the analysis
 - cnt We provide three options for contamination correction:
   0: No contamination correction
