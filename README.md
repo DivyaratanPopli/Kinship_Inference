@@ -42,13 +42,13 @@ You can run KINgaroo from the terminal by typing:
 
 -h: help<br>
 -bam: Path to directory containing bamfiles with chromosomes represented by numbers 1,2,..,X,Y<br>
--bed Path to tab-separated .bed file containing chromosome, reference and alternate alleles at all<br> &nbsp;&nbsp;&nbsp;&nbsp;available positions [see example file](example_files/bedfile.bed)<br>
+-bed Path to tab-separated .bed file containing chromosome, reference and alternate alleles at all<br> &nbsp;&nbsp;&nbsp;&nbsp;available positions ([see example file](example_files/bedfile.bed))<br>
 -T path to file containing list of all bamfiles to be used in the analysis<br>
 -cnt We provide three options for contamination correction:<br>
   0: No contamination correction<br>
-  1: Contamination correction using divergence between the target population and contaminating population. We
-     implement a script that uses an indexed vcf.gz file with an individual each from target and contaminating
-     populations.<br>
+  1: Contamination correction using divergence between the target population and contaminating population. We<br>
+     &nbsp;&nbsp;&nbsp;&nbsp;implement a script that uses an indexed vcf.gz file with an individual each from<br> 
+     &nbsp;&nbsp;&nbsp;&nbsp;target and contaminating populations.<br>
   0<cnt<1 Contamination correction using divergence value given by cnt<br>
 -c Number of cores (by default: all available cores)<br>
 -i Size of genomic windows in int, Options:10000000, 1000000 (by default we use 10000000)<br>
