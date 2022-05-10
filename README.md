@@ -42,22 +42,22 @@ You can run KINgaroo from the terminal by typing:
 
 -h: help<br>
 -bam: Path to directory containing bamfiles with chromosomes represented by numbers 1,2,..,X,Y<br>
--bed Path to tab-separated .bed file containing chromosome, reference and alternate alleles at all<br> &nbsp;&nbsp;&nbsp;&nbsp;available positions ([see example file](example_files/bedfile.bed))<br>
--T path to file containing list of all bamfiles to be used in the analysis<br>
--cnt We provide three options for contamination correction:<br>
+-bed: Path to tab-separated .bed file containing chromosome, reference and alternate alleles at all<br> &nbsp;&nbsp;&nbsp;&nbsp;available positions ([see example](example_files/bedfile.bed))<br>
+-T: path to file ([see example file](example_files/targets.txt))containing list of all bamfiles to be used in the analysis<br>
+-cnt: We provide three options for contamination correction:<br>
   &nbsp;&nbsp;&nbsp;&nbsp;0: No contamination correction<br>
   &nbsp;&nbsp;&nbsp;&nbsp;1: Contamination correction using divergence between the target population and contaminating population. We<br>
      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;implement a script that uses an indexed vcf.gz file with an individual each from<br>
      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;target and contaminating populations.<br>
-  &nbsp;&nbsp;&nbsp;&nbsp;0<cnt<1 Contamination correction using divergence value given by cnt<br>
--c Number of cores (by default: all available cores)<br>
--i Size of genomic windows in int, Options:10000000, 1000000 (by default we use 10000000)<br>
--t Minimum number of nonzero windows for a library to be included in estimation for p_0 (by default:10)<br>
--cest File with contamination estimates (for contamination correction)<br>
--vcf.gz Compressed and indexed vcf file for calculation of divergence between target and contaminating populations<br>
--tar Name of individual from target population in vcf.gz<br>
--cont Name of individual from contaminating population in vcf.gz<br>
--r Enter 1 to estimate long ROH, 0 to skip (by default 1)<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;0<cnt<1: Contamination correction using divergence value given by cnt<br>
+-c: Number of cores (by default: all available cores)<br>
+-i: Size of genomic windows in int, Options:10000000, 1000000 (by default we use 10000000)<br>
+-t: Minimum number of nonzero windows for a library to be included in estimation for p_0 (by default:10)<br>
+-cest: File with contamination estimates (for contamination correction)<br>
+-vcf.gz: Compressed and indexed vcf file for calculation of divergence between target and contaminating populations<br>
+-tar: Name of individual from target population in vcf.gz<br>
+-cont: Name of individual from contaminating population in vcf.gz<br>
+-r: Enter 1 to estimate long ROH, 0 to skip (by default 1)<br>
 
 # Running KIN
 ```
@@ -73,4 +73,5 @@ KIN [-h] -i  -o  -T  [-r] [-c] [-t] [-p]
 -p p_0 estimate given by user (by default: Estimated from the data)<br>
 
 
-The final results are available in the file KIN_results.csv<br></p>
+The final results are available in the file KIN_results.csv ([see example](example_files/KIN_results.csv))<br>
+</p>
