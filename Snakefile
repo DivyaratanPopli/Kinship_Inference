@@ -394,7 +394,7 @@ rule contam_id:
         totalfile="identicalmergedwin_contam_fil{Mfil}/id_total.csv",
     run:
         contamAll(dfile=input.dfile, tfile=input.tfile, cfile=input.contam_est,
-        Dnhfile=input.nh_file[0], difffile=output.difffile,
+        Dnhfile=input.nh_file, difffile=output.difffile,
         totalfile=output.totalfile, iscnt=is_contam)
 
 
@@ -425,8 +425,8 @@ rule rem_highDiv:
 
 rule rem_highDiv_id:
     input:
-        diff="identicalmergedwin_fil{Mfil}/id_wind.csv",
-        total="identicalmergedwin_fil{Mfil}/id_wint.csv",
+        diff="identicalmergedwin_contam_fil{Mfil}/id_wind.csv",
+        total="identicalmergedwin_contam_fil{Mfil}/id_wint.csv",
         winfile="windows_with_diffProp_higher_than3sd{Mfil}.txt"
     output:
         outd="identicalmergedwin_remHighdiv_fil{Mfil}/id_diff.csv",
