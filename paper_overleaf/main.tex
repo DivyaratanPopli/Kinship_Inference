@@ -309,7 +309,7 @@ To test the performance of KIN, and compare it to a commonly used method, READ \
 
 
 \paragraph{Evaluating the ROH detection}
-We next evaluate the performance of the ROH-HMM( Fig.\ref{fig2:ROH}). We observe that as coverage decreases, the raw heterozygosity estimates become noisier. In the case without ROH (Fig \ref{fig2:ROH}A), we correctly infer that there is no ROH for all  windows (except for the case of 0.1x coverage where we miss-classify 2 windows out of 220). We observe that the model predicts ROH probabilities well in all cases, even at a coverage of 0.1x (Table \ref{tab:Table 2}). 
+We next evaluate the performance of the ROH-HMM( Fig.\ref{fig2:ROH}). We observe that as coverage decreases, the raw heterozygosity estimates become noisier. In the case without ROH (Fig \ref{fig2:ROH}A), we correctly infer that there is no ROH for all  windows (except for the case of 0.1x coverage where we miss-classify 2 windows out of 220). We observe that the model predicts ROH probabilities well in all cases, even at a coverage of 0.1x (Table \ref{tab:Table 2}).
 
 
 \begin{figure}[h!]
@@ -361,7 +361,7 @@ We compared the IBD estimates obtained using KIN to those from lcMLkin for all p
 
 \subsubsection{Application to ancient modern humans}
 
-We further applied KIN to a genome-wide dataset of 118 ancient individuals from the Lech Valley \cite{mittnik_kinship-based_2019}. We compared our relatedness estimates to those obtained by the authors using READ and lcMLkin. We found that in most cases the three methods agree, as only $\approx5\%$ of pairs (346 out of 6903) show a different relatedness for KIN and READ (table S2). However, most of these are at very low confidence for both the methods ($LL<1$ for KIN and $sd<1$ for READ). There are 31 pairs where KIN has $\Delta LL>1$. When we investigated these comparisons in more detail we found that in many cases, the prediction by KIN is in agreement with the observed proportion of differences along the genome (fig. S\ref{figS8:eg1}). Only 20 pairs in this subset of 346 pairs had sufficient data for analysis using lcMLkin (more than 10,000 overlapping SNPs). Among these 20 pairs, we found that lcMLkin matches KIN's estimate in all cases except for pair POST131-POST28 where READ predicts unrelated individuals, lcMLkin predicts 3rd-5th degree, KIN predicts second degree, and pair AITI72-AITI77A where READ and lcMLkin predict unrelated, while KIN estimates 3rd degree with LL=1.7).
+We further applied KIN to a genome-wide dataset of 118 ancient individuals from the Lech Valley \cite{mittnik_kinship-based_2019}. We compared our relatedness estimates to those obtained by the authors using READ and lcMLkin. We found that in most cases the three methods agree, as only $<5\%$ of pairs (311 out of 6903) show a different relatedness for KIN and READ (table S2). However, most of these are at very low confidence for both the methods ($LL<1$ for KIN and $sd<1$ for READ). There are 28 pairs where KIN has $\Delta LL>1$. When we investigated these comparisons in more detail we found that in many cases, the prediction by KIN is in agreement with the observed proportion of differences along the genome (fig. S\ref{figS8:eg1}). Only 27 pairs in this subset of 311 pairs had sufficient data for analysis using lcMLkin (more than 10,000 overlapping SNPs). Among these 27 pairs, we found that lcMLkin matches KIN's estimate in all cases except for pair POST131-POST28 where READ predicts unrelated individuals, lcMLkin predicts 3rd-5th degree, KIN predicts second degree, and pair AITI72-AITI77A where READ and lcMLkin predict unrelated, while KIN estimates 3rd degree with LL=1.7).
 We further found 43 pairs for which READ estimates First-Degree, and compared the estimates of lcMLkin and KIN for these cases (Table S3). There were a total of 20 pairs where lcMLkin had sufficient data, and 26 pairs where $\Delta LL>1$ for KIN. Among the 19 overlapping pairs, we found four pairs where KIN and lcMLkin differ, and again the heterozygosities along the genome match the inference of KIN (fig. S\ref{figS9:eg2}).  
 
 
@@ -429,7 +429,7 @@ For testing, we replicate each simulation 60 times, and create data from the sam
 
 
 \section{Acknowledgements}
-We thank Svante Pääbo, Janet Kelso, Harald Ringbauer, Laurits Skov, Leonardo Iasi, Alba Bossom Mesa, Arev Sümer, Guido Alberto Gnecchi Ruscone, Ke Wang and Luca Traverso for helpful comments and discussions. This work was supported by the Max Planck Society and the European Research Council (Grant No.: 694707) to Svante Pääbo.
+We thank Svante Pääbo, Janet Kelso, Harald Ringbauer, Johann Visagie, Laurits Skov, Leonardo Iasi, Alba Bossom Mesa, Arev Sümer, Zuzana Hofmanová, Guido Alberto Gnecchi Ruscone, Ke Wang and Luca Traverso for helpful comments and discussions. This work was supported by the Max Planck Society and the European Research Council (Grant No.: 694707) to Svante Pääbo.
 
 
 \renewcommand\thefigure{\arabic{figure}}    
