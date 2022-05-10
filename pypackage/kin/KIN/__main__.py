@@ -34,6 +34,9 @@ def cli():
     parser.add_argument('-t', '--threshold',
                         type=int, metavar='',
                         help='Minimum number of sites in a window for ROH implementation')
+    parser.add_argument('-p', '--diversity_parameter_p_0',
+                        type=float, metavar='',
+                        help='Input p_0 parameter, if you do not want to calculate it from given samples')
 
     return parser.parse_args()
 
@@ -55,7 +58,11 @@ def main():
         cores = mp.cpu_count()
     else:
         cores = args.cores
-    print("something")
+    if args.diversity_parameter_p_0 is None:
+        p_0 = -9
+    else:
+        p_0 = args.diversity_parameter_p_0
+
     helpers.hmm_all(
         targetfile=args.target_location,
         outfolder=args.output_location,
@@ -66,7 +73,8 @@ def main():
         thresh=thresh,
         cores=cores,
         instates=C.STATES,
-        totalch=C.CHRM
+        totalch=C.CHRM,
+        p_0=p_0
     )
 
 

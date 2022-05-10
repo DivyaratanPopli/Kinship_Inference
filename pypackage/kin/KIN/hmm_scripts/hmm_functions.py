@@ -359,10 +359,9 @@ def hmm(listind, hbdfolder, difffile, totalfile, listf, targets, pfile, Afiles, 
         chrmlist=chrmlist[gudwin]
 
         win=np.sum(gudwin)
-
-        with open(pfile,"r") as f:
-            p_1=float(f.read())
-
+        
+        p_1=float(pfile)
+    
         p_12=p_1/2
         inerror=p_12/2
         initial_p=np.array([[(p_1+p_12)/2,p_1,p_12],
