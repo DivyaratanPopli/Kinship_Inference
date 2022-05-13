@@ -318,6 +318,23 @@ We first evaluated the performance of the ROH-HMM ( Fig.\ref{fig2:ROH}). We comp
     \label{fig2:ROH}
 \end{figure}
 
+\begin{table}[h!]{ l p{5cm}}
+\caption{\label{tab:Table 2}Model performance for ROH prediction. Here we test ROH-HMM in four different cases of simulations: Control (without ROH, ascertainment bias or contamination, R (with ROH), RA (with ROH and ascertainment bias), RC (with ROH and contamination)}
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|}
+    \hline
+    Coverage & Control(bias) & Control(var) & R(bias) & R(var) & RA(bias) & RA(var) & RC(bias) & RC(var)\\
+    \hline
+    4x & -0.007 & 0.006 & -0.081 & 0.036 & -0.083 & 0.036 & -0.091 & 0.039\\
+    \hline
+    0.2x & -0.003 & 0.003 & -0.068 & 0.03 & -0.068 & 0.026 & -0.076 & 0.029\\
+    \hline
+    0.1x & -0.003 & 0.002 & -0.049 & 0.021 & -0.05 & 0.021 & -0.057 & 0.022\\
+    \hline
+\end{tabular}
+\label{table1}
+\end{table}
+
+
 \paragraph{IBD prediction}
 We investigated the accuracy of IBD state prediction along the genome by counting the number of genomic windows where we correctly predict IBD state for different relatdness and coverages (Fig. \ref{fig4:IBDstate_accuracy}). The accuracy for coverages of 0.1x or higher is consistent and varies between 1.0 and 0.836, depending on relatedness. However, the accuracy decreases at lower coverages for most relatedness and ranges from 1.0 to 0.563 at 0.03x. On the other hand, the accuracy for identical individuals and parent-child pairs is nearly perfect for all investigated coverages, even at 0.03x coverage.
 [add some comments about contamination and ascertainment bias, with reference to supplementary figures]
@@ -438,22 +455,6 @@ We thank Svante Pääbo, Janet Kelso, Harald Ringbauer, Johann Visagie, Laurits 
 \section{Supplementary Information}
 \setcounter{figure}{0}   
 
-
-\begin{table}
-\caption{\label{tab:Table 2}Model performance for ROH prediction. Here we test ROH-HMM in four different cases of simulations: Control (without ROH, ascertainment bias or contamination, R (with ROH), RA (with ROH and ascertainment bias), RC (with ROH and contamination)}
-\begin{tabular}{|c|c|c|c|c|c|c|c|c|}
-    \hline
-    Coverage & Control(bias) & Control(var) & R(bias) & R(var) & RA(bias) & RA(var) & RC(bias) & RC(var)\\
-    \hline
-    4x & -0.007 & 0.006 & -0.081 & 0.036 & -0.083 & 0.036 & -0.091 & 0.039\\
-    \hline
-    0.2x & -0.003 & 0.003 & -0.068 & 0.03 & -0.068 & 0.026 & -0.076 & 0.029\\
-    \hline
-    0.1x & -0.003 & 0.002 & -0.049 & 0.021 & -0.05 & 0.021 & -0.057 & 0.022\\
-    \hline
-\end{tabular}
-\label{table1}
-\end{table}
 
 \renewcommand{\figurename}{Fig. S}
 \begin{figure}[h!]
