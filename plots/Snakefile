@@ -1,6 +1,6 @@
 from plot_script import ROH_plotf, IBD_plotf, cutoff_plotf, comparison_table, comparison_plotf, IBDstates
 
-infold="/mnt/diversity/divyaratan_popli/100arc/inbreeding/fastsim_gz_highDiversity"
+infold="/mnt/diversity/divyaratan_popli/100arc/inbreeding/fastsim_gz_highDiversity/"
 plotdata="./plotdata/"
 plotimg="./plotimg/"
 hmmfold="/mnt/diversity/divyaratan_popli/100arc/inbreeding/fastsim_gz_highDiversity/hmm_numba_viterbi_all_win/"
@@ -94,7 +94,23 @@ rule ibd_accuracy:
     output:
         outf="plotdata/plot_IBDaccuracy.csv"
     run:
-        IBDstates(fold=infold, outf=output.outf, list_inds=list_inds, runlist=runlist)
+        IBDstates(fold=infold, outf=output.outf, list_inds=list_inds, runlist=runlist, var='control')
+
+rule ibd_others:
+    input:
+        ibd_true = expand(infold+'sanity_check/inbred0/run{RID}/coverage4/contam0/asc0/inputMode_hapProbs_fil0/{rel1}_state_all.gz', RID=runlist,rel1=[ elem for elem in list(list_inds.keys()) if elem not in ['un','pc','id','gr']]),
+        ibd_pred_c = expand(infold+'hmm_numba_viterbi_all_win/contam1/inbred0/run{RID}/coverage{cov}/filtered0/asc0/relation_{rel1}_file/res_inphapProbs/pw_{pair}.csv.gz', RID=runlist,rel1=list(list_inds.keys()), cov=covlist, pair=list(list_inds.values())),
+        ibd_pred_a = expand(infold+'hmm_numba_viterbi_all_win/contam0/inbred0/run{RID}/coverage{cov}/filtered0/asc2/relation_{rel1}_file/res_inphapProbs/pw_{pair}.csv.gz', RID=runlist,rel1=list(list_inds.keys()), cov=covlist, pair=list(list_inds.values())),
+        ibd_pred_r = expand(infold+'hmm_numba_viterbi_all_win/contam0/inbred1/run{RID}/coverage{cov}/filtered0/asc0/relation_{rel1}_file/res_inphapProbs/pw_{pair}.csv.gz', RID=runlist,rel1=list(list_inds.keys()), cov=covlist, pair=list(list_inds.values())),
+
+    output:
+        outf_c="plotdata/plot_IBDaccuracy_cont.csv",
+        outf_a="plotdata/plot_IBDaccuracy_asc.csv",
+        outf_r="plotdata/plot_IBDaccuracy_roh.csv",
+    run:
+        IBDstates(fold=infold, outf=output.outf_c, list_inds=list_inds, runlist=runlist, var='c')
+        IBDstates(fold=infold, outf=output.outf_a, list_inds=list_inds, runlist=runlist, var='a')
+        IBDstates(fold=infold, outf=output.outf_r, list_inds=list_inds, runlist=runlist, var='r')
 
 rule ibd_accuracy_plot:
     input:
@@ -102,6 +118,17 @@ rule ibd_accuracy_plot:
     output:
         outf="plotimg/plot_IBDaccuracy.png"
     script: "Rscripts/IBD_accuracyPlot.R"
+
+
+rule ibd_accuracy_plot_others:
+    input:
+        inf_c="plotdata/plot_IBDaccuracy_cont.csv",
+        inf_a="plotdata/plot_IBDaccuracy_asc.csv",
+        inf_r="plotdata/plot_IBDaccuracy_roh.csv",
+    output:
+        outf="plotimg/plot_IBDaccuracy_others_supp.png",
+
+    script: "Rscripts/supp_IBD.R"
 
 
 rule all:
