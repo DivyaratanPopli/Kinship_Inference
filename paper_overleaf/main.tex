@@ -336,14 +336,13 @@ We first evaluated the performance of the ROH-HMM ( Fig.\ref{fig2:ROH}). We comp
 
 
 \paragraph{IBD prediction}
-We investigated the accuracy of IBD state prediction along the genome by counting the number of genomic windows where we correctly predict IBD state for different relatdness and coverages (Fig. \ref{fig4:IBDstate_accuracy}). The accuracy for coverages of 0.1x or higher is consistent and varies between 1.0 and 0.836, depending on relatedness. However, the accuracy decreases at lower coverages for most relatedness and ranges from 1.0 to 0.563 at 0.03x. On the other hand, the accuracy for identical individuals and parent-child pairs is nearly perfect for all investigated coverages, even at 0.03x coverage.
-[add some comments about contamination and ascertainment bias, with reference to supplementary figures]
+We investigated the accuracy of IBD state prediction along the genome by counting the number of genomic windows where we correctly predict IBD state for different relatdness and coverages (Fig. \ref{fig4:IBDstate_accuracy}). The accuracy for coverages of 0.1x or higher is consistent and varies between 1.0 and 0.836, depending on relatedness. However, the accuracy decreases at lower coverages for most relatedness and ranges from 1.0 to 0.563 at 0.03x. On the other hand, the accuracy for identical individuals and parent-child pairs is nearly perfect for all investigated coverages, even at 0.03x coverage. We find that adding contamination, ascertainment bias and ROH in our simulations does not affect IBD prediction for identical and parent-child pairs, but reduces accuracy for unrelated individuals by xx, yy and zz respectively, for second degree by xx,yy,zz and for siblings by xx,yy,zz respectively. 
 
 
 \begin{figure}[h!]
     \includegraphics[width=16cm]{plots/plotimg/plot_IBDaccuracy.png}
     \centering
-    \caption{Evaluation of IBD estimation at different coverages. y-axis shows accuracy calculated over 60 simulations with each relatedness case and six different coverages shown on x-Here,Here,axis. The error bars are drawn at 1 standard deviation from the mean. Here, accuracy corresponding to relatedness cases for Parent-Child and Identical individuals is always 1, and overlaps with each other.}
+    \caption{Evaluation of IBD estimation at different coverages. y-axis shows accuracy calculated over 60 simulations with each relatedness case and six different coverages shown on x-axis. The error bars are drawn at 1 standard deviation from the mean. Here, accuracy corresponding to relatedness cases for Parent-Child and Identical individuals is always 1, and overlaps with each other.}
     \label{fig4:IBDstate_accuracy}
 \end{figure}
 
@@ -524,8 +523,28 @@ We thank Svante Pääbo, Janet Kelso, Harald Ringbauer, Johann Visagie, Laurits 
     \label{figS10:cutoff}
 \end{figure}
 
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=18cm]{plots/plotimg/plot_IBDaccuracy_asc.png}
+    \caption{Evaluation of IBD estimation in presence of ascertainment at different coverages. y-axis shows accuracy calculated over 60 simulations with each relatedness case and six different coverages shown on x-axis. The error bars are drawn at 1 standard deviation from the mean. Here, accuracy corresponding to relatedness cases for Parent-Child and Identical individuals is always 1, and overlaps with each other.}
+    \label{figS11:ibd_asc}
+\end{figure}
 
 
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=18cm]{plots/plotimg/plot_IBDaccuracy_roh.png}
+    \caption{Evaluation of IBD estimation in presence of ROH at different coverages. y-axis shows accuracy calculated over 60 simulations with each relatedness case and six different coverages shown on x-axis. The error bars are drawn at 1 standard deviation from the mean. Here, accuracy corresponding to relatedness cases for Parent-Child and Identical individuals is always 1, and overlaps with each other.}
+    \label{figS11:ibd_asc}
+\end{figure}
+
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=18cm]{plots/plotimg/plot_IBDaccuracy_cont.png}
+    \caption{Evaluation of IBD estimation in presence of contamination at different coverages. y-axis shows accuracy calculated over 60 simulations with each relatedness case and six different coverages shown on x-axis. The error bars are drawn at 1 standard deviation from the mean. Here, accuracy corresponding to relatedness cases for Parent-Child and Identical individuals is always 1, and overlaps with each other.}
+    \label{figS11:ibd_asc}
+\end{figure}
 \begin{figure}[h!]
     \centering
     \includegraphics[width=18cm]{supplementary_info/plots/lcPlot.png}
