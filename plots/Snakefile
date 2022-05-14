@@ -122,6 +122,7 @@ rule ibd_accuracy_plot:
 
 rule ibd_accuracy_plot_others:
     input:
+        inf="plotdata/plot_IBDaccuracy.csv",
         inf_c="plotdata/plot_IBDaccuracy_cont.csv",
         inf_a="plotdata/plot_IBDaccuracy_asc.csv",
         inf_r="plotdata/plot_IBDaccuracy_roh.csv",
