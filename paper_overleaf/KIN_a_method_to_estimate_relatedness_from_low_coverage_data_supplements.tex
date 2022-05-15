@@ -1,0 +1,146 @@
+\documentclass[12pt, letterpaper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}
+\usepackage[super]{nth}
+\usepackage{hyperref}
+\usepackage{lineno}
+\usepackage[
+singlelinecheck=false
+]{caption}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{bm}
+\usepackage{bbm}
+\usepackage{graphicx}
+\usepackage{csvsimple}
+\usepackage[section]{placeins}
+\usepackage{lineno}
+\usepackage{natbib}
+
+\title{KIN: A method to infer relatedness from low-coverage ancient DNA}
+\author{Divyaratan Popli, Stéphane Peyrégne, Benjamin M. Peter}
+%\date{5 August 2021}
+\linenumbers
+
+\setlength{\parskip}{1em}
+\setlength{\parindent}{0em}
+
+\newcommand{\BZ}{\mathbf{Z}}
+\newcommand{\BD}{\mathbf{D}}
+\newcommand{\BN}{\mathbf{N}}
+\newcommand{\BH}{\mathbf{H}}
+\newcommand{\Btheta}{\pmb{\theta}}
+
+
+\begin{document}
+
+\maketitle
+%\renewcommand\thefigure{\arabic{figure}}    
+\section*{Supplementary Figures}
+%\setcounter{figure}{0}   
+
+
+\renewcommand{\figurename}{Fig. S}
+\begin{figure}[h!]
+    \includegraphics[width=18cm]{plots/inkscape_finalImg/schematic1.png}
+    \centering
+    \caption{Overall schematic of the method showing the entire pipeline from processed bam files to final relatedness and IBD estimates. Blue boxes show the data files, while green boxes represent scripts.}
+    \label{figS0:schematic}
+\end{figure}
+
+
+
+
+\begin{figure}[h!]
+    \includegraphics[width=18cm]{supplementary_info/plots/binom.png}
+    \centering
+    \caption{Comparison of fit with Beta-binomial and Binomial distributions. Data is represented by the histogram of proportion of differences from all windows of a (A) unrelated, (B) Parent-Child, (C) Identical pair of individuals. Binomial parameter p is calculated from the data, while Beta-binomial parameters are estimated with the relatedness HMM.}
+    \label{figS1:binom}
+    
+\end{figure}
+
+
+\begin{figure}[h!]
+    \includegraphics[width=18cm]{plots/inkscape_finalImg/pedigree_both.png}
+    \centering
+    \caption{Overview of simulated dataset. (A) We simulated four different populations with split times and sampling times (in generations) mimicking the populations of Chagyrskaya Neandertals, Vindija Neandertals, Altai Neandertals and present day Africans \cite{mafessoni_high-coverage_2020}. We artificially mated individuals in Pop1 to create related individuals. We used Pop2 and Pop3 to introduced ascertainment bias in the data, while we simulated contamination from modern humans using Pop4. (B) In Pop1, we sampled 8 diploid unrelated individuals, and artificially mated some of them to make a pedigree with upto $5^th$ Degree relatives. Circles represent females, and squares represent males. Dotted lines connect identical pair of individuals.}
+    \label{figS10:pedigree}
+    
+\end{figure}
+
+
+\begin{figure}[h!]
+    \includegraphics[width=18cm]{supplementary_info/plots/fil0_read_plot.png}
+    \centering
+    \caption{Application of READ on Neandertal specimens from Chagyrskaya and Okladnikov Caves. Color of a square represents the relatedness, while the number denotes standard deviations away from the upper threshold (we show lower threshold for unrelated pairs since upper threshold is not available).}
+    \label{figS2:Chagyrskaya_READ}
+\end{figure}
+
+
+\begin{figure}[h!]
+    \includegraphics[width=18cm]{supplementary_info/plots/contam0_inbred1_run57_coverage0.2_asc0_inputMode_hapProbs_fil0_pair0_15_relid_emissions_bnds.png}
+    \centering
+    \caption{Application of Identical KIN-HMM on a pair of identical individuals with low coverage (0.2x), and ROH tracts. Top panel shows pairwise proportion of differences is close to expectation, but dips in some windows due to presence of ROH tracts. Bottom two panels show $P(Data|Z_w=2)$ without constraints and with constraints respectively.}
+    \label{figS3:bnds}
+\end{figure}
+
+
+
+\begin{figure}[h!]
+    \includegraphics[width=18cm]{supplementary_info/plots/contam0_inbred1_run57_coverage0.2_asc0_inputMode_hapProbs_fil0_pair0_15_relid_betaplot.png}
+    \centering
+    \caption{Comparison of beta distributions estimated with the Identical KIN-HMM (left) without and (right) with variance constrained optimization of $\delta$ parameters.The histogram in each plot shows pairwise differences in genomic windows for identical individuals. Colored lines shows the Beta probability distribution for each IBD state $Z_w$.}
+    \label{figS4:bndsbeta}
+\end{figure}
+
+
+\begin{figure}[h!]
+    \includegraphics[width=18cm]{supplementary_info/plots/contam0_inbred1_run57_coverage0.2_asc0_inputMode_hapProbs_fil0_ind0_forced_roh.png}
+     \centering
+    \caption{Comparison of Beta distributions estimated with ROH-HMM (left) without and (right) with constrained emissions. The histogram in each plot shows pairwise differences in genomic windows for identical individuals. Colored lines shows the Beta probability distribution for each homozygosity state $Y_w$.}
+    \label{figS5:ROHforced}
+\end{figure}
+
+\begin{figure}[h!]
+    \includegraphics[width=16cm]{plots/plotimg/contam0_inbred0_model_performance_allroc_asc0_plot.png}
+    \centering
+    \caption{False positive and true positive rates as a function of cutoff on log likelihood ratio. In top panel, dotted line represents $5\%$. Unrelated label here refers to KIN performance results when all Unrelated, Fifth Degree, Fourth Degree, Third Degree pairs are labelled as Unrelated. 'Unrelated w/o $3^{rd}$ Degree' refers to the performance results when $3^{rd}$ Degree is classified separately from the unrelated individuals.}
+    \label{figS10:cutoff}
+\end{figure}
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=18cm]{plots/plotimg/plot_IBDaccuracy_others_supp.png}
+    \caption{Comparison of IBD estimation in control simulations and in presence of contamination, ascertainment or ROH (denoted in figure legend by Control, C, A and R, respectively) at different coverages. y-axis shows accuracy calculated over 60 simulations for each relatedness case, for each scenario (control, C, A or R), and six different coverages shown on x-axis. The error bars are drawn at 1 standard deviation from the mean. Here, accuracy corresponding to relatedness cases for Parent-Child and Identical individuals is always 1, and overlaps with each other.}
+    \label{figS11:ibd_others}
+\end{figure}
+
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=18cm]{supplementary_info/plots/lcPlot.png}
+    \caption{Comparison of IBD states estimated for Chagyrskaya specimens using (A) lcMLkin and (B) KIN. Each plot shows relatedness coefficient (calculated as $k_2+k_1/2$) on y-axis plotted against $k_0$ (proportion of genome with no chromosomes shared). The relatedness shown with different colors is estimated with both READ and KIN.}
+    \label{figS6:Chagyrskaya_ibd}
+\end{figure}
+
+
+
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=18cm]{supplementary_info/plots/egplot1.png}
+    \caption{Plots showing proportion of differences in windows along the genome for some of the pairs of relatives for which KIN differs from READ. (A) AITI62B-OTTM156 (READ estimates Identical individuals, lcMLkin does not have sufficient data, and KIN predicts parent-child. (B) UNTA5867-UNTA5868Sk1 (READ estimates Second Degree, lcMLkin does not have sufficient data, and KIN predicts parent-child). (C) AITI40-AITI72 (READ estimates Unrelated individuals, lcMLkin shows 3rd-5th degree, and KIN predicts 3rd degree.)
+    (D) AITI2-AITI55 (READ estimates Unrelated individuals, lcMLkin and KIN predicts predict second degree.)}
+    \label{figS8:eg1}
+\end{figure}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=18cm]{supplementary_info/plots/egplot2.png}
+    \caption{Plots showing proportion of differences in windows along the genome for some of the pairs of relatives for which KIN differs from lcMLkin. (A) AITI43-AITI55 (READ estimates First degree, lcMLkin predicts siblings, while KIN predicts parent-child. (B) AITI70-AITI72 (READ estimates First degree, lcMLkin predicts parent-child, while KIN predicts siblings.}
+    \label{figS9:eg2}
+\end{figure}
+
+
+
+\end{document}
