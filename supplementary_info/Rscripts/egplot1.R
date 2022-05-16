@@ -8,10 +8,12 @@ library(readr)
 #chrmf <- "/mnt/diversity/divyaratan_popli/100arc/inbreeding/bronze_age_newSim/mergedwin_fil0/merged_chrm.csv"
 egplot1 <- function(p1f, datadf, datatf, chrmf, outimg){
 
-  ind1=1907+1 #AITI62B_OTTM156
-  ind2=6783+1 #UNTA5867_UNTA5868Sk1
-  ind3=1029+1 #AITI40_AITI72
-  ind4=244+1 #AITI2_AITI55
+  ind1=2987+1 #AITI95_AITI98
+  ind2=2343+1 #AITI72_AITI77A
+  ind3=6311+1 #POST131_POST28
+  ind4=3333+1 #ALT3_ALT4
+
+
   p1 <- read_file(p1f)
   p1 <- as.double(gsub("[\r\n]", "", p1))
   p12=p1/2
@@ -150,6 +152,8 @@ egplot1 <- function(p1f, datadf, datatf, chrmf, outimg){
 
 
   panel<-plot_grid(plot1,plot2,plot3,plot4, labels= c("A","B","C","D"), ncol=1, rel_widths = c(1,1,1,1),rel_heights = c(1,1,1,1.3), align="v")
+  #panel<-plot_grid(plot1,plot2,plot4, labels= c("A","B","C"), ncol=1, rel_widths = c(1,1,1,1),rel_heights = c(1,1,1,1.1), align="v")
+
   ggsave(outimg,
          width = 8, height = 5, dpi = 150, units = "in", device='png')
 }
