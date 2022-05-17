@@ -54,7 +54,7 @@ singlelinecheck=false
 \begin{figure}[h!]
     \includegraphics[width=18cm]{supplementary_info/plots/binom.png}
     \centering
-    \caption{Comparison of fit with Beta-binomial and Binomial distributions. Data is represented by the histogram of proportion of differences from all windows of a (A) unrelated, (B) Parent-Child, (C) Identical pair of individuals. Binomial parameter p is calculated from the data, while Beta-binomial parameters are estimated with the relatedness HMM.}
+    \caption{Comparison of fit with Beta-binomial and Binomial distributions. Data is represented by the histogram of proportion of differences from all windows of a (A) unrelated, (B) Parent-Child, (C) Identical pair of individuals. Binomial parameter p is calculated from the data, while Beta-binomial parameters are estimated with corresponding KIN-HMM.}
     \label{figS1:binom}
     
 \end{figure}
@@ -63,7 +63,7 @@ singlelinecheck=false
 \begin{figure}[h!]
     \includegraphics[width=18cm]{plots/inkscape_finalImg/pedigree_both.png}
     \centering
-    \caption{Overview of simulated dataset. (A) We simulated four different populations with split times and sampling times (in generations) mimicking the populations of Chagyrskaya Neandertals, Vindija Neandertals, Altai Neandertals and present day Africans \cite{mafessoni_high-coverage_2020}. We artificially mated individuals in Pop1 to create related individuals. We used Pop2 and Pop3 to introduced ascertainment bias in the data, while we simulated contamination from modern humans using Pop4. (B) In Pop1, we sampled 8 diploid unrelated individuals, and artificially mated some of them to make a pedigree with upto $5^th$ Degree relatives. Circles represent females, and squares represent males. Dotted lines connect identical pair of individuals.}
+    \caption{Overview of simulated dataset. (A) We simulated four different populations with split times and sampling times (in generations) mimicking the populations of Chagyrskaya Neandertals, Vindija Neandertals, Altai Neandertals and present day Africans. We artificially mated individuals in Pop1 to create related individuals. We used Pop2 and Pop3 to introduced ascertainment bias in the data, while we simulated contamination from modern humans using Pop4. (B) In Pop1, we sampled 8 diploid unrelated individuals, and artificially mated some of them to make a pedigree with upto $5^{th}$ Degree relatives. Circles represent females, and squares represent males. Dotted lines connect identical pair of individuals.}
     \label{figS10:pedigree}
     
 \end{figure}
@@ -89,7 +89,7 @@ singlelinecheck=false
 \begin{figure}[h!]
     \includegraphics[width=18cm]{supplementary_info/plots/contam0_inbred1_run57_coverage0.2_asc0_inputMode_hapProbs_fil0_pair0_15_relid_betaplot.png}
     \centering
-    \caption{Comparison of beta distributions estimated with the Identical KIN-HMM (left) without and (right) with variance constrained optimization of $\delta$ parameters.The histogram in each plot shows pairwise differences in genomic windows for identical individuals. Colored lines shows the Beta probability distribution for each $i$, where $i$ is the index used for combinations of $Z_W$ and $H_w$.}
+    \caption{Comparison of beta distributions estimated with the Identical KIN-HMM (left) without and (right) with variance constrained optimization of $\delta$ parameters.The histogram in each plot shows pairwise differences in genomic windows for identical individuals. Colored lines shows the Beta probability distribution for each $i$, where $i$ is the index used for combinations of $Z_w$ and $H_w$.}
     \label{figS4:bndsbeta}
 \end{figure}
 
@@ -129,7 +129,7 @@ singlelinecheck=false
 \begin{figure}[!ht]
     \centering
     \includegraphics[width=18cm]{supplementary_info/plots/egplot1.png}
-    \caption{Plots showing proportion of differences in windows along the genome for some pairs of relatives for which there is contradiction among KIN, READ and lcMLkin. (A) shows a case for which KIN and lcMLkin together disagree with READ, and (B) shows a case where KIN and lcMLkin differ, while READ does not have enough power. (C) and (D) show the two pairs for which all three methods disagree. We expect to see proportion of differences for second degree to be close to $p_0$ in $50\%$ windows, and $p_1$ in $50\%$ windows. For third degree we expect $75\%$ windows to be close to $p_0$, and $25\%$ windows to be close to $p_1$. For unrelated, we expect the proportion of differences to stay close to $p_0$ with some noise. (A) AITI95-AITI98 (READ estimates unrelated, lcMLkin and KIN predict second degree. (B) AITI72-AITI77A (READ estimates unrelated (READ does not distinguish between unrelated and third degree), lcMLkin shows unrelated, and KIN predicts third degree). (C) POST131-POST28 (READ estimates Unrelated, lcMLkin shows 3rd-5th degree, and KIN predicts second degree.) (D) ALT3-ALT4 (READ estimates unrelated, lcMLkin shows second degree and KIN predicts third degree.)}
+    \caption{Plots showing proportion of differences in windows along the genome for some pairs of relatives for which there is contradiction among KIN, READ and lcMLkin. (A) shows a case for which KIN and lcMLkin together disagree with READ, and (B) shows a case where KIN and lcMLkin differ, while READ does not classify between contradicting relatedness categories. (C) and (D) show the two unresolved pairs for which all three methods disagree. We expect to see proportion of differences for second degree to be close to $p_0$ in $50\%$ windows, and $p_1$ in $50\%$ windows. For third degree we expect $75\%$ windows to be close to $p_0$, and $25\%$ windows to be close to $p_1$. For unrelated, we expect the proportion of differences to stay close to $p_0$ with some noise. (A) AITI95-AITI98 (READ estimates unrelated, lcMLkin and KIN predict second degree. (B) AITI72-AITI77A (READ estimates unrelated, lcMLkin shows unrelated, and KIN predicts third degree). (C) POST131-POST28 (READ estimates Unrelated, lcMLkin shows 3rd-5th degree, and KIN predicts second degree.) (D) ALT3-ALT4 (READ estimates unrelated, lcMLkin shows second degree and KIN predicts third degree.)}
     \label{figS8:eg1}
 \end{figure}
 
