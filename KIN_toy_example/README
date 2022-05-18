@@ -1,0 +1,2 @@
+This folder contains all the input files needed for KIN, the files were generated with snakemake with scripts in Simulations directory.
+To run KIN in this directory type KIN -I ./ -O ./ -T ./targets.txt
