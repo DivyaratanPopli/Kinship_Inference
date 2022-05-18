@@ -1,0 +1,370 @@
+
+import numpy as np
+import pandas as pd
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+from sanitycheck_func import *
+
+
+runlist=list(range(1,61))
+totalch=list(range(1,23))
+covlist=[4, 0.5, 0.2, 0.1, 0.05,0.03]
+Mfilist=[0,1]
+#expected overlaps: [4,000,000, 160,000-40,000, 26000-6400, 10,000-2500, 3600-900, 1600- 400]
+inds=list(range(17))
+#length=1e8
+interval=1e7
+
+
+rule grand_plot:
+    input:
+        diff="../post_sim/inbred{inb}/run{RID}/chrm{ch}/coverage{cov}/contam{cnt}/asc{asc}/wins/inputMode_{inpMode}_fil{Mfil}/allwind.csv.gz",
+        total="../post_sim/inbred{inb}/run{RID}/chrm{ch}/coverage{cov}/contam{cnt}/asc{asc}/wins/inputMode_{inpMode}_fil{Mfil}/allwint.csv.gz",
+        pos="../post_sim/inbred{inb}/run{RID}/chrm{ch}/coverage{cov}/contam{cnt}/asc{asc}/hapProbs/pos_filtered{Mfil}.gz"
+
+
+    output:
+        png="inbred{inb}/run{RID}/chrm{ch}/coverage{cov}/contam{cnt}/asc{asc}/inputMode_{inpMode}_fil{Mfil}/gr1state.png",
+        grand1state="inbred{inb}/run{RID}/chrm{ch}/coverage{cov}/contam{cnt}/asc{asc}/inputMode_{inpMode}_fil{Mfil}/gr1state.csv.gz"
+    resources:
+        mem_mb=20000
+    run:
+        recombdir="../sim_init/run%s/chrm%s/sim_recomb/" %(str(wildcards.RID), str(wildcards.ch))
+        position=np.loadtxt(input.pos, dtype='float', delimiter = ",")
+        length=position[-1]
+        plot_gp(length=length,
+            interval=interval,
+            filenamed=input.diff,
+            filenamet=input.total,
+            rdir=recombdir,
+            g1=1,
+            g2=12,
+            p1=1,
+            p2=10,
+            outimg=output.png,
+            outstate=output.grand1state,
+            rel23=2,
+            ninds=len(inds))
+
+
+rule deg3_plot:
+    input:
+        diff="../post_sim/inbred{inb}/run{RID}/chrm{ch}/coverage{cov}/contam{cnt}/asc{asc}/wins/inputMode_{inpMode}_fil{Mfil}/allwind.csv.gz",
+        total="../post_sim/inbred{inb}/run{RID}/chrm{ch}/coverage{cov}/contam{cnt}/asc{asc}/wins/inputMode_{inpMode}_fil{Mfil}/allwint.csv.gz",
+        pos="../post_sim/inbred{inb}/run{RID}/chrm{ch}/coverage{cov}/contam{cnt}/asc{asc}/hapProbs/pos_filtered{Mfil}.gz"
+
+
+    output:
+        png="inbred{inb}/run{RID}/chrm{ch}/coverage{cov}/contam{cnt}/asc{asc}/inputMode_{inpMode}_fil{Mfil}/deg3state.png",
+        deg3state="inbred{inb}/run{RID}/chrm{ch}/coverage{cov}/contam{cnt}/asc{asc}/inputMode_{inpMode}_fil{Mfil}/deg3state.csv.gz"
+    resources:
+        mem_mb=20000
+    run:
+        recombdir="../sim_init/run%s/chrm%s/sim_recomb/" %(str(wildcards.RID), str(wildcards.ch))
+        position=np.loadtxt(input.pos, dtype='float', delimiter = ",")
+        length=position[-1]
+        plot_gp(length=length,
+            interval=interval,
+            filenamed=input.diff,
+            filenamet=input.total,
+            rdir=recombdir,
+            g1=1,
+            g2=13,
+            p1=1,
+            p2=12,
+            outimg=output.png,
+            outstate=output.deg3state,
+            rel23=3,
+            ninds=len(inds))
+
+rule deg4_plot:
+    input:
+        diff="../post_sim/inbred{inb}/run{RID}/chrm{ch}/coverage{cov}/contam{cnt}/asc{asc}/wins/inputMode_{inpMode}_fil{Mfil}/allwind.csv.gz",
+        total="../post_sim/inbred{inb}/run{RID}/chrm{ch}/coverage{cov}/contam{cnt}/asc{asc}/wins/inputMode_{inpMode}_fil{Mfil}/allwint.csv.gz",
+        pos="../post_sim/inbred{inb}/run{RID}/chrm{ch}/coverage{cov}/contam{cnt}/asc{asc}/hapProbs/pos_filtered{Mfil}.gz"
+
+
+    output:
+        png="inbred{inb}/run{RID}/chrm{ch}/coverage{cov}/contam{cnt}/asc{asc}/inputMode_{inpMode}_fil{Mfil}/deg4state.png",
+        deg4state="inbred{inb}/run{RID}/chrm{ch}/coverage{cov}/contam{cnt}/asc{asc}/inputMode_{inpMode}_fil{Mfil}/deg4state.csv.gz"
+
+    resources:
+        mem_mb=20000
+
+    run:
+        recombdir="../sim_init/run%s/chrm%s/sim_recomb/" %(str(wildcards.RID), str(wildcards.ch))
+        position=np.loadtxt(input.pos, dtype='float', delimiter = ",")
+        length=position[-1]
+        plot_gp(length=length,
+            interval=interval,
+            filenamed=input.diff,
+            filenamet=input.total,
+            rdir=recombdir,
+            g1=1,
+            g2=14,
+            p1=1,
+            p2=13,
+            outimg=output.png,
+            outstate=output.deg4state,
+            rel23=4,
+            ninds=len(inds))
+
+
+rule deg5_plot:
+    input:
+        diff="../post_sim/inbred{inb}/run{RID}/chrm{ch}/coverage{cov}/contam{cnt}/asc{asc}/wins/inputMode_{inpMode}_fil{Mfil}/allwind.csv.gz",
+        total="../post_sim/inbred{inb}/run{RID}/chrm{ch}/coverage{cov}/contam{cnt}/asc{asc}/wins/inputMode_{inpMode}_fil{Mfil}/allwint.csv.gz",
+        pos="../post_sim/inbred{inb}/run{RID}/chrm{ch}/coverage{cov}/contam{cnt}/asc{asc}/hapProbs/pos_filtered{Mfil}.gz"
+
+    output:
+        png="inbred{inb}/run{RID}/chrm{ch}/coverage{cov}/contam{cnt}/asc{asc}/inputMode_{inpMode}_fil{Mfil}/deg5state.png",
+        deg5state="inbred{inb}/run{RID}/chrm{ch}/coverage{cov}/contam{cnt}/asc{asc}/inputMode_{inpMode}_fil{Mfil}/deg5state.csv.gz"
+
+
+    resources:
+            mem_mb=20000
+    run:
+        recombdir="../sim_init/run%s/chrm%s/sim_recomb/" %(str(wildcards.RID), str(wildcards.ch))
+        position=np.loadtxt(input.pos, dtype='float', delimiter = ",")
+        length=position[-1]
+        plot_gp(length=length,
+            interval=interval,
+            filenamed=input.diff,
+            filenamet=input.total,
+            rdir=recombdir,
+            g1=8,
+            g2=14,
+            p1=1,
+            p2=10,
+            outimg=output.png,
+            outstate=output.deg5state,
+            rel23=5,
+            ninds=len(inds))
+
+
+rule sib_plot:
+    input:
+        diff="../post_sim/inbred{inb}/run{RID}/chrm{ch}/coverage{cov}/contam{cnt}/asc{asc}/wins/inputMode_{inpMode}_fil{Mfil}/allwind.csv.gz",
+        total="../post_sim/inbred{inb}/run{RID}/chrm{ch}/coverage{cov}/contam{cnt}/asc{asc}/wins/inputMode_{inpMode}_fil{Mfil}/allwint.csv.gz",
+        pos="../post_sim/inbred{inb}/run{RID}/chrm{ch}/coverage{cov}/contam{cnt}/asc{asc}/hapProbs/pos_filtered{Mfil}.gz"
+
+    output:
+        sib1state="inbred{inb}/run{RID}/chrm{ch}/coverage{cov}/contam{cnt}/asc{asc}/inputMode_{inpMode}_fil{Mfil}/sib1state.csv.gz",
+        png="inbred{inb}/run{RID}/chrm{ch}/coverage{cov}/contam{cnt}/asc{asc}/inputMode_{inpMode}_fil{Mfil}/sib1state.png"
+
+    resources:
+        mem_mb=20000
+
+
+    run:
+        recombdir="../sim_init/run%s/chrm%s/sim_recomb/" %(str(wildcards.RID),str(wildcards.ch))
+        position=np.loadtxt(input.pos, dtype='float', delimiter = ",")
+        length=position[-1]
+
+        plot_sib(length=length,
+            interval=interval,
+            filenamed=input.diff,
+            filenamet=input.total,
+            rdir=recombdir,
+            rel='sib',
+            p11=2,
+            p12=3,
+            p21=4,
+            p22=5,
+            outimg=output.png,
+            outstate=output.sib1state,
+            ninds=len(inds))
+
+
+rule avu_plot:
+    input:
+        diff="../post_sim/inbred{inb}/run{RID}/chrm{ch}/coverage{cov}/contam{cnt}/asc{asc}/wins/inputMode_{inpMode}_fil{Mfil}/allwind.csv.gz",
+        total="../post_sim/inbred{inb}/run{RID}/chrm{ch}/coverage{cov}/contam{cnt}/asc{asc}/wins/inputMode_{inpMode}_fil{Mfil}/allwint.csv.gz",
+        pos="../post_sim/inbred{inb}/run{RID}/chrm{ch}/coverage{cov}/contam{cnt}/asc{asc}/hapProbs/pos_filtered{Mfil}.gz"
+
+    output:
+        avu1state="inbred{inb}/run{RID}/chrm{ch}/coverage{cov}/contam{cnt}/asc{asc}/inputMode_{inpMode}_fil{Mfil}/avu1state.csv.gz",
+        png="inbred{inb}/run{RID}/chrm{ch}/coverage{cov}/contam{cnt}/asc{asc}/inputMode_{inpMode}_fil{Mfil}/avu1state.png"
+    resources:
+        mem_mb=20000
+
+    run:
+        recombdir="../sim_init/run%s/chrm%s/sim_recomb/" %(str(wildcards.RID),str(wildcards.ch))
+        position=np.loadtxt(input.pos, dtype='float', delimiter = ",")
+        length=position[-1]
+
+        plot_sib(length=length,
+            interval=interval,
+            filenamed=input.diff,
+            filenamet=input.total,
+            rdir=recombdir,
+            rel='avu',
+            p11=2,
+            p12=3,
+            p21=4,
+            p22=5,
+            outimg=output.png,
+            outstate=output.avu1state,
+            ninds=len(inds))
+
+
+rule halfsib_plot:
+    input:
+        diff="../post_sim/inbred{inb}/run{RID}/chrm{ch}/coverage{cov}/contam{cnt}/asc{asc}/wins/inputMode_{inpMode}_fil{Mfil}/allwind.csv.gz",
+        total="../post_sim/inbred{inb}/run{RID}/chrm{ch}/coverage{cov}/contam{cnt}/asc{asc}/wins/inputMode_{inpMode}_fil{Mfil}/allwint.csv.gz",
+        pos="../post_sim/inbred{inb}/run{RID}/chrm{ch}/coverage{cov}/contam{cnt}/asc{asc}/hapProbs/pos_filtered{Mfil}.gz"
+
+    output:
+        hsib1state="inbred{inb}/run{RID}/chrm{ch}/coverage{cov}/contam{cnt}/asc{asc}/inputMode_{inpMode}_fil{Mfil}/hsib1state.csv.gz",
+        png="inbred{inb}/run{RID}/chrm{ch}/coverage{cov}/contam{cnt}/asc{asc}/inputMode_{inpMode}_fil{Mfil}/hsib1state.png"
+    resources:
+        mem_mb=20000
+
+    run:
+        recombdir="../sim_init/run%s/chrm%s/sim_recomb/" %(str(wildcards.RID),str(wildcards.ch))
+        position=np.loadtxt(input.pos, dtype='float', delimiter = ",")
+        length=position[-1]
+
+        plot_halfsib(length=length,
+            interval=interval,
+            filenamed=input.diff,
+            filenamet=input.total,
+            rdir=recombdir,
+            outimg=output.png,
+            outstate=output.hsib1state,
+            ninds=len(inds))
+
+
+rule merge_states:
+    input:
+        grandf=expand("inbred{{inb}}/run{{RID}}/chrm{ch}/coverage{{cov}}/contam{{cnt}}/asc{{asc}}/inputMode_{{inpMode}}_fil{{Mfil}}/gr1state.csv.gz",ch=totalch),
+        sibf=expand("inbred{{inb}}/run{{RID}}/chrm{ch}/coverage{{cov}}/contam{{cnt}}/asc{{asc}}/inputMode_{{inpMode}}_fil{{Mfil}}/sib1state.csv.gz",ch=totalch),
+        deg3f=expand("inbred{{inb}}/run{{RID}}/chrm{ch}/coverage{{cov}}/contam{{cnt}}/asc{{asc}}/inputMode_{{inpMode}}_fil{{Mfil}}/deg3state.csv.gz",ch=totalch),
+        hsibf=expand("inbred{{inb}}/run{{RID}}/chrm{ch}/coverage{{cov}}/contam{{cnt}}/asc{{asc}}/inputMode_{{inpMode}}_fil{{Mfil}}/hsib1state.csv.gz",ch=totalch),
+        avuf=expand("inbred{{inb}}/run{{RID}}/chrm{ch}/coverage{{cov}}/contam{{cnt}}/asc{{asc}}/inputMode_{{inpMode}}_fil{{Mfil}}/avu1state.csv.gz",ch=totalch),
+        deg4f=expand("inbred{{inb}}/run{{RID}}/chrm{ch}/coverage{{cov}}/contam{{cnt}}/asc{{asc}}/inputMode_{{inpMode}}_fil{{Mfil}}/deg4state.csv.gz",ch=totalch),
+        deg5f=expand("inbred{{inb}}/run{{RID}}/chrm{ch}/coverage{{cov}}/contam{{cnt}}/asc{{asc}}/inputMode_{{inpMode}}_fil{{Mfil}}/deg5state.csv.gz",ch=totalch),
+
+    output:
+        outg="inbred{inb}/run{RID}/coverage{cov}/contam{cnt}/asc{asc}/inputMode_{inpMode}_fil{Mfil}/grand_state_all.gz",
+        outs="inbred{inb}/run{RID}/coverage{cov}/contam{cnt}/asc{asc}/inputMode_{inpMode}_fil{Mfil}/sib_state_all.gz",
+        out3="inbred{inb}/run{RID}/coverage{cov}/contam{cnt}/asc{asc}/inputMode_{inpMode}_fil{Mfil}/deg3_state_all.gz",
+        outh="inbred{inb}/run{RID}/coverage{cov}/contam{cnt}/asc{asc}/inputMode_{inpMode}_fil{Mfil}/hsib_state_all.gz",
+        outa="inbred{inb}/run{RID}/coverage{cov}/contam{cnt}/asc{asc}/inputMode_{inpMode}_fil{Mfil}/avu_state_all.gz",
+        out4="inbred{inb}/run{RID}/coverage{cov}/contam{cnt}/asc{asc}/inputMode_{inpMode}_fil{Mfil}/deg4_state_all.gz",
+        out5="inbred{inb}/run{RID}/coverage{cov}/contam{cnt}/asc{asc}/inputMode_{inpMode}_fil{Mfil}/deg5_state_all.gz",
+
+    resources:
+            mem_mb=20000
+
+    run:
+        init_s= np.empty(0)
+        init_g= np.empty(0)
+        init_3= np.empty(0)
+        init_h= np.empty(0)
+        init_a= np.empty(0)
+        init_4= np.empty(0)
+        init_5= np.empty(0)
+
+        gfiles=input.grandf
+        sfiles=input.sibf
+        files3=input.deg3f
+        hfiles=input.hsibf
+        afiles=input.avuf
+        files4=input.deg4f
+        files5=input.deg5f
+
+        for fi in range(len(gfiles)):
+
+            if sfiles[fi].split('chrm')[1].split('/')[0] != str(fi+1) or gfiles[fi].split('chrm')[1].split('/')[0] !=str(fi+1):
+                print("sibstate or grandstate files are not sorted for merge_all fn,chrm=", )
+
+
+            more_s=np.loadtxt(sfiles[fi],dtype='float', delimiter = ",")
+            init_s= np.append(init_s,more_s)
+
+            more_g=np.loadtxt(gfiles[fi],dtype='float', delimiter = ",")
+            init_g= np.append(init_g,more_g)
+
+            more_3=np.loadtxt(files3[fi],dtype='float', delimiter = ",")
+            init_3= np.append(init_3,more_3)
+
+            more_h=np.loadtxt(hfiles[fi],dtype='float', delimiter = ",")
+            init_h= np.append(init_h,more_h)
+
+            more_a=np.loadtxt(afiles[fi],dtype='float', delimiter = ",")
+            init_a= np.append(init_a,more_a)
+
+            more_4=np.loadtxt(files4[fi],dtype='float', delimiter = ",")
+            init_4= np.append(init_4,more_4)
+
+            more_5=np.loadtxt(files5[fi],dtype='float', delimiter = ",")
+            init_5= np.append(init_5,more_5)
+
+        np.savetxt(fname= output.outs, X=init_s, delimiter=",")
+
+        np.savetxt(fname=output.outg, X=init_g, delimiter=",")
+
+        np.savetxt(fname=output.out3, X=init_3, delimiter=",")
+
+        np.savetxt(fname=output.outh, X=init_h, delimiter=",")
+
+        np.savetxt(fname=output.outa, X=init_a, delimiter=",")
+
+        np.savetxt(fname=output.out4, X=init_4, delimiter=",")
+
+        np.savetxt(fname=output.out5, X=init_5, delimiter=",")
+
+
+
+rule make_simplots:
+    input:
+        stateg="inbred{inb}/run{RID}/coverage{cov}/contam{cnt}/asc{asc}/inputMode_{inpMode}_fil{Mfil}/grand_state_all.gz",
+        states="inbred{inb}/run{RID}/coverage{cov}/contam{cnt}/asc{asc}/inputMode_{inpMode}_fil{Mfil}/sib_state_all.gz",
+        stateh="inbred{inb}/run{RID}/coverage{cov}/contam{cnt}/asc{asc}/inputMode_{inpMode}_fil{Mfil}/hsib_state_all.gz",
+        stated3="inbred{inb}/run{RID}/coverage{cov}/contam{cnt}/asc{asc}/inputMode_{inpMode}_fil{Mfil}/deg3_state_all.gz",
+        statea="inbred{inb}/run{RID}/coverage{cov}/contam{cnt}/asc{asc}/inputMode_{inpMode}_fil{Mfil}/avu_state_all.gz",
+        stated4="inbred{inb}/run{RID}/coverage{cov}/contam{cnt}/asc{asc}/inputMode_{inpMode}_fil{Mfil}/deg4_state_all.gz",
+        stated5="inbred{inb}/run{RID}/coverage{cov}/contam{cnt}/asc{asc}/inputMode_{inpMode}_fil{Mfil}/deg5_state_all.gz",
+
+        datad="../contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/asc{asc}/inputMode_{inpMode}_fil{Mfil}/merged_wind.csv.gz",
+        datat="../contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/asc{asc}/inputMode_{inpMode}_fil{Mfil}/merged_wint.csv.gz",
+
+
+
+    output:
+        figureg="inbred{inb}/run{RID}/coverage{cov}/contam{cnt}/asc{asc}/inputMode_{inpMode}_fil{Mfil}/grand_state_all.png",
+        figures="inbred{inb}/run{RID}/coverage{cov}/contam{cnt}/asc{asc}/inputMode_{inpMode}_fil{Mfil}/sib_state_all.png",
+        figureh="inbred{inb}/run{RID}/coverage{cov}/contam{cnt}/asc{asc}/inputMode_{inpMode}_fil{Mfil}/hsib_state_all.png",
+        figured3="inbred{inb}/run{RID}/coverage{cov}/contam{cnt}/asc{asc}/inputMode_{inpMode}_fil{Mfil}/deg3_state_all.png",
+        figurea="inbred{inb}/run{RID}/coverage{cov}/contam{cnt}/asc{asc}/inputMode_{inpMode}_fil{Mfil}/avu_state_all.png",
+        figured4="inbred{inb}/run{RID}/coverage{cov}/contam{cnt}/asc{asc}/inputMode_{inpMode}_fil{Mfil}/deg4_state_all.png",
+        figured5="inbred{inb}/run{RID}/coverage{cov}/contam{cnt}/asc{asc}/inputMode_{inpMode}_fil{Mfil}/deg5_state_all.png",
+
+    resources:
+            mem_mb=20000
+
+    run:
+
+        make_plots(grandstate=input.stateg,
+                    sibstate=input.states,
+                    hsibstate=input.stateh,
+                    deg3state=input.stated3,
+                    avustate=input.statea,
+                    deg4state=input.stated4,
+                    deg5state=input.stated5,
+                    diff=input.datad,
+                    total=input.datat,
+                    fig_g=output.figureg,
+                    fig_s=output.figures,
+                    fig_h=output.figureh,
+                    fig_d3=output.figured3,
+                    fig_a=output.figurea,
+                    fig_d4=output.figured4,
+                    fig_d5=output.figured5,
+                    ninds=len(inds))
+
+rule all:
+    input:
+        figureg=expand("inbred0/run{RID}/coverage4/contam0/asc0/inputMode_hapProbs_fil0/grand_state_all.png", RID=runlist)
