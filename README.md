@@ -36,42 +36,47 @@ pip3 install _path_to_kin
 # Running KINgaroo
 You can run KINgaroo from the terminal by typing:
 ```
- KINgaroo [-h] -bam  -bed  -T  -cnt  [-c] [-i] [-t] [-cest] [-vcf.gz] [-tar] [-cont] [-r] [-p]
+  KINgaroo [-h] -bam  -bed  -T  -cnt  [-c] [-i] [-t] [-cest] [-d] [-tar] [-cont] [-r] [-p]
 ```
 <p>Here optional inputs are shown in [].
 
 -h: Help<br>
--bam: Path to directory containing bamfiles with chromosomes represented by numbers 1,2,..,X,Y<br>
--bed: Path to tab-separated .bed file containing chromosome, reference and alternate alleles at all<br> &nbsp;&nbsp;&nbsp;&nbsp;available positions ([see example file](example_files/bedfile.bed))<br>
+-bam: Path to directory containing bamfiles with chromosomes (represented by 1,2,..,X,Y) <br>
+-bed: Path to tab-separated .bed file containing chromosome (1,2,..,X,..), reference and alternate alleles at all<br> &nbsp;&nbsp;&nbsp;&nbsp;available positions ([see example file](example_files/bedfile.bed))<br>
 -T: Path to file ([see example file](example_files/targets.txt))containing list of all bamfiles to be used in the analysis<br>
 -cnt: We provide three options for contamination correction:<br>
   &nbsp;&nbsp;&nbsp;&nbsp;0: No contamination correction<br>
-  &nbsp;&nbsp;&nbsp;&nbsp;1: Contamination correction using divergence between the target population and contaminating population. We<br>
-     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;implement a script that uses an indexed vcf.gz file with an individual each from<br>
-     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;target and contaminating populations.<br>
-  &nbsp;&nbsp;&nbsp;&nbsp;0<cnt<1: Contamination correction using divergence value given by cnt<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;1: Contamination correction using divergence between the target population and contaminating population. Please<br>
+     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;enter path to an indexed compressed vcf file [-d] with an individual each from<br>
+     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;target [-tar] and contaminating populations [-cont]. Also required for this step: path<br>
+     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;to contamination estimates file [-cest]<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;0<cnt<1: Contamination correction using divergence value entered here (0<cnt<1). Also required for this step: path<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;to contamination estimates file [-cest] <br>
 -c: Number of cores (by default: all available cores)<br>
 -i: Size of genomic windows in int, Options:10000000, 1000000 (by default we use 10000000)<br>
 -t: Minimum number of nonzero windows for a library to be included in estimation for p_0 (by default:10)<br>
--cest: File with contamination estimates (for contamination correction)<br>
--vcf.gz: Compressed and indexed vcf file for calculation of divergence between target and contaminating populations<br>
--tar: Name of individual from target population in vcf.gz<br>
--cont: Name of individual from contaminating population in vcf.gz<br>
+-cest: File with contamination estimates with 2 tab-separated columns: name,contamination<br>
+-d: Compressed and indexed vcf file for calculation of divergence between target and contaminating populations. Please make sure that your vcf file<br>
+ &nbsp;&nbsp;&nbsp;&nbsp;has genotypes [GT] represented in one of the following formats: X|Y (for phased files), X/Y (for unphased files),X (for pseudohaploids).<br>
+ &nbsp;&nbsp;&nbsp;&nbsp;Here X,Y are 0/1 for ancestral/derived allele<br>
+-tar: Name of individual from target population in [-d]<br>
+-cont: Name of individual from contaminating population in [-d]<br>
 -r: Enter 1 to estimate long ROH, 0 to skip (by default 1)<br>
 -p: p_0 estimate given by user (by default: Estimated from the data)<br>
+
 # Running KIN
 ```
 KIN [-h] -I  -O  -T  [-r] [-c] [-t] [-p] [-i]
 ```
 -h: Help<br>
 -I: Path to the folder where you ran KINgaroo<br>
--O: Output location<br>
+-O: Output location for KIN<br>
 -T: Path to file containing list of all bamfiles to be used in the analysis (should be same as that used in previous package)<br>
--r: Location of directory containing ROH estimates (by default: same as -i)<br>
+-r: Location of directory containing ROH estimates (by default: same as -I)<br>
 -c: Cores (by default: all available cores)<br>
 -t: Minimum number of sites in a window from which ROH estimates are reliable used (by default: 10)<br>
 -p: p_0 estimate given by user (by default: Estimated from the data)<br>
--i: Size of genomic windows in int, Options:10000000, 1000000 (by default we use 10000000)<br>
+-i: Size of genomic windows in int, use the same size as for KINgaroo (by default:10000000)<br>
 # Output
 The final results are available in the file KIN_results.csv ([see example file](example_files/KIN_results.csv))<br>
 The output file has following columns:<br>
