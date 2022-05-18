@@ -290,13 +290,13 @@ def pipeline1(targetsfile, bedfile, cores, rawbams, interval, splitbams, bedfile
 
     libraries, listf = prep_function(targetsfile, splitbams, bedfiles, hapProbs, hmm_param, hbdf, likf)
 
-    #split_bed(bedfile=bedfile, totalch=chrmf, bedfiles=bedfiles)
+    split_bed(bedfile=bedfile, totalch=chrmf, bedfiles=bedfiles)
 
-    #lib_chrm_all=create_lib_chrm(libraries=libraries, totalch=chrmf)
+    lib_chrm_all=create_lib_chrm(libraries=libraries, totalch=chrmf)
 
-    #parallel_indexes(rawbams=rawbams, libraries=libraries, cores=cores)
+    parallel_indexes(rawbams=rawbams, libraries=libraries, cores=cores)
 
-    #parallel_bamfilter(rawbams=rawbams, splitbams=splitbams, bedfiles=bedfiles, hapProbs=hapProbs, lib_chrm_all=lib_chrm_all, cores=cores)
+    parallel_bamfilter(rawbams=rawbams, splitbams=splitbams, bedfiles=bedfiles, hapProbs=hapProbs, lib_chrm_all=lib_chrm_all, cores=cores)
 
     dwins,twins,id_dwins,id_twins, chrmlist = parallel_mergedchrm(libraries=libraries, totalch=chrmf, interval=interval, cores=cores)
 
