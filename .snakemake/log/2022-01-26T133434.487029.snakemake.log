@@ -1,0 +1,3 @@
+ModuleNotFoundError in line 2 of /mnt/diversity/divyaratan_popli/100arc/inbreeding/model_git/Snakefile:
+No module named 'pybedtools'
+  File "/mnt/diversity/divyaratan_popli/100arc/inbreeding/model_git/Snakefile", line 2, in <module>

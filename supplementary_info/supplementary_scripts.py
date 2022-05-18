@@ -34,29 +34,66 @@ def suppTable2(resultsf,kinf,outf2,outf3):
     kin.loc[kin['relatedness']=='un','relatedness_l'] ='Unrelated'
     kin.loc[kin['relatedness']=='deg3','relatedness_l'] ='Third Degree'
 
+    a=list(set(kin['pair']) - set(res['pair']))
+    for i in a:
+        kin.loc[kin['pair']==i,'pair']=i.split('_')[1] + '_' + i.split('_')[0]
 
     ares=pd.merge(res, kin, how='inner', on=['pair'])
+
     ares.loc[ares['Relationship (r/k0)* ']=='unrelated', 'Relationship (r/k0)* ']='Unrelated'
     ares.loc[ares['Relationship (r/k0)* ']=='2nd degree', 'Relationship (r/k0)* ']='Second Degree'
-
+    ares.loc[ares['Relationship (r/k0)* ']=='3rd-5th degree', 'Relationship (r/k0)* ']='Third Degree'
+    #rounding off
+    ares['loglik_ratio']=round(ares['loglik_ratio'],2)
+    ares['Z_lower']=ares['Z_lower'].astype(float).round(2)
+    ares['Z_upper']=ares['Z_upper'].astype(float).round(2)
     #where do read and kin differ?
 
     diff=ares.loc[ares['relatedness_r']!=ares['Relationship (READ)'],['relatedness_r','relatedness_l','loglik_ratio','Relationship (READ)','Z_upper','Z_lower','Relationship (r/k0)* ','pair','nSNPs']]
     diff.reset_index(drop=True, inplace=True)
 
+    diff1=diff.loc[diff['loglik_ratio']>1,:]
+    diff1.reset_index(drop=True, inplace=True)
 
-    dtable=diff.copy()
-    dtable.columns=['relatedness_r', 'Relatedness KIn', 'Log liklihood ratio (KIn)', 'Relatedness READ','Z_upper (READ)', 'Z_lower (READ)', 'Relatedness lcMLkin', 'pair', 'nSNPs']
+    diff2=diff1.loc[~((abs(diff1['Z_lower'])<1) | (abs(diff1['Z_upper'])<1)),:]
+    diff2=diff2.loc[diff2['Relationship (r/k0)* ']!='too low coverage',:]
+
+    #where do lcmlkin and kin differ?
+    diffl=ares.loc[ares['relatedness_l']!=ares['Relationship (r/k0)* '],['relatedness_r','relatedness_l','loglik_ratio','Relationship (READ)','Z_upper','Z_lower','Relationship (r/k0)* ','pair','nSNPs']]
+    diffl.reset_index(drop=True, inplace=True)
+    diffl=diffl.loc[diffl['loglik_ratio']>1,:]
+    diffl.reset_index(drop=True, inplace=True)
+    diffl=diffl.loc[diffl['Relationship (r/k0)* ']!='too low coverage',:]
+    diffl.reset_index(drop=True, inplace=True)
+
+    #diffl=diffl.loc[~((abs(diffl['Z_lower'])<1) | (abs(diffl['Z_upper'])<1)),:]
+
+
+    dtable=diff1.copy()
+    dtable.columns=['relatedness_r', 'Relatedness KIN', 'Log liklihood ratio (KIN)', 'Relatedness READ','Z_upper (READ)', 'Z_lower (READ)', 'Relatedness lcMLkin', 'pair', 'nSNPs']
     dtable=dtable.drop('relatedness_r',1)
 
     #looking at cases where read says first degree and others disagree
-    fread=ares.loc[ares['Relationship (READ)']=='First Degree',['relatedness_r','relatedness_l','withinDeg_ll','Relationship (READ)','Z_upper','Z_lower','Relationship (r/k0)* ','pair','nSNPs']]
-    rtable=fread.copy()
-    rtable.columns=['relatedness_r', 'Relatedness KIn', 'Log liklihood ratio (KIn)', 'Relatedness READ','Z_upper (READ)', 'Z_lower (READ)', 'Relatedness lcMLkin', 'pair', 'nSNPs']
-    rtable=rtable.drop('relatedness_r',1)
+    #fread=ares.loc[ares['Relationship (READ)']=='First Degree',['relatedness_r','relatedness_l','withinDeg_ll','Relationship (READ)','Z_upper','Z_lower','Relationship (r/k0)* ','pair','nSNPs']]
+    #rtable=fread.copy()
+    #rtable.columns=['relatedness_r', 'Relatedness KIn', 'Log liklihood ratio (KIn)', 'Relatedness READ','Z_upper (READ)', 'Z_lower (READ)', 'Relatedness lcMLkin', 'pair', 'nSNPs']
+    #rtable=rtable.drop('relatedness_r',1)
+
+    ##same thing for kin versus lcmlkin
+    dtable2=diffl.copy()
+    dtable2.columns=['relatedness_r', 'Relatedness KIN', 'Log liklihood ratio (KIN)', 'Relatedness READ','Z_upper (READ)', 'Z_lower (READ)', 'Relatedness lcMLkin', 'pair', 'nSNPs']
+    dtable2=dtable2.drop('relatedness_r',1)
 
     with pd.option_context('display.max_rows', len(dtable.index), 'display.max_columns', len(dtable.columns)):
                 dtable.to_csv(outf2, sep=',',index=False)
 
-    with pd.option_context('display.max_rows', len(rtable.index), 'display.max_columns', len(rtable.columns)):
-                rtable.to_csv(outf3, sep=',',index=False)
+    with pd.option_context('display.max_rows', len(dtable2.index), 'display.max_columns', len(dtable2.columns)):
+                dtable2.to_csv(outf3, sep=',',index=False)
+
+def round_s4(inf, outf):
+    kin=pd.read_csv(inf, sep="\t", header=0, index_col=0)
+    kin['Log Likelihood Ratio']=kin['Log Likelihood Ratio'].astype(float).round(2)
+    kin['Within Degree Log Likelihood Ratio']=kin['Within Degree Log Likelihood Ratio'].astype(float).round(2)
+
+    with pd.option_context('display.max_rows', len(kin.index), 'display.max_columns', len(kin.columns)):
+                kin.to_csv(outf, sep=',',index=False)

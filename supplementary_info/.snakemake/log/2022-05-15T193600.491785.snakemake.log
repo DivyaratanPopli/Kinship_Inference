@@ -1,0 +1,23 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cores: 1 (use --cores to define parallelism)
+Rules claiming more threads will be scaled down.
+Job stats:
+job                       count    min threads    max threads
+----------------------  -------  -------------  -------------
+supplementary_table234        1              1              1
+total                         1              1              1
+
+Select jobs to execute...
+
+[Sun May 15 19:36:02 2022]
+rule supplementary_table234:
+    input: /home/divyaratan_popli/Documents/bronze_age_data/aax6219_Mittnik_SM_TableS10_kinship_inference.xlsx, /mnt/diversity/divyaratan_popli/100arc/inbreeding/bronze_age_newSim_idcor/hmm_numba/filtered0/merged_relatable_allLikelihoods.csv, /mnt/diversity/divyaratan_popli/100arc/inbreeding/laurits_writeup/Ch9_rem/neavar/testkin/newKIN/KIN_results.csv
+    output: tables/supplementary_table2.csv, tables/supplementary_table3.csv, tables/supplementary_table1.csv
+    jobid: 0
+    resources: tmpdir=/tmp
+
+[Sun May 15 19:36:05 2022]
+Finished job 0.
+1 of 1 steps (100%) done
+Complete log: /mnt/diversity/divyaratan_popli/100arc/inbreeding/model_git/supplementary_info/.snakemake/log/2022-05-15T193600.491785.snakemake.log

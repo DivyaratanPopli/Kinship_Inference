@@ -1,0 +1,3 @@
+FileNotFoundError in line 31 of /mnt/diversity/divyaratan_popli/100arc/inbreeding/model_git/hmm_numba/Snakefile:
+[Errno 2] No such file or directory: '../targets.txt'
+  File "/mnt/diversity/divyaratan_popli/100arc/inbreeding/model_git/hmm_numba/Snakefile", line 31, in <module>

@@ -1,0 +1,3 @@
+WorkflowError in line 106 of /mnt/diversity/divyaratan_popli/100arc/inbreeding/model_git/supplementary_info/Snakefile:
+Duplicate output file pattern in rule variance_bnd_data. First two duplicate for entries xnew1file and xnew2file
+  File "/mnt/diversity/divyaratan_popli/100arc/inbreeding/model_git/supplementary_info/Snakefile", line 106, in <module>

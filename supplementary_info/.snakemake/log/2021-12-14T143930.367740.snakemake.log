@@ -1,0 +1,20 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cores: 1 (use --cores to define parallelism)
+Rules claiming more threads will be scaled down.
+Job counts:
+	count	jobs
+	1	Chagyrskaya
+	1
+
+[Tue Dec 14 14:39:33 2021]
+rule Chagyrskaya:
+    input: /mnt/diversity/divyaratan_popli/100arc/inbreeding/laurits_writeup/Ch9_rem/neavar/newSim_probCorr/overlap_fil1, /mnt/diversity/divyaratan_popli/100arc/inbreeding/laurits_writeup/Ch9_rem/neavar/newSim_probCorr/hmm_numba/filtered0/read/READ_results
+    output: plots/fil0_read_plot.png, plots/fil0_overlap_plot.png
+    jobid: 0
+    wildcards: Mfil=0
+
+[Tue Dec 14 14:39:37 2021]
+Finished job 0.
+1 of 1 steps (100%) done
+Complete log: /mnt/diversity/divyaratan_popli/100arc/inbreeding/model_git/supplementary_info/.snakemake/log/2021-12-14T143930.367740.snakemake.log

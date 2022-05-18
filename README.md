@@ -36,14 +36,14 @@ pip3 install _path_to_kin
 # Running KINgaroo
 You can run KINgaroo from the terminal by typing:
 ```
- KINgaroo [-h] -bam  -bed  -T  -cnt  [-c] [-i] [-t] [-cest] [-vcf.gz] [-tar] [-cont] [-r]
+ KINgaroo [-h] -bam  -bed  -T  -cnt  [-c] [-i] [-t] [-cest] [-vcf.gz] [-tar] [-cont] [-r] [-p]
 ```
 <p>Here optional inputs are shown in [].
 
--h: help<br>
+-h: Help<br>
 -bam: Path to directory containing bamfiles with chromosomes represented by numbers 1,2,..,X,Y<br>
--bed: Path to tab-separated .bed file containing chromosome, reference and alternate alleles at all<br> &nbsp;&nbsp;&nbsp;&nbsp;available positions ([see example](example_files/bedfile.bed))<br>
--T: path to file ([see example file](example_files/targets.txt))containing list of all bamfiles to be used in the analysis<br>
+-bed: Path to tab-separated .bed file containing chromosome, reference and alternate alleles at all<br> &nbsp;&nbsp;&nbsp;&nbsp;available positions ([see example file](example_files/bedfile.bed))<br>
+-T: Path to file ([see example file](example_files/targets.txt))containing list of all bamfiles to be used in the analysis<br>
 -cnt: We provide three options for contamination correction:<br>
   &nbsp;&nbsp;&nbsp;&nbsp;0: No contamination correction<br>
   &nbsp;&nbsp;&nbsp;&nbsp;1: Contamination correction using divergence between the target population and contaminating population. We<br>
@@ -58,22 +58,22 @@ You can run KINgaroo from the terminal by typing:
 -tar: Name of individual from target population in vcf.gz<br>
 -cont: Name of individual from contaminating population in vcf.gz<br>
 -r: Enter 1 to estimate long ROH, 0 to skip (by default 1)<br>
-
+-p: p_0 estimate given by user (by default: Estimated from the data)<br>
 # Running KIN
 ```
-KIN [-h] -i  -o  -T  [-r] [-c] [-t] [-p]
+KIN [-h] -I  -O  -T  [-r] [-c] [-t] [-p] [-i]
 ```
--h help<br>
--i Path to the folder where you ran KINgaroo<br>
--o Output location<br>
--T Path to file containing list of all bamfiles to be used in the analysis<br>
--r Location of directory containing ROH estimates (by default: same as -i)<br>
--c Cores (by default: all available cores)<br>
--t Minimum number of sites in a window from which ROH estimates are reliable used (by default: 10)<br>
--p p_0 estimate given by user (by default: Estimated from the data)<br>
-
+-h: Help<br>
+-I: Path to the folder where you ran KINgaroo<br>
+-O: Output location<br>
+-T: Path to file containing list of all bamfiles to be used in the analysis (should be same as that used in previous package)<br>
+-r: Location of directory containing ROH estimates (by default: same as -i)<br>
+-c: Cores (by default: all available cores)<br>
+-t: Minimum number of sites in a window from which ROH estimates are reliable used (by default: 10)<br>
+-p: p_0 estimate given by user (by default: Estimated from the data)<br>
+-i: Size of genomic windows in int, Options:10000000, 1000000 (by default we use 10000000)<br>
 # Output
-The final results are available in the file KIN_results.csv ([see example](example_files/KIN_results.csv))<br>
+The final results are available in the file KIN_results.csv ([see example file](example_files/KIN_results.csv))<br>
 The output file has following columns:<br>
 -Pair: Name of all pairs<br>
 -Relatedness: Most likely relation<br>

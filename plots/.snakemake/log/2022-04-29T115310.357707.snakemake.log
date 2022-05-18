@@ -1,0 +1,19 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cores: 1 (use --cores to define parallelism)
+Rules claiming more threads will be scaled down.
+Job counts:
+	count	jobs
+	1	comparisonplotf_supptable4
+	1
+
+[Fri Apr 29 11:53:11 2022]
+rule comparisonplotf_supptable4:
+    input: README
+    output: plotdata/comparison_plot_data.csv.gz, ../supplementary_info/tables/supplementary_table4.csv
+    jobid: 0
+
+[Fri Apr 29 11:53:16 2022]
+Finished job 0.
+1 of 1 steps (100%) done
+Complete log: /mnt/diversity/divyaratan_popli/100arc/inbreeding/model_git/plots/.snakemake/log/2022-04-29T115310.357707.snakemake.log

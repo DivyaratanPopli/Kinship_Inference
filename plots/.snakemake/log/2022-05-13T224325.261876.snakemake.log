@@ -1,0 +1,6 @@
+Building DAG of jobs...
+MissingInputException in line 123 of /mnt/diversity/divyaratan_popli/100arc/inbreeding/model_git/plots/Snakefile:
+Missing input files for rule ibd_accuracy_plot_others:
+plotdata/plot_IBDaccuracy_c.csv
+plotdata/plot_IBDaccuracy_r.csv
+plotdata/plot_IBDaccuracy_a.csv

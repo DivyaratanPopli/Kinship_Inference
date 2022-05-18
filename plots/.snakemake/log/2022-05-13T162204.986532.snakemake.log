@@ -1,0 +1,19 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cores: 1 (use --cores to define parallelism)
+Rules claiming more threads will be scaled down.
+Job counts:
+	count	jobs
+	1	ibd_accuracy_plot_c
+	1
+
+[Fri May 13 16:23:17 2022]
+rule ibd_accuracy_plot_c:
+    input: plotdata/plot_IBDaccuracy_cont.csv
+    output: plotimg/plot_IBDaccuracy_cont.png
+    jobid: 0
+
+[Fri May 13 16:23:19 2022]
+Finished job 0.
+1 of 1 steps (100%) done
+Complete log: /mnt/diversity/divyaratan_popli/100arc/inbreeding/model_git/plots/.snakemake/log/2022-05-13T162204.986532.snakemake.log

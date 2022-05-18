@@ -1,0 +1,28 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cores: 1 (use --cores to define parallelism)
+Rules claiming more threads will be scaled down.
+Job counts:
+	count	jobs
+	1	ibd_accuracy_plot_others
+	1
+
+[Fri May 13 22:56:18 2022]
+rule ibd_accuracy_plot_others:
+    input: plotdata/plot_IBDaccuracy_cont.csv, plotdata/plot_IBDaccuracy_asc.csv, plotdata/plot_IBDaccuracy_roh.csv
+    output: plotimg/plot_IBDaccuracy_others_supp.png
+    jobid: 0
+
+[Fri May 13 22:56:20 2022]
+Error in rule ibd_accuracy_plot_others:
+    jobid: 0
+    output: plotimg/plot_IBDaccuracy_others_supp.png
+
+RuleException:
+CalledProcessError in line 131 of /mnt/diversity/divyaratan_popli/100arc/inbreeding/model_git/plots/Snakefile:
+Command 'set -euo pipefail;  Rscript --vanilla /mnt/diversity/divyaratan_popli/100arc/inbreeding/model_git/plots/.snakemake/scripts/tmpolemui2y.supp_IBD.R' returned non-zero exit status 1.
+  File "/mnt/diversity/divyaratan_popli/100arc/inbreeding/model_git/plots/Snakefile", line 131, in __rule_ibd_accuracy_plot_others
+  File "/home/divyaratan_popli/.conda/envs/relcap_env/lib/python3.6/concurrent/futures/thread.py", line 56, in run
+Shutting down, this might take some time.
+Exiting because a job execution failed. Look above for error message
+Complete log: /mnt/diversity/divyaratan_popli/100arc/inbreeding/model_git/plots/.snakemake/log/2022-05-13T224628.652866.snakemake.log

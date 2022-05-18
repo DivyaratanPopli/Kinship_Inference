@@ -1,0 +1,3 @@
+KeyError in line 21 of /mnt/diversity/divyaratan_popli/100arc/inbreeding/model_git/Snakefile:
+'is_contam'
+  File "/mnt/diversity/divyaratan_popli/100arc/inbreeding/model_git/Snakefile", line 21, in <module>

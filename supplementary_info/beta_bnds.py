@@ -639,22 +639,22 @@ def plot_betas(dfile, tfile, pair, thresh, rel, libraries, listf, Afile, pfile, 
 
         a=betas[2]
         b=betas[3]
-        ax[i].plot(x, beta.pdf(x, a, b)/533.33,'r-', lw=3, alpha=0.6, label="$Z_w$=0")
+        ax[i].plot(x, beta.pdf(x, a, b)/533.33,'r-', lw=3, alpha=0.6, label="i=0")
         #plt.hist(diff/total,alpha=0.3)
 
         a=betas[0]
         b=betas[1]
-        ax[i].plot(x, beta.pdf(x, a, b)/533.33,'b-', lw=3, alpha=0.6, label="$Z_w$=1")
+        ax[i].plot(x, beta.pdf(x, a, b)/533.33,'b-', lw=3, alpha=0.6, label="i=1")
 
         a=betas[4]
         b=betas[5]
-        ax[i].plot(x, beta.pdf(x, a, b)/533.33,'g-', lw=3, alpha=0.6, label="$Z_w$=2")
+        ax[i].plot(x, beta.pdf(x, a, b)/533.33,'g-', lw=3, alpha=0.6, label="i=2")
         #plt.hist(diff/total,alpha=0.3)
 
         a=betas[6]
         b=betas[7]
 
-        ax[i].plot(x, beta.pdf(x, a, b)/533.33,'y-', lw=3, alpha=0.6, label="$Z_w$=4")
+        ax[i].plot(x, beta.pdf(x, a, b)/533.33,'y-', lw=3, alpha=0.6, label="i=3")
         ax[i].hist(diff/total,alpha=0.3,weights=np.ones(len(total)) / len(total))
         ax[i].set_ylim(0,0.4)
 

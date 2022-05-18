@@ -496,6 +496,8 @@ def comparison_plotf(hmmfold,outfold, outs):
     supf=supf.drop('cutoff', axis=1)
     supf.columns=['True_positive', 'False_positive', 'Relatedness', 'Coverage', 'Method','Ascertainment', 'Contamination', 'ROH']
 
+    supf['True_positive']=supf['True_positive'].astype(float).round(2)
+    supf['False_positive']=supf['False_positive'].astype(float).round(2)
     with pd.option_context('display.max_rows', len(supf.index), 'display.max_columns', len(supf.columns)):
                     supf.to_csv(outs, sep=',',index=False)
 

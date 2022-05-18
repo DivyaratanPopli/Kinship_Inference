@@ -1,0 +1,18 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cores: 1 (use --cores to define parallelism)
+Rules claiming more threads will be scaled down.
+Job counts:
+	count	jobs
+	1	supplementary_table23
+	1
+
+[Sun May 15 18:48:43 2022]
+rule supplementary_table23:
+    input: /home/divyaratan_popli/Documents/bronze_age_data/aax6219_Mittnik_SM_TableS10_kinship_inference.xlsx, /mnt/diversity/divyaratan_popli/100arc/inbreeding/bronze_age_newSim_idcor/hmm_numba/filtered0/merged_relatable_allLikelihoods.csv
+    output: tables/supplementary_table2.csv, tables/supplementary_table3.csv
+    jobid: 0
+
+Shutting down, this might take some time.
+Exiting because a job execution failed. Look above for error message
+Complete log: /mnt/diversity/divyaratan_popli/100arc/inbreeding/model_git/supplementary_info/.snakemake/log/2022-05-15T184841.988715.snakemake.log
