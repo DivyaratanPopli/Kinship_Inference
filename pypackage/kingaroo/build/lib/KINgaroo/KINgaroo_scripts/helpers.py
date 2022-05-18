@@ -180,7 +180,7 @@ def contamFile(infile, outfile, targets, idfile):
    for ch1 in range(len(cnf)-1):
        for ch2 in range(ch1+1,len(cnf)):
            names.append(cnf.loc[ch1, 'name'] + '_._' + cnf.loc[ch2, 'name'])
-           ctotal=cnf.loc[ch1, 'contamination'] + cnf.loc[ch2, 'contamination']
+           ctotal=cnf.loc[ch1, 'contamination (%)'] + cnf.loc[ch2, 'contamination (%)']
            contam.append(ctotal)
 
    df = pd.DataFrame(
@@ -190,7 +190,7 @@ def contamFile(infile, outfile, targets, idfile):
 
    df_id = pd.DataFrame(
        {'name': cnf['name'],
-        'contam': 2*cnf['contamination']
+        'contam': 2*cnf['contamination (%)']
        })
 
    with pd.option_context('display.max_rows', len(df.index), 'display.max_columns', len(df.columns)):

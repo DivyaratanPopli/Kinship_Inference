@@ -16,10 +16,10 @@ from .hmm_scripts import helpers
 def cli():
     parser = argparse.ArgumentParser(description="Relatedness and IBD estimates")
 
-    parser.add_argument('-i', '--input_location',
+    parser.add_argument('-I', '--input_location',
                         type=str, metavar='',  required=True,
                         help='input files location')
-    parser.add_argument('-o', '--output_location',
+    parser.add_argument('-O', '--output_location',
                         type=str, metavar='', required=True,
                         help='Output files location')
     parser.add_argument('-T', '--target_location',
@@ -36,7 +36,10 @@ def cli():
                         help='Minimum number of sites in a window for ROH implementation')
     parser.add_argument('-p', '--diversity_parameter_p_0',
                         type=float, metavar='',
-                        help='Input p_0 parameter, if you do not want to calculate it from given samples')
+                        help='Input p_0 parameter, if you do not want to calculate it from given samples (Keep it same as that for KINgaroo)')
+    parser.add_argument('-i', '--interval',
+                        type=int, metavar='',
+                        help='Window size (Please choose the same size as for KINgaroo). By default:10000000')
 
     return parser.parse_args()
 
@@ -62,19 +65,25 @@ def main():
         p_0 = -9
     else:
         p_0 = args.diversity_parameter_p_0
+    if args.interval is None:
+        A_interval=C.A_ALL10
+    elif args.interval==10000000:
+        A_interval=C.A_ALL10
+    elif args.interval==1000000:
+        A_interval=C.A_ALL1
 
     helpers.hmm_all(
         targetfile=args.target_location,
         outfolder=args.output_location,
         datafolder=args.input_location,
-        paramfolder=C.TRANSITION,
         allrel=C.RELS,
         hbdfolder=hbdfolder,
         thresh=thresh,
         cores=cores,
         instates=C.STATES,
         totalch=C.CHRM,
-        p_0=p_0
+        p_0=p_0,
+        Afiles=A_interval
     )
 
 

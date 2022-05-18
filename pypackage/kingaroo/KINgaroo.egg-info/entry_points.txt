@@ -1,0 +1,2 @@
+[console_scripts]
+KINgaroo = KINgaroo:__main__.main

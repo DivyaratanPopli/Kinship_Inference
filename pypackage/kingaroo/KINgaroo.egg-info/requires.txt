@@ -1,0 +1,7 @@
+scipy
+numpy
+numdifftools
+pandas
+numba
+pysam
+pybedtools

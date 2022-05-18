@@ -359,9 +359,9 @@ def hmm(listind, hbdfolder, difffile, totalfile, listf, targets, pfile, Afiles, 
         chrmlist=chrmlist[gudwin]
 
         win=np.sum(gudwin)
-        
+
         p_1=float(pfile)
-    
+
         p_12=p_1/2
         inerror=p_12/2
         initial_p=np.array([[(p_1+p_12)/2,p_1,p_12],
@@ -379,8 +379,8 @@ def hmm(listind, hbdfolder, difffile, totalfile, listf, targets, pfile, Afiles, 
         likall=[]
         for rel_cnt in range(len(rels)):
 
-            Afile=Afiles[rel_cnt]
-            A=np.array(pd.read_csv(Afile,sep=',',header=None,index_col=False))
+            A=Afiles[rel_cnt]
+
             B = np.zeros((inbr_states,np.shape(A)[0],win)) #Emission probability
 
             [b0, b1, b2, b3]=[1000,1000,1000,1000]
@@ -391,7 +391,7 @@ def hmm(listind, hbdfolder, difffile, totalfile, listf, targets, pfile, Afiles, 
             B=makeB(data=data,xin=xin0, M=A.shape[0], T=len(data), inbr=inbr_states)
 
             np.argwhere(np.isnan(B))
-            
+
             gamma,A,B,up_p,lik, pi= baum_welch(data=data, hbd=hbd, A=A, B=B, pos=pos, p1avg=initial_p, inbr=inbr_states, x0=x0)
             res=viterbi(data, A, B, pi)
             likall.append(lik)
