@@ -42,9 +42,9 @@ singlelinecheck=false
 
 Here, we present KIN, a Hidden-Markov-Model-based approach to estimate the relatedness of a pair of individuals and to identify the identical-by-descent segments they share. KIN can accurately classify up to 3rd-degree relatives and differentiate between sibling and parent-child relationships using ancient DNA sequence data with as little as 0.05x coverage. KIN also incorporates an adjustment for contamination, and an additional model to estimate the location of long runs of homozygosity, and uses them to improve classification accuracy.
 
-We show with simulations that KIN infers first-degree relationships with nearly perfect accuracy, and second degree relationships with over $90\%$ accuracy, even at 0.05x coverage.
+We show with simulations that KIN infers first-degree relationships with nearly perfect accuracy, and second degree relationships with about $90\%$ accuracy, even at 0.05x coverage.
 
-To illustrate its utility, we apply KIN to a Neandertal group from Siberia, Russia, and a group of Bronze-Age people from the Lech Valley, Germany. We find that in both cases, KIN matches the findings of existing approaches and detects several additional related individuals. 
+To illustrate its utility, we apply KIN to a Neandertal group from Siberia, Russia, and a group of Bronze-Age people from the Lech Valley, Germany. We find that in both cases, KIN matches the findings of existing approaches and detects several additional relationships. 
 
 KIN is a useful tool for analyzing relatedness for ancient DNA datasets of any size, even with low coverage, and is applicable to any diploid species, without the requirement for a reference panel.
 \end{abstract}
@@ -62,7 +62,7 @@ In ancient DNA studies, relatedness can be used to identify bones and teeth belo
 
 Commonly, pairs of related individuals are identified by looking for parts of the genome that are identical by descent (IBD), i.e. inherited from a recent common ancestor. Due to the laws of Mendelian segregation, each parent will share exactly one set of chromosomes IBD with their offspring, while subsequent recombination means that a grandparent will, on average share a quarter of their genome with a grand-child. Along the genomes of a pair of diploid individuals, there are three IBD states possible at any given position: the individuals share zero, one or two chromosomes IBD. The genome-wide proportions of these states (usually referred to as $k_0$, $k_1$, $k_2$, so that $k_0+k_1+k_2=1$) can be used to infer the degree and nature of relatedness for a pair of individuals. For example, a pair of siblings are expected to have all three possible IBD states with proportions of 0.25,0.5,0.25, respectively (Fig. \ref{fig0:schematic}). These IBD probabilities can directly be used to categorize their relatedness as shown in table \ref{tab:Table 1}. One can also use these probabilities to estimate the coefficient of relatedness $r$, which is defined as the proportion of the genome that is IBD. In the absence of inbreeding, this would be calculated as $r= k_1/2 + k_2$.
 
-However, since it is not possible to directly observe IBD segments, a common approach is to first identify segments of the genome that are Identical by State (IBS) and to use population allele frequencies obtained from an out-of-sample reference panel to calculate the probability of IBD given IBS. There are several methods that incproporate reference panel allele frequencies, phase information, recombination maps, or genotype calls to co-estimate IBD and the relatedness coefficient \cite{huff_maximum-likelihood_2011,li_relationship_2014,li_accurate_2014,thornton_estimating_2012, boehnke_accurate_1997,lynch_estimation_1999, albrechtsen_natural_2010, purcell_plink_2007,manichaikul_robust_2010,gusev_whole_2009,nyerki_optimized_2022}.
+However, since it is not possible to directly observe IBD segments, a common approach is to first identify segments of the genome that are Identical by State (IBS) and to use population allele frequencies obtained from an out-of-sample reference panel to calculate the probability of IBD given IBS. There are several methods that incproporate reference panel allele frequencies, phase information, recombination maps, or genotype calls to co-estimate IBD and the relatedness coefficient \cite{huff_maximum-likelihood_2011,li_relationship_2014,thornton_estimating_2012, boehnke_accurate_1997,lynch_estimation_1999, albrechtsen_natural_2010, purcell_plink_2007,manichaikul_robust_2010,gusev_whole_2009,nyerki_optimized_2022}.
 
 \begin{figure}[h!]
     \includegraphics[width=18cm]{plots/inkscape_finalImg/schematic_sib.png}
@@ -100,7 +100,7 @@ Several methods surmount this problem by using genotype likelihoods \cite{lipato
 
 Several methods have been proposed to estimate relatedness without a reference panel from ancient DNA, but they  require either $>4$x coverage \cite{waples_allele_2019}, or a large sample size to get an estimate of allele frequencies in the population from which the sampled individuals originate \cite{theunert_joint_2017}. A second issue is contamination. If the contamination stems from another population, contaminated data will look more dissimilar to other individuals from the analyzed population, and hence relatedness will be underestimated. In addition, some analyzed  genomes may have long runs of homozygosity (ROH), for example due to a small population size, or recent inbreeding. Long ROH cause related individuals to seem genetically more similar to each other, but do not affect the genetic distance between unrelated individuals.
 
-Moreover, ancient DNA is commonly captured with a SNP array that enriches for informative variants. Particularly methods based on the fraction of sites in different IBS states are sensitive to the ascertainment bias caused by this non-random selection of targeted sites \cite{waples_allele_2019}. 
+Moreover, ancient DNA is commonly captured with a SNP array that enriches for informative variants. Particularly, methods based on the fraction of sites in different IBS states are sensitive to the ascertainment bias caused by this non-random selection of targeted sites \cite{waples_allele_2019}. 
 
 READ \cite{kuhn_estimating_2018} addresses several of the issues encountered in the analysis of ancient DNA. In particular, the lack of  genotype calls is dealt with by randomly sampling alleles from each individual. A string of these alleles at each position (called pseudo-haploids) are then compared to other individuals to estimate  average pairwise genetic distances, which in turn are used to infer relatedness. However, READ only infers the degree of relatedness, and only up to second degree.
 
@@ -113,7 +113,7 @@ To infer relatedness, KIN fits one HMM for each pair of individuals and for each
 
 
 \subsection{Model description}\label{method_overview} 
-The goal of KIN-HMM is to infer how two individuals are related via the patterns of shared IBD states along a pair of genomes. For this purpose,  we subdivide the genomes of a pair of individuals into $L$ large genomic windows (typically of size 10Mb), and infer the pattern of IBD-sharing for each relatedness case we consider (Unrelated, $5^{th}$ Degree, $4^{th}$ Degree, $3^{rd}$ Degree, Grandparent-Grandchild, Avuncular, Half-siblings, Parent-Child, Siblings, and Identical). We then compare the likelihood between all models, and classify each pair to the model with the highest likelihood. We also return the most likely locations of IBD tracts (using standard Viterbi algorithm), and the state posterior probabilities $\BZ$. 
+The goal of KIN-HMM is to infer how two individuals are related via the patterns of shared IBD states along a pair of genomes. For this purpose,  we subdivide the genomes of a pair of individuals into $L$ large genomic windows (typically of size 10Mb), and infer the pattern of IBD-sharing for each relatedness case we consider (Unrelated, $5^{th}$ Degree, $4^{th}$ Degree, $3^{rd}$ Degree, Grandparent-Grandchild, Avuncular, Half-siblings, Parent-Child, Siblings, and Identical). We then compare the likelihood between all models, and classify each pair to the model with the highest likelihood. We also return the most likely locations of IBD tracts (using standard Viterbi algorithm), and the IBD state posterior probabilities. 
 
 The details of the likelihood computation are given in section \ref{ll}. As is the case for any HMM, KIN-HMM requires a set of emission (section \ref{B}) and transition probability matrices. We assume the transition matrix for each relatedness case is fixed. Our emissions include a vector of parameters ($\delta$) that describe the variance in the data for each IBD state that we infer from the data (section \ref{B}).
 
@@ -193,7 +193,7 @@ The only free parameters we estimate in the maximization step are the over-dispe
 
 
 \begin{align}\label{eq:4}
-\mathcal{C} &= \mathbb{E}[\log P(D_w|Z_w, H_w, \theta, \delta^{(t-1)}]\nonumber\\
+\mathcal{C} &= \mathbb{E}[\log P(D_w|Z_w, H_w, \theta, \delta^{(t-1)})]\nonumber\\
 &= \sum_{w=1}^L \sum_{j=0}^2\sum^2_{\omega=0} \log P(D_{w}|N_w, \delta(j ,\omega)^{(t-1)}, p(j,\omega))h_{w\omega}\gamma_{wj}
 \end{align}
 
@@ -212,7 +212,7 @@ So we can rewrite equation \ref{eq:4} as:
 \mathcal{C} &= \sum_{i=0}^3 \sum_{w=1}^L \log P(D_{w}|N_w, \delta_i, p_i)g_{wi}
 \end{align}
 
-The cost function \ref{eq:6} has one independent term for each $i$ and so we can separate them and estimate each $\delta_i$ independently using the minimize\_scalar algorithm implemented in \texttt{scipy.optimize} \cite{virtanen_scipy_2020}. 
+The cost function (equation \ref{eq:6}) has one independent term for each $i$ and so we can separate them and estimate each $\delta_i$ independently using the minimize\_scalar algorithm implemented in \texttt{scipy.optimize} \cite{virtanen_scipy_2020}. 
 
 %\paragraph{Constraints on $\delta$ optimization}\label{delta_constraint}
 
@@ -227,7 +227,7 @@ Particularly for low-quality data, we may not be able to distinguish all cases. 
 
 \paragraph{Critical Values:}
  
-To investigate the limits of our method, we plotted the true-positive and false-positive rates for classification of different relatedness in control simulations (without contamination, ROH and ascertainment bias, see section \ref{simulat}) when we use a particular difference in log-likelihood as a cutoff (fig. S8). The figure shows that for all relatedness cases except for $3^{rd}$-degree, the false positive rate is below $5\%$ even when simply selecting the model with the highest likelihood. We observe that for $3^{rd}$-degree relatives, using a cutoff of 1.0 brings down the false positive rate close to $5\%$ for all coverages except 0.05x. Thus, we recommended using a cutoff of 1 for all cases where ROH and contamination are not a concern.
+To investigate the limits of our method, we plotted the true-positive and false-positive rates for classification of different relatedness in control simulations (without contamination, ROH and ascertainment bias, see section \ref{simulat}) when we use a particular difference in log-likelihood as a cutoff (Fig. S8). The figure shows that for all relatedness cases except for $3^{rd}$-degree, the false positive rate is below $5\%$ even when simply selecting the model with the highest likelihood. We observe that for $3^{rd}$-degree relatives, using a cutoff of 1.0 brings down the false positive rate close to $5\%$ for all coverages except 0.05x. Thus, we recommended using a cutoff of 1 for all cases where ROH and contamination are not a concern.
 
 
 \paragraph{Example case of siblings:}
@@ -255,7 +255,7 @@ Since the source of ROH may not be known, we estimate both transitions and emiss
 \begin{align}\label{eq:11}
 \mathcal{C} = \sum_{w=1}^L \sum_{i=2}^3 P(\Delta_w|\delta_{i},p_{i}) \Gamma_{wi} ,
 \end{align}
-where $P(\Delta_w|\delta_{i},p_{i})$ is a beta-binomial probability with mean $p$ and over-dispersion parameter $\delta$ similar to eq. \ref{eq:3}, and $\Gamma_{wi}$ is the posterior probability of homozygosity state $i$ at window $w$.
+where $P(\Delta_w|\delta_{i},p_{i})$ is a beta-binomial probability with mean $p$ and over-dispersion parameter $\delta$ similar to eq. \ref{eq:3}.
 
 To estimate transitions, we initialize the transition matrix with the value 0.2 for the off-diagonal entries, and update it using the standard Baum-Welch update step \cite{baum_maximization_1970}.
 
@@ -309,12 +309,12 @@ Here, $S_w = N_w - D_w$. Hence, we set $\mathbb{E}[N_w^{'}] = \mathbb{E}[S_w^{'}
 \subsection{Evaluation with simulations}
 We first tested the performance of KIN with simulated pedigrees. We performed coalescent simulations to generate 8 unrelated diploid genomes and artificially mated them to form pedigrees of 17 individuals with relationships up to $5^{th}$ degree (Fig. S3). To evaluate the effect of sequence coverage on the performance of KIN, we generated artificial pileups at each polymorphic site for each individual following a Poisson distribution with 6 different average depths varying between 4$x$ and 0.03$x$ (see section \ref{method}). To mimic ROH, for some pedigrees, we picked a single allele at heterozygous sites in some regions as determined by a Markov chain so that about $17\%$ of the genome is ROH. We also created versions with contamination, by introducing alleles from distantly related individuals, and ascertainment bias, by selecting polymorphic sites identified in a subset of the individuals (see section \ref{method}). We created 60 pedigrees for each combination of average coverage and scenarios of presence/absence of ROH, contamination, and ascertainment bias, totalling 2,880 pedigrees.
 
-\paragraph{ROH detection}
+\paragraph{ROH detection:}
 We first evaluated the performance of the ROH-HMM ( Fig.\ref{fig2:ROH}). We computed the proportion of ROH in all windows and compared it to the posterior probability of the ROH state, by computing the bias (i.e., the difference between both) and its variance across windows. Without ROH, we correctly inferred the absence of ROH as the observed bias ranges from $0.3$ to $0.7\%$ (variance $\leq0.006$; Table \ref{tab:Table 2}). With ROH, we observed a slight bias of $5$ to $9\%$ more ROH than simulated (variance $\leq0.004$). The largest bias observed ($9\%$) was for the datasets that included contamination. Ascertainment bias had a minimal effect on the detection of ROH (Table \ref{tab:Table 2}). Surprisingly, the bias was lower for lower coverages, perhaps because there is only one possible ROH state per window to model a continuous variable, viz. proportion of window in ROH, and this state is inferred more confidently with more data. Overall, the model predicts ROH well in all cases, even at a coverage of 0.1x (Fig.\ref{fig2:ROH}).
 
 
 \begin{figure}[h!]
-    \includegraphics[width=16cm]{plots/inkscape_finalImg/ROHplot_final.png}
+    \includegraphics[width=16cm]{plots/inkscape_finalImg/ROHplot.png}
     \centering
     \caption{Estimation of ROH probabilities along the genome in simulations. Top panel shows proportion of differences in a simulated individual in windows along the genome, and the bottom panel shows probability of seeing no ROH. (A) Simulation with no ascertainment, contamination, or ROH. (B) Simulation with ROH. (C) Simulation with ROH and ascertainment. (D) Simulation with ROH and contamination.}
     \label{fig2:ROH}
@@ -326,11 +326,11 @@ We first evaluated the performance of the ROH-HMM ( Fig.\ref{fig2:ROH}). We comp
     \hline
     Coverage & Control(bias) & Control(var) & R(bias) & R(var) & RA(bias) & RA(var) & RC(bias) & RC(var)\\
     \hline
-    4x & -0.007 & 0.006 & -0.081 & 0.036 & -0.083 & 0.036 & -0.091 & 0.039\\
+    4x & 0.007 & 0.006 & 0.081 & 0.036 & 0.083 & 0.036 & 0.091 & 0.039\\
     \hline
-    0.2x & -0.003 & 0.003 & -0.068 & 0.03 & -0.068 & 0.026 & -0.076 & 0.029\\
+    0.2x & 0.003 & 0.003 & 0.068 & 0.03 & 0.068 & 0.026 & 0.076 & 0.029\\
     \hline
-    0.1x & -0.003 & 0.002 & -0.049 & 0.021 & -0.05 & 0.021 & -0.057 & 0.022\\
+    0.1x & 0.003 & 0.002 & 0.049 & 0.021 & 0.05 & 0.021 & 0.057 & 0.022\\
     \hline
 \end{tabular}
 \label{table1}
@@ -338,7 +338,7 @@ We first evaluated the performance of the ROH-HMM ( Fig.\ref{fig2:ROH}). We comp
 
 
 \paragraph{IBD prediction:}
-We investigated the accuracy of IBD state prediction along the genome by counting the number of genomic windows where we correctly predict IBD state for different relatdness and coverages (Fig. \ref{fig4:IBDstate_accuracy}). The accuracy for coverages of 0.1x or higher is consistent and varies between 1.0 and 0.836, depending on relatedness. However, the accuracy decreases at lower coverages for most relatedness cases and ranges from 1.0 to 0.563 at 0.03x. The exceptions are for identical individuals and parent-child pairs, where the accuracy is nearly perfect for all investigated coverages, even at 0.03x coverage. We find that adding contamination, ascertainment bias in our simulations has little effect on IBD prediction. Adding ROH to the simulations reduces the IBD prediction in two cases: the accuracy for second degree is decreased by $1.5$ to $5\%$ and for siblings by $5$ to $17\%$ (Fig. S9). We see this adverse effect of ROH in case of siblings, perhaps because only in case of siblings we do not introduce long ROH directly, but long and short ROH may be present through parents (see section \ref{method}). Unidentified short ROH may cause a difficulty in differentiating between different combinations of IBD ($Z_w$) and ROH states ($H_w$). However, this does not affect the power to identify siblings in presence of ROH even at $0.05x$ (see figure \ref{fig3:Comparison_READ_KIN})
+We investigated the accuracy of IBD state prediction along the genome by counting the number of genomic windows where we correctly predict IBD state for different relatdness and coverages (Fig. \ref{fig4:IBDstate_accuracy}). The accuracy for coverages of 0.1x or higher is consistent and varies between 1.0 and 0.836, depending on relatedness. However, the accuracy decreases at lower coverages for most relatedness cases and ranges from 1.0 to 0.563 at 0.03x. The exceptions are for identical individuals and parent-child pairs, where the accuracy is nearly perfect for all investigated coverages, even at 0.03x coverage. We find that adding contamination, ascertainment bias in our simulations has little effect on IBD prediction. Adding ROH to the simulations reduces the IBD prediction in two cases: the accuracy for second degree is decreased by $1.5$ to $5\%$ and for siblings by $5$ to $17\%$ (Fig. S9). We see this adverse effect of ROH in case of siblings, perhaps because only in case of siblings we do not introduce long ROH directly, but long and short ROH may be present through parents (see section \ref{method}). Unidentified short ROH may cause a difficulty in differentiating between different combinations of IBD ($Z_w$) and ROH states ($H_w$). However, this does not affect the power to identify siblings in presence of ROH even at $0.05x$ (see Fig. \ref{fig3:Comparison_READ_KIN})
 
 
 \begin{figure}[h!]
@@ -364,8 +364,8 @@ We evaluated the classification accuracy of KIN (cutoff: 1 log-likelihood unit) 
 
 \subsection{Application to real data}
 
-\paragraph{Chagyrskaya Neandertals:}
-To test KIN on real ancient data, we applied it to a Neandertal dataset from Chagyrskaya and Okladnikov Caves in Siberia, Russia \cite{kolobova_archaeological_2020-1, mafessoni_high-coverage_2020,laurits_skov_genetic_nodate}. This dataset contains genetic data from a total of 16 skeletal remains that likely belong to contemporary Neandertals who occupied the Chagyrskaya and Okladnikov caves between 59 and 51 kya, and atleast 44 kya respectively. \cite{laurits_skov_genetic_nodate}. DNA extracted from each of these remains were captured with an array targeting variable sites identified in high coverage Neandertal and Denisovan genomes, and common variations in Africans \cite{laurits_skov_genetic_nodate}. This genetic data has  low-to-intermediate depth of coverage ranging from 0.01x to 12.34x, with 8 samples at  $<1x$ coverage. Some of these specimens showed signs of long ROH, and DNA contamination from modern humans as well as hyenas \cite{laurits_skov_genetic_nodate}. We focused our analysis on the variable sites in two high-coverage Neandertal genomes: Altai Neandertal (Denisova 5) \cite{prufer_complete_2014} and Vindija 33.19 \cite{prufer_high-coverage_2017} as done by the authors for the relatedness analysis \cite{laurits_skov_genetic_nodate}. Our results for pairwise relatedness for these individuals are shown in Fig.\ref{fig5:Chagyrskaya_KIN}. We found three specimens from the same  individual (Chagyrskaya13-Chagyrskaya19-Chagyrskaya1141), a parent-child pair (Chagyrskaya07 and Chagyrskaya17), and a pair of  $2^{nd}$-degree relatives (Chagyrskaya01/Chagyrskaya60). Further, we identify Chagyrskaya17 and Chagyrskaya60 as 3rd-degree relatives (table S1). 
+\paragraph{Chagyrskaya and Okladnikov Neandertals:}
+To test KIN on real ancient data, we applied it to a Neandertal dataset from Chagyrskaya and Okladnikov Caves in Siberia, Russia \cite{kolobova_archaeological_2020-1, mafessoni_high-coverage_2020,laurits_skov_genetic_nodate}. This dataset contains genetic data from a total of 16 skeletal remains that likely belong to contemporary Neandertals who occupied the Chagyrskaya and Okladnikov caves between 59 and 51 kya, and atleast 44 kya respectively \cite{laurits_skov_genetic_nodate}. DNA extracted from each of these remains were captured with an array targeting variable sites identified in high coverage Neandertal and Denisovan genomes, and common variations in Africans \cite{laurits_skov_genetic_nodate}. This genetic data has  low-to-intermediate depth of coverage ranging from 0.01x to 12.34x, with 8 samples at  $<1x$ coverage. Some of these specimens showed signs of long ROH, and DNA contamination from modern humans as well as hyenas \cite{laurits_skov_genetic_nodate}. We focused our analysis on the variable sites in two high-coverage Neandertal genomes: Altai Neandertal (Denisova 5) \cite{prufer_complete_2014} and Vindija 33.19 \cite{prufer_high-coverage_2017} as done by the authors for the relatedness analysis \cite{laurits_skov_genetic_nodate}. Our results for pairwise relatedness for these individuals are shown in Fig.\ref{fig5:Chagyrskaya_KIN}. We found three specimens from the same  individual (Chagyrskaya13-Chagyrskaya19-Chagyrskaya1141), a parent-child pair (Chagyrskaya07 and Chagyrskaya17), and a pair of  $2^{nd}$-degree relatives (Chagyrskaya01/Chagyrskaya60). Further, we identify Chagyrskaya17 and Chagyrskaya60 as 3rd-degree relatives (table S1). 
 
 Our estimates are consistent with those obtained using READ, except that READ is unable to detect 3rd-degree relationships, and does not distinguish between sibling and parent-child relationships. We also find that both KIN and READ classify Chagyrskaya06 and Chagyrskaya14 as parent-child with low confidence, but from the morphology they likely stem from the same individual. We believe that the low confidence mis-classification may be due to uncorrected non-human contamination present in these libraries ($1\%$ and $2.9\%$ respectively \cite{laurits_skov_genetic_nodate}), biasing the estimated differences between the individuals to higher values.
 
@@ -386,7 +386,7 @@ We further applied KIN to a genome-wide dataset of 118 ancient individuals from 
 
 Only for 28 pairs, KIN has confident classifications that differ from those obtained using READ (table S2, Fig. S11). For 20 of these comparisons, KIN predicts a third-degree relationship, which READ classifies as unrelated. 
 
-lcMLkin predicts $3^{rd}$ - $5^th$ in 14 of these cases, unrelated in 1 case (see Fig. S11), second degree in 1 case (see Fig. S11), and does not have enough data for classification in 4 cases. Since READ does not infer third degree, and lcMLkin infers a group of relatedness together as $3^{rd}$ - $5^th$, it is likely that KIN is able to correctly resolve these cases. For 10 additional pairs, lcMLkin predicts $3^{rd}$ - $5^th$ degree, but KIN infers them to be unrelated. Thus, these are likely examples of $4^{th}$ or $5^{th}$ degree relations.
+lcMLkin predicts $3^{rd}$ - $5^{th}$ in 14 of these cases, unrelated in 1 case (see Fig. S11), second degree in 1 case (see Fig. S11), and does not have enough data for classification in 4 cases. Since READ does not infer third degree, and lcMLkin infers a group of relatedness together as $3^{rd}$ - $5^{th}$, it is likely that KIN is able to correctly resolve these cases. For 10 additional pairs, lcMLkin predicts $3^{rd}$ - $5^{th}$ degree, but KIN infers them to be unrelated. Thus, these are likely examples of $4^{th}$ or $5^{th}$ degree relations.
 
 For less than third-degree relations, only eight cases are classified differently between KIN and READ. lcMLkin matches KIN's prediction in two cases, and does not have enough data in 5 cases. In the last case, all three methods differ (table S3, Fig. S11). Finally, there are three disagreements between KIN and lcMLkin in classification of parent-child versus siblings (READ predicts first degree for all three pairs). We plotted the pairwise differences for these three pairs in Fig. S12, and found that the proportion of differences along the genome aligns with the prediction of KIN.
 
@@ -395,10 +395,10 @@ For less than third-degree relations, only eight cases are classified differentl
 \section{Discussion}\label{discussion}
 Here, we present a new method called KIN to estimate genetic kinship and the location of IBD tracts from low-coverage data, in presence of long ROH, contamination, as well as ascertainment bias. Our method utilizes a set of HMMs to estimate IBD tracts and uses them to classify each pair of individuals into a possible relatedness case, along with a measure of classification confidence (Fig. S1). We evaluated the method performance of KIN, and compared it to that of READ using simulated pedigrees. Finally, we show applications of KIN on two ancient datasets.
 
-For detecting ROH, there is only one method available that works with low coverage ancient DNA \cite{ringbauer_parental_2021}. This software can infer ROH at coverages $>0.3x$, but requires a reference panel. In the absence of a method to detect long ROH at low coverages without a reference panel, we developed a HMM based method, and tested it on simulations to show that it can be used reliably at coverage $\geq 0.1x$ to detect ROH regions with lengths on the order of 10cM. 
+For detecting ROH, there is only one method available that works with low coverage ancient DNA \cite{ringbauer_parental_2021}. This software can infer ROH at coverages $\geq0.3x$, but requires a reference panel. In the absence of a method to detect long ROH at low coverages without a reference panel, we developed a HMM based method, and tested it on simulations to show that it can be used reliably at coverage $\geq 0.1x$ to detect ROH regions with lengths on the order of 10cM. 
 In our simulations, we find that adding long ROH ($~17\%$) to simulations slightly improves the power of both KIN and READ, particularly at lower coverages. This is likely because ROH actually reduces the variance in differences depending on the relatedness, and makes it easier to correctly classify relatedness. For READ, the presence of ROH causes a bias towards inferring closer relatedness cases, but the model we use in KIN reduces this bias (see Fig. \ref{fig3:Comparison_READ_KIN}). 
 
-We show that KIN reliably detects IBD tracts for upto 0.1x coverage even in presence of contamination and ascertainment bias, and the accuracy for IBD detection reduces with lower coverages. Adding ROH to the simulations adversely affects IBD prediction in siblings (Fig. S9), but this does not affect the power to correctly classify siblings (fig. \ref{fig3:Comparison_READ_KIN}).
+We show that KIN reliably detects IBD tracts for upto 0.1x coverage even in presence of contamination and ascertainment bias, and the accuracy for IBD detection reduces with lower coverages. Adding ROH to the simulations adversely affects IBD prediction in siblings (Fig. S9), but this does not affect the power to correctly classify siblings (Fig. \ref{fig3:Comparison_READ_KIN}).
 
 Contamination can affect the accuracy of relatedness inference for two reasons. For one, if a substantial fraction of samples is contaminated, then the estimation of $p_0$ becomes inaccurate, because the majority of pairwise differences will include at least one contaminated sample. The second issue is that contaminated samples will look less similar to other individuals, and thus cause a bias towards inferring them to be less related to other individuals. The amount of contamination does not need to be large for this to be important, in our simulations we find that even at contamination levels $\leq 3\%$, the performance of READ is substantially reduced. Assuming the contamination rates are correctly inferred, the correction we implemented leads to improved performance compared to naive methods such as READ, although they too could be ameliorated in a similar way \cite{laurits_skov_genetic_nodate}.
 
@@ -412,7 +412,7 @@ While we have focused on the application of KIN on ancient human samples, the mo
 \section{Materials and methods}\label{method}
 
 \subsection{Simulations}\label{simulat}
-We use simulations both for estimating the transition matrices and for testing and validating our algorithm. All simulations are performed in a scenario mimicking the analysis of a Neandertal population contaminated by modern humans. We simulate unrelated individuals using $\texttt{msprime}$ \cite{kelleher_efficient_2016}, followed by an additional step where we simulate related individuals using a predetermined pedigree (Fig. S1).
+We use simulations both for estimating the transition matrices and for testing and validating our algorithm. All simulations are performed in a scenario mimicking the analysis of a Neandertal population contaminated by modern humans \cite{mafessoni_high-coverage_2020}. We simulate unrelated individuals using $\texttt{msprime}$ \cite{kelleher_efficient_2016}, followed by an additional step where we simulate related individuals using a predetermined pedigree (Fig. S1).
 
 \paragraph{Simulating pedigrees:}
 
@@ -451,7 +451,7 @@ $$\mathbf{A} = \left[\begin{array}
 \end{array}\right]
 $$
 
-It is worth noting that we introduce long ROH in unrelated individuals, before artificially mating them to form pedigrees, which means that we do not directly introduce ROH in progeny, but it still affects relatedness inference among progeny as shown in Fig. \ref{fig0:schematic} 
+It is worth noting that we introduce long ROH in unrelated individuals, before artificially mating them to form pedigrees, which means that we do not directly introduce ROH in progeny, but it still affects relatedness inference among progeny as shown in Fig. \ref{fig0:schematic}. 
 From the steps described above, we got genotypes of individuals in Pop1 in presence/absence of ROH and ascertainment. We further simulated five diploid individuals from Pop4 with split time of 20,000 generations with Pop1, sampled from the present time, as a source of contamination.  For cases including contamination, we contaminated eight individuals with varying amounts between 0.5\% to 3\% contamination, while the remaining  nine individuals did not have any contamination. We generated reads (derived/ancestral) for different genomic coverages ranging from 4x to 0.03x, assuming a Poisson distribution.
 
 For testing, we replicate our simulation 60 times, and create data from the same base simulations at varying levels of coverages and different scenarios: We have a control scenario (without ascertainment bias, ROH or contamination), and individual scenarios where we add ROH, SNP ascertainment and contamination. For the evaluation of the ROH-HMM, we also combine ROH with ascertainment or contamination.
@@ -461,7 +461,7 @@ For testing, we replicate our simulation 60 times, and create data from the same
 We thank Svante Pääbo, Janet Kelso, Harald Ringbauer, Johann Visagie, Laurits Skov, Leonardo N. M. Iasi, Alba Bossoms Mesa, Arev P. Sümer, Zuzana Hofmanová, Guido Alberto Gnecchi Ruscone, Ke Wang and Luca Traverso for helpful comments and discussions. This work was supported by the Max Planck Society and the European Research Council (Grant No.: 694707) to Svante Pääbo.
 
 \section{Contributions}
-Conceptualization (Design of study): B.M.P.; Software: D.P.; Methodology—lead: D.P.; Methodology—support: B.M.P., S.P.; Formal Analysis: D.P.; Visualization-lead: D.P.; Visualization-support: S.P.; Data Curation: D.P.; Writing (original draft preparation)—lead: D.P.; Writing (original draft preparation)—support: B.M.P.; Writing (review and editing):  all authors; Supervision: B.M.P.
+Conceptualization (Design of study): B.M.P.; Software: D.P.; Methodology—lead: D.P.; Methodology—support: B.M.P., S.P.; Formal Analysis: D.P.; Visualization-lead: D.P.; Visualization-support: S.P.; Data Curation: D.P.; Writing—lead: D.P.; Writing—support: B.M.P., S.P.; Supervision: B.M.P.
 
 \section{Competing interests}
 The authors declare that they have no competing interests.
