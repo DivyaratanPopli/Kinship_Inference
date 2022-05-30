@@ -78,10 +78,14 @@ def main():
     else:
         roh = args.roh
 
+    if args.bamfiles_location[-1] != '/':
+        bamfiles_dir=args.bamfiles_location + '/'
+    elif args.bamfiles_location[-1] == '/':
+        bamfiles_dir=args.bamfiles_location
     libraries, listf, dwins, twins, id_dwins, id_twins, chrmlist = hel.pipeline1(targetsfile = args.target_location,
                                                                                  bedfile = args.bedfile,
                                                                                  cores = args.cores,
-                                                                                 rawbams = args.bamfiles_location,
+                                                                                 rawbams = bamfiles_dir,
                                                                                  interval = interval,
                                                                                  splitbams = C.splitbams,
                                                                                  bedfiles = C.bedfiles,
