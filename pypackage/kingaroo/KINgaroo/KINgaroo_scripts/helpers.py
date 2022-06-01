@@ -251,10 +251,14 @@ def contamAll(diff, total, cfile, p_c):
 
 
 
-def data2p(diff_cor, total_cor, id_diff_cor, id_total_cor, libraries, listf, hmm_param, thresh, outdiff, outtotal, id_outdiff, id_outtotal):
+def data2p(diff_cor, total_cor, id_diff_cor, id_total_cor, libraries, listf, hmm_param, thresh, outdiff, outtotal, id_outdiff, id_outtotal, badwins):
 
     print("Estimating p_0...")
-    rem_wins=getHighDiv(alld=diff_cor, allt=total_cor)
+    if len(badwins)==0:
+        rem_wins=getHighDiv(alld=diff_cor, allt=total_cor)
+    else:
+        rem_wins=np.array(badwins).astype(int)
+    np.savetxt(fname='filtered_windows.txt', X=rem_wins, delimiter=',')
     diff_cor[rem_wins,:] = 0
     total_cor[rem_wins,:] = 0
 

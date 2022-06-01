@@ -8,7 +8,7 @@ Created on Sun May  1 22:15:29 2022
 
 import argparse
 import multiprocessing as mp
-
+import numpy as np
 from .KINgaroo_scripts import constants as C
 from .KINgaroo_scripts import helpers as hel
 
@@ -55,8 +55,10 @@ def cli():
     parser.add_argument('-p', '--diversity_parameter_p_0',
                         type=float, metavar='',
                         help='Enter p_0 estimate for input to ROH-HMM, if quality of samples is not good enough to estimate p_0.')
+    parser.add_argument('-n', '--noisy_wins',
+                        type=str, metavar='',
+                        help='You can optionally specify the noisy windows that should be filtered out in a file with list of window indexes (0-based).')
     return parser.parse_args()
-
 
 def main():
     args = cli()
@@ -82,6 +84,10 @@ def main():
         bamfiles_dir=args.bamfiles_location + '/'
     elif args.bamfiles_location[-1] == '/':
         bamfiles_dir=args.bamfiles_location
+    if args.noisy_wins is None:
+        badwins=[]
+    else:
+        badwins=np.loadtxt(args.noisy_wins,dtype='float', delimiter = ",")
     libraries, listf, dwins, twins, id_dwins, id_twins, chrmlist = hel.pipeline1(targetsfile = args.target_location,
                                                                                  bedfile = args.bedfile,
                                                                                  cores = args.cores,
@@ -114,7 +120,7 @@ def main():
                                                             total_cor=total_cor, id_diff_cor=id_diff_cor,
                                                             id_total_cor=id_total_cor, libraries=libraries, listf=listf,
                                                             hmm_param=C.hmm_param, thresh=thresh, outdiff=C.outdiff, outtotal=C.outtotal,
-                                                            id_outdiff=C.id_outdiff, id_outtotal=C.id_outtotal)
+                                                            id_outdiff=C.id_outdiff, id_outtotal=C.id_outtotal, badwins=badwins)
     if args.diversity_parameter_p_0 is None:
         p_0val=p1
     else:

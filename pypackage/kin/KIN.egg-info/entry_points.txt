@@ -1,2 +1,0 @@
-[console_scripts]
-KIN = KIN:__main__.main
