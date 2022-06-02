@@ -370,8 +370,12 @@ def nhFile(alldiff, avgdiff, is_contam):
 
 def contamFile(infile, outfile, targets, idfile, iscnt):
     if str(iscnt)=='1':
-        cnf=pd.read_csv(infile, sep="\t",header=0,index_col=None)
-        cnf=cnf.loc[cnf['name'].isin(targets),:]
+        cnf_u=pd.read_csv(infile, sep="\t",header=0,index_col=None)
+        cnf_u=cnf_u.loc[cnf_u['name'].isin(targets),:]
+
+        cnf = cnf_u.set_index('name')
+        cnf=cnf.loc[targets]
+        cnf['name']=cnf.index
         cnf.reset_index(drop=True, inplace=True)
         names=[]
         contam=[]
@@ -441,6 +445,14 @@ def contamAll(dfile, tfile, cfile, Dnhfile, difffile, totalfile, iscnt):
 
         p_e = (propmean - c * p_c)/ (1-c)
         p_e[p_e>1]=1
+
+        less0=np.where(p_e<0)[0]
+        if len(less0)>0:
+            #print("Warning: In contamination correction step we detect some libraries with almost no data, or incorrect contamination levels. Data for comparison of these libraries is removed to avoid problems (see missing rows in hmm_parameters/p_all.csv).")
+            diff[:,less0]=0
+            total[:,less0]=0
+            p_e[less0]=0
+            c[less0]=0
 
         d_cor, n_cor = adjust_sd(D_obs=diff, N_obs=total, p_e=p_e, p_c=p_c, c=c)
         #print(d_cor[np.isnan(d_cor)])
