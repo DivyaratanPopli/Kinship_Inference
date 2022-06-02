@@ -172,8 +172,12 @@ def divergence_vcf(vcf_file, bedfile, target_ind, contam_ind):
 
 
 def contamFile(infile, outfile, targets, idfile):
-   cnf=pd.read_csv(infile, sep="\t",header=0,index_col=None)
-   cnf=cnf.loc[cnf['name'].isin(targets),:]
+   cnf_u=pd.read_csv(infile, sep="\t",header=0,index_col=None)
+   cnf_u=cnf_u.loc[cnf_u['name'].isin(targets),:]
+
+   cnf = cnf_u.set_index('name')
+   cnf=cnf.loc[targets]
+   cnf['name']=cnf.index
    cnf.reset_index(drop=True, inplace=True)
    names=[]
    contam=[]
@@ -222,7 +226,6 @@ def adjust_sd(D_obs, N_obs, *args, **kwargs):
 
 
 def contamAll(diff, total, cfile, p_c):
-
     df=pd.read_csv(cfile, sep=",",header=0,index_col=0)
     cnt1=np.array(df['contam'])
 
@@ -230,21 +233,26 @@ def contamAll(diff, total, cfile, p_c):
 
     propmean=np.sum(diff, axis=0)/np.sum(total, axis=0)
 
-
     p_e = (propmean - c * p_c)/ (1-c)
     p_e[p_e>1]=1
 
+    #Avoiding issues with low coverage libraries with contamination
+    less0=np.where(p_e<0)[0]
+    if len(less0)>0:
+        print("Warning: In contamination correction step we detect some libraries with almost no data, or incorrect contamination levels. Data for comparison of these libraries is removed to avoid problems (see missing rows in hmm_parameters/p_all.csv).")
+        diff[:,less0]=0
+        total[:,less0]=0
+        p_e[less0]=0
+        c[less0]=0
+
     d_cor, n_cor = adjust_sd(D_obs=diff, N_obs=total, p_e=p_e, p_c=p_c, c=c)
-    #print(d_cor[np.isnan(d_cor)])
 
     if np.all(np.where(np.isnan(np.sum(d_cor,0)))[0] == np.where(np.isnan(np.sum(n_cor,0)))[0]):
         d_cor[np.isnan(d_cor)] = 0
         n_cor[np.isnan(n_cor)] = 0
 
-
     if(np.sum(np.isnan(d_cor))==0):
         if(np.sum(np.isnan(n_cor))==0):
-
             return d_cor, n_cor
         else:
             print("Something is wrong in contamination correction, there are nan values.")
@@ -252,7 +260,8 @@ def contamAll(diff, total, cfile, p_c):
 
 
 def data2p(diff_cor, total_cor, id_diff_cor, id_total_cor, libraries, listf, hmm_param, thresh, outdiff, outtotal, id_outdiff, id_outtotal, badwins):
-
+    #print("diffs",diff_cor[[175,255]])
+    #print("total",total_cor[total_cor<-1])
     print("Estimating p_0...")
     if len(badwins)==0:
         rem_wins=getHighDiv(alld=diff_cor, allt=total_cor)
@@ -264,7 +273,8 @@ def data2p(diff_cor, total_cor, id_diff_cor, id_total_cor, libraries, listf, hmm
 
     id_diff_cor[rem_wins,:] = 0
     id_total_cor[rem_wins,:] = 0
-
+    print("diff",diff_cor[rem_wins,:])
+    print("total",total_cor[rem_wins,:])
     p1=getP(obsd=diff_cor, obst=total_cor, targets=listf,
         pfile=hmm_param+'p_0.txt',goodpairs='goodpairs.csv',
         allp=hmm_param+'p_all.csv', overf='overlap.csv',  thresh=thresh)
