@@ -1,7 +1,7 @@
 from delta_functions import *
 from beta_bnds import *
 from forcedROH import *
-from supplementary_scripts import suppTable2,round_s4
+from supplementary_scripts import suppTable2
 
 datafolder="/mnt/diversity/divyaratan_popli/100arc/inbreeding/fastsim_gz_highDiversity/"
 datafolder_alt="/mnt/diversity/divyaratan_popli/100arc/inbreeding/fastsim_gz/"
@@ -9,9 +9,8 @@ paramfolder="/mnt/diversity/divyaratan_popli/100arc/inbreeding/fastsim_gz/transi
 hbdfolder="/mnt/diversity/divyaratan_popli/100arc/inbreeding/fastsim_gz_highDiversity/hbd_hmm/"
 Chagfold="/mnt/diversity/divyaratan_popli/100arc/inbreeding/laurits_writeup/Ch9_rem/neavar/newSim_ibd/"
 lcfold="/mnt/diversity/divyaratan_popli/100arc/inbreeding/laurits_writeup/Ch9_rem/neavar/"
-deg2fold="/mnt/diversity/divyaratan_popli/100arc/inbreeding/fastsim_gz/"
-bronze_age_folder="/mnt/diversity/divyaratan_popli/100arc/inbreeding/bronze_age_newSim_idcor/"
-pypackage="/mnt/diversity/divyaratan_popli/100arc/inbreeding/laurits_writeup/Ch9_rem/neavar/testkin/newKIN/"
+deg2fold="/mnt/diversity/divyaratan_popli/100arc/inbreeding/fastsim_gz_highDiversity/"
+bronze_age_folder="/mnt/diversity/divyaratan_popli/100arc/inbreeding/bronze_age_newSim/"
 
 inds=list(range(17))
 instates=[0,1,2]
@@ -93,7 +92,7 @@ rule lcMLkin:
 
 rule degree2_plot:
     input:
-        fnames=expand(deg2fold+"hmm_numba_corr_IBD/contam0/inbred0/run{r}/coverage4/filtered0/asc0/IBDstates_allLikelihoods_inphapProbs.csv.gz", r=runlist),
+        fnames=expand(deg2fold+"1M_win/hmm_numba/contam0/inbred0/run{r}/coverage4/filtered0/asc0/IBDstates_allLikelihoods_inphapProbs.csv.gz", r=runlist),
     output:
         outplot="plots/degree2_10Mwin.png",
     script:"Rscripts/degree2_cluster.R"
@@ -176,19 +175,15 @@ rule plot_forcedROH:
         plotbetas(dfile=input.dfile, tfile=input.tfile, ind=wildcards.ind, chrmf=input.chrmf,
         p1file=input.p1f, upA='initial', targets=inds, outplot=output.outplot)
 
-rule supplementary_table234:
+rule supplementary_table23:
     input:
         resultsf='/home/divyaratan_popli/Documents/bronze_age_data/aax6219_Mittnik_SM_TableS10_kinship_inference.xlsx',
-        kinf=bronze_age_folder + "hmm_numba/filtered0/merged_relatable_allLikelihoods.csv",
-        KINresult=pypackage + "KIN_results.csv"
-
+        kinf=bronze_age_folder + "hmm_numba_corrAsim_grSib_replaced/filtered0/merged_relatable_allLikelihoods.csv"
     output:
         outf2="tables/supplementary_table2.csv",
-        outf3="tables/supplementary_table3.csv",
-        outf1="tables/supplementary_table1.csv",
+        outf3="tables/supplementary_table3.csv"
     run:
         suppTable2(resultsf=input.resultsf, kinf=input.kinf, outf2=output.outf2, outf3=output.outf3)
-        round_s4(inf=input.KINresult, outf=output.outf1)
 
 rule egplot1:
     input:

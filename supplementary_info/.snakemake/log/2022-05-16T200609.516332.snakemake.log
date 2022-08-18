@@ -1,4 +1,0 @@
-Building DAG of jobs...
-MissingInputException in line 203 of /mnt/diversity/divyaratan_popli/100arc/inbreeding/model_git/supplementary_info/Snakefile:
-Missing input files for rule egplot2:
-/mnt/diversity/divyaratan_popli/100arc/inbreeding/bronze_age_newSim_idcor/mergedwin_fil0/merged_chrm.csv
