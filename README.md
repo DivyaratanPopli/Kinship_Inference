@@ -34,6 +34,8 @@ pip3 install _path_to_kin
 ```
 
 # Running KINgaroo
+
+IMPORTANT: Please make sure that your input bamfiles are filtered (remove duplicates, and apply standard filters for quality control). Unfiltered duplicates may affect the results.
 You can run KINgaroo from the terminal by typing:
 ```
   KINgaroo [-h] -bam  -bed  -T  -cnt  [-c] [-i] [-t] [-cest] [-d] [-tar] [-cont] [-r] [-p]
