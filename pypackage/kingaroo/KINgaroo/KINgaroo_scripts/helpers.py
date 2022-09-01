@@ -14,6 +14,26 @@ import multiprocessing as mp
 from .input_preparation_functions import *
 from .hbd_hmm_functions import *
 
+def test_input(bedfile, rawbams, targetsfile):
+    print("testing the input files...")
+
+    bed=pd.read_csv(bedfile, sep="\t", header=None, index_col=False, low_memory=False).loc[:10,:]
+    with pd.option_context('display.max_rows', len(bed.index), 'display.max_columns', len(bed.columns)):
+        bed.to_csv("test_bed10.bed", sep='\t', header=None, index=False)
+
+    with open(targetsfile) as f:
+        lib = [line.strip() for line in f]
+
+    np.savetxt(fname="test_targets.txt", X=lib, delimiter=',', fmt="%s")
+
+    bamf=rawbams + lib[0] + '.bam'
+    command = 'samtools view -b %s %s -o %s' %(bamf, 22, "test_bam22.bam")
+    process = subprocess.Popen(command.split(), stdout=subprocess.PIPE)
+    output, error = process.communicate()
+    print("Input files are OK.")
+    print("Please further check that these files are not empty: test_targets.txt (names of all libraries), test_bam22.bam (bamfile for first library with chromosome 22), test_bed10.bed (first 10 rows of bedfile)")
+#creating initial indexes:
+
 
 def prep_function(targetsfile, splitbams, bedfiles, hapProbs, hmm_param, hbd, lik):
 

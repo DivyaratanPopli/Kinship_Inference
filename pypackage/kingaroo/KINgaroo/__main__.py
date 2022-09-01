@@ -58,6 +58,9 @@ def cli():
     parser.add_argument('-n', '--noisy_wins',
                         type=str, metavar='',
                         help='You can optionally specify the noisy windows that should be filtered out in a file with list of window indexes (0-based).')
+    parser.add_argument('-test', '--test_input',
+                        type=int, metavar='',
+                        help='Enter 1 to test your input files')
     return parser.parse_args()
 
 def main():
@@ -88,45 +91,55 @@ def main():
         badwins=[]
     else:
         badwins=np.loadtxt(args.noisy_wins,dtype='float', delimiter = ",")
-    libraries, listf, dwins, twins, id_dwins, id_twins, chrmlist = hel.pipeline1(targetsfile = args.target_location,
-                                                                                 bedfile = args.bedfile,
-                                                                                 cores = args.cores,
-                                                                                 rawbams = bamfiles_dir,
-                                                                                 interval = interval,
-                                                                                 splitbams = C.splitbams,
-                                                                                 bedfiles = C.bedfiles,
-                                                                                 hapProbs = C.hapProbs,
-                                                                                 hmm_param = C.hmm_param,
-                                                                                 hbdf = C.hbdf,
-                                                                                 likf = C.likf,
-                                                                                 chrmf=C.CHRM)
 
-
-    if args.contam_parameter==0:
-            diff_cor, total_cor, id_diff_cor, id_total_cor = dwins, twins, id_dwins, id_twins
-
-    elif args.contam_parameter!=0:
-        hel.contamFile(infile=args.contamination_estimates, outfile=C.contam_est, targets=libraries, idfile=C.id_contam_est)
-        if args.contam_parameter==1:
-
-            div= hel.divergence_vcf(args.divergence_file, args.bedfile, args.target_ind, args.contaminating_ind)
-        elif args.contam_parameter>0 and args.contam_parameter<1:
-            div = args.contam_parameter
-
-        diff_cor,total_cor = hel.contamAll(diff=dwins, total=twins, cfile=C.contam_est, p_c=div)
-        id_diff_cor, id_total_cor = hel.contamAll(diff=id_dwins, total=id_twins, cfile=C.id_contam_est, p_c=div)
-
-    diff_cor, total_cor, id_diff_cor, id_total_cor, p1 = hel.data2p(diff_cor=diff_cor,
-                                                            total_cor=total_cor, id_diff_cor=id_diff_cor,
-                                                            id_total_cor=id_total_cor, libraries=libraries, listf=listf,
-                                                            hmm_param=C.hmm_param, thresh=thresh, outdiff=C.outdiff, outtotal=C.outtotal,
-                                                            id_outdiff=C.id_outdiff, id_outtotal=C.id_outtotal, badwins=badwins)
-    if args.diversity_parameter_p_0 is None:
-        p_0val=p1
+    if args.test_input is None:
+        testin = 0
     else:
-        p_0val=args.diversity_parameter_p_0
-    if roh==1:
-        hel.run_hmm(diff=id_diff_cor, total=id_total_cor, chrm1=chrmlist, p1=p_0val, hbdf=C.hbdf, likf=C.likf, libraries=libraries, cores=cores)
+        testin = args.test_input
+
+    if testin==1:
+        hel.test_input(bedfile=args.bedfile, rawbams=bamfiles_dir, targetsfile=args.target_location)
+    elif testin==0:
+
+        libraries, listf, dwins, twins, id_dwins, id_twins, chrmlist = hel.pipeline1(targetsfile = args.target_location,
+                                                                                     bedfile = args.bedfile,
+                                                                                     cores = args.cores,
+                                                                                     rawbams = bamfiles_dir,
+                                                                                     interval = interval,
+                                                                                     splitbams = C.splitbams,
+                                                                                     bedfiles = C.bedfiles,
+                                                                                     hapProbs = C.hapProbs,
+                                                                                     hmm_param = C.hmm_param,
+                                                                                     hbdf = C.hbdf,
+                                                                                     likf = C.likf,
+                                                                                     chrmf=C.CHRM)
+
+
+        if args.contam_parameter==0:
+                diff_cor, total_cor, id_diff_cor, id_total_cor = dwins, twins, id_dwins, id_twins
+
+        elif args.contam_parameter!=0:
+            hel.contamFile(infile=args.contamination_estimates, outfile=C.contam_est, targets=libraries, idfile=C.id_contam_est)
+            if args.contam_parameter==1:
+
+                div= hel.divergence_vcf(args.divergence_file, args.bedfile, args.target_ind, args.contaminating_ind)
+            elif args.contam_parameter>0 and args.contam_parameter<1:
+                div = args.contam_parameter
+
+            diff_cor,total_cor = hel.contamAll(diff=dwins, total=twins, cfile=C.contam_est, p_c=div)
+            id_diff_cor, id_total_cor = hel.contamAll(diff=id_dwins, total=id_twins, cfile=C.id_contam_est, p_c=div)
+
+        diff_cor, total_cor, id_diff_cor, id_total_cor, p1 = hel.data2p(diff_cor=diff_cor,
+                                                                total_cor=total_cor, id_diff_cor=id_diff_cor,
+                                                                id_total_cor=id_total_cor, libraries=libraries, listf=listf,
+                                                                hmm_param=C.hmm_param, thresh=thresh, outdiff=C.outdiff, outtotal=C.outtotal,
+                                                                id_outdiff=C.id_outdiff, id_outtotal=C.id_outtotal, badwins=badwins)
+        if args.diversity_parameter_p_0 is None:
+            p_0val=p1
+        else:
+            p_0val=args.diversity_parameter_p_0
+        if roh==1:
+            hel.run_hmm(diff=id_diff_cor, total=id_total_cor, chrm1=chrmlist, p1=p_0val, hbdf=C.hbdf, likf=C.likf, libraries=libraries, cores=cores)
 
 
 
