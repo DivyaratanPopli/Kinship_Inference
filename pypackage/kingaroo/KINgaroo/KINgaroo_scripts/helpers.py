@@ -90,7 +90,7 @@ def bam_filter(rawbams, splitbams, bedfiles, hapProbs, lib_chrm):
 
     lib=lib_chrm[0]
     chrm=int(lib_chrm[1])
-    print("sorting and removing duplicates for library %s chromosome %s...\n" %(lib,chrm))
+    print("sorting library %s chromosome %s...\n" %(lib,chrm))
     bamsplit_chr=splitbams+'%s_chrm%s.bam' %(lib,chrm)
 
     bamf=rawbams + lib + '.bam'
@@ -99,23 +99,18 @@ def bam_filter(rawbams, splitbams, bedfiles, hapProbs, lib_chrm):
     output, error = process.communicate()
 
     bamsorted=splitbams+'%s_chrm%s.sorted.bam' %(lib,chrm)
-    bamrmdup=splitbams+'%s_chrm%s.sorted.rmdup.bam' %(lib,chrm)
 
     pysam.sort("-o", bamsorted, bamsplit_chr)
-
-    command = "bam-rmdup %s -r -o %s" %(bamsorted, bamrmdup)
-    process = subprocess.Popen(command.split(), stdout=subprocess.PIPE)
-    output, error = process.communicate()
-    pysam.index(bamrmdup)
+    pysam.index(bamsorted)
 
     #input file generation
     bedfile=bedfiles + 'bedfile_chrm%s.bed' %(chrm)
-    baifile=bamrmdup+'.bai'
+    baifile=bamsorted+'.bai'
 
     outprob=hapProbs + 'hapProbs_%s_chrm%s_probs.csv' %(lib,chrm)
     outdiff=hapProbs + 'hapProbs_%s_chrm%s_diffs.csv' %(lib,chrm)
 
-    makeHapProbs(inbam=bamrmdup, inbai=baifile, inbed=bedfile, outprob=outprob, outdiff_id=outdiff)
+    makeHapProbs(inbam=bamsorted, inbai=baifile, inbed=bedfile, outprob=outprob, outdiff_id=outdiff)
 
 #getting splitbams for all libs and chrm in parallel
 def parallel_indexes(rawbams, libraries, cores):
