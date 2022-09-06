@@ -38,15 +38,7 @@ singlelinecheck=false
 
 \begin{abstract}
 
-\noindent Inferring genetic kinship of ancient individuals can provide insights into their culture and social hierarchy, and is relevant for downstream genetic analyses. However, estimating relatedness from ancient DNA is difficult due to low coverage, ascertainment bias, or contamination from various sources. 
-
-Here, we present KIN, a Hidden-Markov-Model-based approach to estimate the relatedness of a pair of individuals and to identify the identical-by-descent segments they share. KIN can accurately classify up to 3rd-degree relatives and differentiate between sibling and parent-child relationships using ancient DNA sequence data with as little as 0.05x coverage. KIN also incorporates an adjustment for contamination, and an additional model to estimate the location of long runs of homozygosity, and uses them to improve classification accuracy.
-
-We show with simulations that KIN infers first-degree relationships with nearly perfect accuracy, and second degree relationships with about $90\%$ accuracy, even at 0.05x coverage.
-
-To illustrate its utility, we apply KIN to a Neandertal group from Siberia, Russia, and a group of Bronze-Age people from the Lech Valley, Germany. We find that in both cases, KIN matches the findings of existing approaches and detects several additional relationships. 
-
-KIN is a useful tool for analyzing relatedness for ancient DNA datasets of any size, even with low coverage, and is applicable to any diploid species, without the requirement for a reference panel.
+\noindent Inferring genetic kinship of ancient individuals can provide insights into their culture and social hierarchy, and is relevant for downstream genetic analyses. However, estimating relatedness from ancient DNA is difficult due to low-coverage, ascertainment bias, or contamination from various sources. Here, we present KIN, a method to estimate the relatedness of a pair of individuals from the identical-by-descent segments they share. KIN accurately classifies up to 3rd-degree relatives using >0.05x sequence coverage and differentiates siblings from parent-child. It incorporates additional models to adjust for contamination and detect inbreeding, which improves classification accuracy, and can be applied to any diploid species. 
 \end{abstract}
 
 \section{Introduction}
@@ -269,7 +261,7 @@ target population and the putative contaminant popoulation is known. With probab
 
 We  estimate the expected number of differences from comparison of endogenous reads $\mathbb{E}[D_w^{'}]$, and the total number of sites with overlapping endogenous reads $\mathbb{E}[N_w^{'}]$. 
 
-For any particular comparison showing a difference $D$ (not to be confused with number of differences $D_w$), we calculate the probability of the event $E$ that it is between endogenous reads as 
+For any particular comparison showing a difference $D$ (not to be confused with the number of differences $D_w$), we calculate the probability of the event $E$ that it is between endogenous reads as 
 \begin{equation}
     P(E|D) = \frac{P(D|E)P(E)}{P(D|E)P(E) + P(D| \neg E)P( \neg E)}.
 \end{equation}
@@ -314,7 +306,7 @@ We first evaluated the performance of the ROH-HMM ( Fig.\ref{fig2:ROH}). We comp
 
 
 \begin{figure}[h!]
-    \includegraphics[width=16cm]{plots/inkscape_finalImg/ROHplot.png}
+    \includegraphics[width=16cm]{plots/inkscape_finalImg/ROHplot_final1.png}
     \centering
     \caption{Estimation of ROH probabilities along the genome in simulations. Top panel shows proportion of differences in a simulated individual in windows along the genome, and the bottom panel shows probability of seeing no ROH. (A) Simulation with no ascertainment, contamination, or ROH. (B) Simulation with ROH. (C) Simulation with ROH and ascertainment. (D) Simulation with ROH and contamination.}
     \label{fig2:ROH}
@@ -386,7 +378,7 @@ We further applied KIN to a genome-wide dataset of 118 ancient individuals from 
 
 Only for 28 pairs, KIN has confident classifications that differ from those obtained using READ (table S2, Fig. S11). For 20 of these comparisons, KIN predicts a third-degree relationship, which READ classifies as unrelated. 
 
-lcMLkin predicts $3^{rd}$ - $5^{th}$ in 14 of these cases, unrelated in 1 case (see Fig. S11), second degree in 1 case (see Fig. S11), and does not have enough data for classification in 4 cases. Since READ does not infer third degree, and lcMLkin infers a group of relatedness together as $3^{rd}$ - $5^{th}$, it is likely that KIN is able to correctly resolve these cases. For 10 additional pairs, lcMLkin predicts $3^{rd}$ - $5^{th}$ degree, but KIN infers them to be unrelated. Thus, these are likely examples of $4^{th}$ or $5^{th}$ degree relations.
+lcMLkin predicts $3^{rd}$ - $5^{th}$ in 14 of these cases, unrelated in 1 case (see Fig. S11), second degree in 1 case (see Fig. S11), and does not have enough data for classification in 4 cases. For 10 additional pairs, lcMLkin predicts $3^{rd}$ - $5^{th}$ degree, but KIN infers them to be unrelated.
 
 For less than third-degree relations, only eight cases are classified differently between KIN and READ. lcMLkin matches KIN's prediction in two cases, and does not have enough data in 5 cases. In the last case, all three methods differ (table S3, Fig. S11), and the true relatedness is unresolved in this case. Finally, there are three disagreements between KIN and lcMLkin in classification of parent-child versus siblings (READ predicts first degree for all three pairs). We plotted the pairwise differences for these three pairs in Fig. S12, and found that the proportion of differences along the genome aligns with the prediction of KIN.
 
