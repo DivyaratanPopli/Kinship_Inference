@@ -1,7 +1,7 @@
 from delta_functions import *
 from beta_bnds import *
 from forcedROH import *
-from supplementary_scripts import suppTable2
+from supplementary_scripts import suppTable2, misscontam_plotf
 
 datafolder="/mnt/diversity/divyaratan_popli/100arc/inbreeding/fastsim_gz_highDiversity/"
 datafolder_alt="/mnt/diversity/divyaratan_popli/100arc/inbreeding/fastsim_gz/"
@@ -11,10 +11,16 @@ Chagfold="/mnt/diversity/divyaratan_popli/100arc/inbreeding/laurits_writeup/Ch9_
 lcfold="/mnt/diversity/divyaratan_popli/100arc/inbreeding/laurits_writeup/Ch9_rem/neavar/"
 deg2fold="/mnt/diversity/divyaratan_popli/100arc/inbreeding/fastsim_gz_highDiversity/"
 bronze_age_folder="/mnt/diversity/divyaratan_popli/100arc/inbreeding/bronze_age_newSim/"
+missCfold="/mnt/diversity/divyaratan_popli/review_sim/hmm_numba/miss_contam/"
 
 inds=list(range(17))
 instates=[0,1,2]
 runlist=list(range(1,61))
+
+mind_list=[10]
+mcont_list=[0.5,1.5,2.5,3.5,4.5,5.5]
+covlist=[4, 0.5, 0.2, 0.1, 0.05]
+
 
 listf=[]
 for i, l1 in enumerate(inds):
@@ -204,3 +210,18 @@ rule egplot2:
     output:
         outimg="plots/egplot2.png"
     script:"Rscripts/egplot2.R"
+
+rule contam_miss_file:
+    input:
+        kin=expand(missCfold+"output/missC{mcont}_{mind}/contam{cnt}/inbred{inb}/model_performance_{folder}/coverage{cov}/asc{asc}/filtered{Mfil}_cut{cutoff}.csv.gz", cnt=1, inb=0, folder="allLikelihoods_inphapProbs", cov=covlist, Mfil=0, asc=0, cutoff=1.0, mcont=mcont_list, mind=mind_list),
+        pc_sib=expand(missCfold+"output/missC{mcont}_{mind}/contam{cnt}/inbred{inb}/pc_sib_performance_allLikelihoods_inphapProbs/coverage{cov}/asc{asc}/filtered0_cut{cut_pcsib}/pc_sib.csv.gz", cut_pcsib=1,cov=covlist,cnt=1,inb=0,asc=0, mind=mind_list, mcont=mcont_list)
+    output:
+        outf="dataf/contam1_inbred0_model_performance_allLikelihoods_inphapProbs_asc0.csv"
+    run:
+        misscontam_plotf(outf=output.outf,covs=covlist,ctlist=mcont_list)
+rule contam_miss_plot:
+    input:
+        infile="dataf/contam1_inbred0_model_performance_allLikelihoods_inphapProbs_asc0.csv"
+    output:
+        outfile="plots/contam_missspecification.png"
+    script: "Rscripts/misscontam_plot.R"
