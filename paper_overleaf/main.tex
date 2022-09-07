@@ -302,7 +302,7 @@ Here, $S_w = N_w - D_w$. Hence, we set $\mathbb{E}[N_w^{'}] = \mathbb{E}[S_w^{'}
 We first tested the performance of KIN with simulated pedigrees. We performed coalescent simulations to generate 8 unrelated diploid genomes and artificially mated them to form pedigrees of 17 individuals with relationships up to $5^{th}$ degree (Fig. S3). To evaluate the effect of sequence coverage on the performance of KIN, we generated artificial pileups at each polymorphic site for each individual following a Poisson distribution with 6 different average depths varying between 4$x$ and 0.03$x$ (see section \ref{method}). To mimic ROH, for some pedigrees, we picked a single allele at heterozygous sites in some regions as determined by a Markov chain so that about $17\%$ of the genome is ROH. We also created versions with contamination, by introducing alleles from distantly related individuals, and ascertainment bias, by selecting polymorphic sites identified in a subset of the individuals (see section \ref{method}). We created 60 pedigrees for each combination of average coverage and scenarios of presence/absence of ROH, contamination, and ascertainment bias, totalling 2,880 pedigrees.
 
 \paragraph{ROH detection:}
-We first evaluated the performance of the ROH-HMM ( Fig.\ref{fig2:ROH}). We computed the proportion of ROH in all windows and compared it to the posterior probability of the ROH state, by computing the bias (i.e., the difference between both) and its variance across windows. Without ROH, we correctly inferred the absence of ROH as the observed bias ranges from $0.3$ to $0.7\%$ (variance $\leq0.006$; Table \ref{tab:Table 2}). With ROH, we observed a slight bias of $5$ to $9\%$ more ROH than simulated (variance $\leq0.004$). The largest bias observed ($9\%$) was for the datasets that included contamination. Ascertainment bias had a minimal effect on the detection of ROH (Table \ref{tab:Table 2}). Surprisingly, the bias was lower for lower coverages, perhaps because there is only one possible ROH state per window to model a continuous variable, viz. proportion of window in ROH, and this state is inferred more confidently with more data. Overall, the model predicts ROH well in all cases, even at a coverage of 0.1x (Fig.\ref{fig2:ROH}).
+We first evaluated the performance of the ROH-HMM ( Fig.\ref{fig2:ROH}). We computed the proportion of ROH in all windows and compared it to the posterior probability of the ROH state, by computing the bias (i.e., the difference between both) and its variance across windows. Without ROH, we correctly inferred the absence of ROH as the observed bias ranges from $0.3$ to $0.7\%$ (variance $\leq0.006$; Table \ref{tab:Table 2}). With ROH, we observed a slight bias of $5$ to $9\%$ more ROH than simulated (variance $\leq0.04$). The largest bias observed ($10.1\%$) was for the datasets that included contamination. Ascertainment bias had a minimal effect on the detection of ROH (Table \ref{tab:Table 2}). Surprisingly, the bias was lower for lower coverages, perhaps because there is only one possible ROH state per window to model a continuous variable, viz. proportion of window in ROH, and this state is inferred more confidently with more data. Overall, the model predicts ROH well in all cases, even at a coverage of 0.1x (Fig.\ref{fig2:ROH}).
 
 
 \begin{figure}[h!]
@@ -318,11 +318,13 @@ We first evaluated the performance of the ROH-HMM ( Fig.\ref{fig2:ROH}). We comp
     \hline
     Coverage & Control(bias) & Control(var) & R(bias) & R(var) & RA(bias) & RA(var) & RC(bias) & RC(var)\\
     \hline
-    4x & 0.007 & 0.006 & 0.081 & 0.036 & 0.083 & 0.036 & 0.091 & 0.039\\
+    4x & 0.007 & 0.006 & 0.087 & 0.038 & 0.089 & 0.039 & 0.101 & 0.042\\
     \hline
-    0.2x & 0.003 & 0.003 & 0.068 & 0.03 & 0.068 & 0.026 & 0.076 & 0.029\\
+    0.5x & 0.006 & 0.005 & 0.085 & 0.036 & 0.087 & 0.036 & 0.098 & 0.039\\
     \hline
-    0.1x & 0.003 & 0.002 & 0.049 & 0.021 & 0.05 & 0.021 & 0.057 & 0.022\\
+    0.2x & 0.004 & 0.003 & 0.073 & 0.03 & 0.073 & 0.028 & 0.084 & 0.031\\
+    \hline
+    0.1x & 0.003 & 0.002 & 0.054 & 0.023 & 0.054 & 0.023 & 0.065 & 0.025\\
     \hline
 \end{tabular}
 \label{table1}
