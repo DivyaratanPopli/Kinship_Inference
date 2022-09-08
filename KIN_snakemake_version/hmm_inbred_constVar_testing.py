@@ -416,7 +416,7 @@ def hmm(difffile, targets, totalfile, listind, listf, pfile, Afiles, resfiles, g
 
 
 
-        pi= np.array([1/3,1/3,1/3])
+        #pi= np.array([1/3,1/3,1/3])
 
         #A=A1
         likall=[]
@@ -424,7 +424,7 @@ def hmm(difffile, targets, totalfile, listind, listf, pfile, Afiles, resfiles, g
 
             Afile=Afiles[rel_cnt]
             A=np.array(pd.read_csv(Afile,sep=',',header=None,index_col=False))
-
+            pi=matrix_power(A,10000)[0]
             Bu = np.zeros((inbr_states,np.shape(A)[0],win)) #Emission probability
             #for st in instates:
              #   for re in range(np.shape(A)[0]):
