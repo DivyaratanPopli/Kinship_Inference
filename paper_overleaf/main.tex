@@ -59,7 +59,7 @@ However, since it is not possible to directly observe IBD segments, a common app
 \begin{figure}[h!]
     \includegraphics[width=18cm]{plots/inkscape_finalImg/schematic_sib_rev.png}
     \centering
-    \caption{IBD sharing between siblings without and with runs of homozygosity (ROH). (A) Schematic of chromosomes for parent 1 (Par1)and parent 2 (Par2). On the left, the parents have unrelated chromosomes depicted with different colors, and on the right parent 1 has a homozygous pair of chromosomes. (B) In top row, recombined chromosomes inherited from parents by a pair of siblings are shown. The bottom row shows the expected proportion of differences ($p$) along the chromosome. In both cases, $p$ can take values of $p_0$, $p_1$ or $p_2$, which are the expected proportion of differences in IBD states 0,1 and 2, respectively.  }
+    \caption{IBD sharing between siblings without and with runs of homozygosity (ROH). (A) Schematic of chromosomes for two parents (Par1, Par2). (B) Schematics of recombinant chromosomes of two children (Sib1, Sib2). (C)  Expected differences between Sib1 and Sib2 ($p$) along the chromosome. In both cases, $p$ can take values of $p_0$, $p_1$ or $p_2$, which are the expected proportion of differences in IBD states 0,1 and 2, respectively.  (D-F): Same as A-C, except parent 1 is assumed to be homozygous.  }
     \label{fig0:schematic}
 \end{figure}
 
@@ -110,9 +110,9 @@ The goal of KIN-HMM is to infer how two individuals are related via the patterns
 The details of the likelihood computation are given in section \ref{ll}. As is the case for any HMM, KIN-HMM requires a set of emission (section \ref{B}) and transition probability matrices. We assume the transition matrix for each relatedness case is fixed. Our emissions include a vector of parameters ($\delta$) that describe the variance in the data for each IBD state that we infer from the data (section \ref{B}).
 
 \subsection{Input of KIN-HMM}\label{hmm_input}
-The inputs of our algorithm are i) the number of overlapping sites for the $w$-th window $N_w$ for which both samples have at least one read available, ii) the expected number of pairwise differences $D_w$ at these sites, and iii) the probability of ROH in windows, by default obtained from ROH-HMM described in section \ref{roh}.
+The inputs of our algorithm are i) the number of overlapping sites for the $w$-th window $N_w$ for which both samples have at least one read available, ii) the number of pairwise differences $D_w$ at these sites, and iii) the probability of ROH in windows, by default obtained from ROH-HMM described in section \ref{roh}.
 
-$D_w$ is the number of sites that are different between a pair of individuals. For high-coverage data, this can be estimated accurately by comparing genotypes, but for low-coverage samples, $D_w$ needs to be estimated. The simplest approach is to randomly-sample a read from each position \cite{haak_massive_2015,prufer_complete_2014,green_draft_2010}. However, such an approach may result in loss of data, and hence we calculate $D_w$ by implicitly summing over all possible samplings:
+For high-coverage data, $D_w$ can be directly obtained by comparing genotypes, but for low-coverage samples, $D_w$ needs to be estimated from the sequencing data. The simplest approach is to randomly-sample a read from each position \cite{haak_massive_2015,prufer_complete_2014,green_draft_2010}. However, such an approach may result in loss of data, and hence we estimate $D_w$ by implicitly summing over all possible samplings:
 \begin{align}\label{eq:x}
 D_w &= \sum_{s=1}^{N_w} \nu_i(s) (1-\nu_j(s)) + (1-\nu_i(s)) \nu_j(s)
 \end{align}
@@ -123,7 +123,7 @@ Throughout, we will use bold-face notation to refer to the vector (or matrix) co
 \subsection{Log likelihood of the KIN-HMM}\label{ll}
 The KIN-HMM uses $\BD$ and $\BN$ to classify each window into three hidden states $Z_w \in$ ($0$, $1$, $2$), reflecting zero, one or two shared chromosomes IBD, respectively. To take ROH into account, we define the variable $H_w \in$ ($0$, $1$, $2$) that designates that zero, one or both individuals are homozygous in window $w$. Since $H_w$ is unobserved, in practice we use the estimates from ROH-HMM: $h_{wj} = P(H_w = j)$. 
 
-There are three additional model parameters, $\pi, \mathbf{A}$ and $\delta$. The initial probabilities $\pi$ give the probabilities of being in each state $Z_0$ (at the beginning of each chromosome), which we set to uniform for simplicity. The transition matrix $\mathbf{A}$ gives the probability of moving from state $i$ to state $j$, given by $a_{ij}$, and is fixed and estimated from simulations for each relatedness case (section \ref{simulat}). The overdispersion-parameter $\delta$ takes into account that SNPs in each window vary in their allele frequency (see next setion).  For compactness of notation, we group the fixed parameters: $\theta = (\BN, \mathbf{A}, \pi)$. 
+There are three additional model parameters, $\pi, \mathbf{A}$ and $\delta$. The transition matrix $\mathbf{A}$ gives the probability of moving from state $i$ to state $j$, given by $a_{ij}$, and is fixed and estimated from simulations for each relatedness case (section \ref{simulat}). The initial probabilities $\pi$ give the probabilities of being in each state $Z_0$ (at the beginning of each chromosome), which we set to the stationary distribution of the transition matrix for simplicity. The overdispersion-parameter $\delta$ takes into account that SNPs in each window vary in their allele frequency (see next setion).  For compactness of notation, we group the fixed parameters: $\theta = (\BN, \mathbf{A}, \pi)$. 
 
 Thus, the complete data likelihood for the HMM is
 
@@ -143,19 +143,19 @@ where, $p$ is the proportion of differences expected for a particular IBD and RO
 
 The proportion of differences between unrelated individuals $p_0$ is an important parameter. We follow READ \cite{kuhn_estimating_2018} and estimate $p_0$ as the median of differences for all possible pairs of individuals, which works well if the majority of individuals in the sample are unrelated.
 
-The presence of long tracts of homozygosity resulting from recent inbreeding adds an additional complication, as the number of shared chromosomes may be overestimated \cite{weir_genetic_2006}. For example, when considering two bones from the same individual, we would expect the entire genome to have a pairwise difference of $p_2$, because two out of the four compared chromosomes are identical copies. However, in inbred regions all four chromosomes will be identical, and so the expected pairwise differences are zero ($p_3$ in equation \ref{eq:2}). Note however, that $p_0$ does not depend on the presence of ROH, since all comparisons are between unrelated chromosomes even if both individuals are homozygous at a particular locus. 
+The presence of long tracts of homozygosity resulting from recent inbreeding adds an additional complication, as the number of shared chromosomes may be overestimated \cite{weir_genetic_2006}. For example, when considering two bones from the same individual, we would expect the entire genome to have a pairwise difference of $p_2$, because two out of the four compared chromosomes are identical copies. However, in inbred regions all four chromosomes will be identical, and so the expected pairwise differences are zero ($p_4$ in equation \ref{eq:2}). Note however, that $p_0$ does not depend on the presence of ROH, since all comparisons are between unrelated chromosomes even if both individuals are homozygous at a particular locus. 
 
 Taken together, we can summarize $p$ in the following matrix, where rows give the state of $Z_w$, and columns of $H_w$:
 \begin{equation}\label{eq:2}
     p(Z_w, H_w) = \left[\begin{array}
 {rrr}
 p_0 & p_0 & p_0 \\
-p_1 & p_2 & p_3 \\
-p_2 & p_3 & p_3
+p_1 & p_2 & p_4 \\
+p_2 & p_4 & p_4
 \end{array}\right]
 \end{equation}
 
-As explained above, we would expect $p_3$ to be zero. However, as we do all our calculations in large windows, the start/end positions of windows may not coincide with that of ROH tracts, and we found that we obtain better results by setting $p_3 = \frac{p_2}{2}$.
+As explained above, we would expect $p_4$ to be zero. However, as we do all our calculations in large windows, the start/end positions of windows may not coincide with that of ROH tracts, and we found that we obtain better results by setting $p_4 = \frac{p_2}{2}$, to take into account that many windows will only partially have four comparisons between identical chromosomes.
 
 The effect of these considerations is that even though we have nine possible combinations of $Z_w$ and $H_w$ for each window, there are actually only four unique $p$-parameters $p_i$ with $i$ $\in$ (0,1,2,3). 
 
@@ -190,18 +190,21 @@ The only free parameters we estimate in the maximization step are the over-dispe
 \end{align}
 
 
-Using equation \ref{eq:2}, we simplify this by grouping all the terms that would result in the same $p_i$ and $\delta_i$, i.e.
+Using equation \ref{eq:2}, we simplify this by grouping all the terms that have the same number of pairwise comparisons between identical chromosomes, which would result in the same $p_i$ and $\delta_i$, i.e.
 
 \begin{align*}\label{eq:5}
 g_{w0} &= \gamma_{w0}\\
 g_{w1} &= \gamma_{w1} h_{w0}\\
 g_{w2} &= \gamma_{w2} h_{w0} + \gamma_{w1} h_{w1}\\
-g_{w3} &= \gamma_{w2} h_{w1} + \gamma_{w2} h_{w2} + \gamma_{w1} h_{w2}
+g_{w3} &= 0 \\
+g_{w4} &= \gamma_{w2} h_{w1} + \gamma_{w2} h_{w2} + \gamma_{w1} h_{w2},
 \end{align*}
+
+where $g_{w3}$ is always 0 because there is no case that leads to only three comparisons between identical chromosomes.
 
 So we can rewrite equation \ref{eq:4} as:
 \begin{align}\label{eq:6}
-\mathcal{C} &= \sum_{i=0}^3 \sum_{w=1}^L \log P(D_{w}|N_w, \delta_i, p_i)g_{wi}
+\mathcal{C} &= \sum_{i=0}^4 \sum_{w=1}^L \log P(D_{w}|N_w, \delta_i, p_i)g_{wi}
 \end{align}
 
 The cost function (equation \ref{eq:6}) has one independent term for each $i$ and so we can separate them and estimate each $\delta_i$ independently using the minimize\_scalar algorithm implemented in \texttt{scipy.optimize} \cite{virtanen_scipy_2020}. 
@@ -211,7 +214,7 @@ The cost function (equation \ref{eq:6}) has one independent term for each $i$ an
 We constrain the optimization space of the $\delta_i$, as unconstrained optimization could result in some confounding of cases. We know that different cases of relatedness have different numbers of IBD states possible. For example, siblings may have all three IBD states present while a Parent-Child has only $Z_w=1$. However, the parent-child model could fit data generated under the sibling model by assigning it a very high $\delta_1$, which would reduce performance (for example, see Fig. S5, S6). We avoid this problem by constraining the $\delta$ such that the beta distributions for the different relatedness cases overlap by at most one standard deviation.
 
 \subsection{Model comparison}\label{model_comp}
-To infer the most likely relatedness case, we run our model on all relatedness cases mentioned in section \ref{method_overview}, and compare the resulting likelihoods. We output the relatedness corresponding to the maximum likelihood model. Because the models we test are not nested, standard likelihood-ratio theory cannot be used to generate a confidence value. Instead we use the log likelihood ratio between the two best models as a statistic to assess the confidence in our classifications, and use simulations to obtain critical values (Fig. S8).
+To infer the most likely relatedness case, we run our model on all relatedness cases mentioned in section \ref{method_overview}, and compare the resulting likelihoods. We output the relatedness corresponding to the maximum likelihood model. Since we compare models where the  parameters are not subset of each other, standard likelihood-ratio theory for nested models cannot be used to obtain confidence intervals. Instead we use the log likelihood ratio between the two best models as a statistic to assess the confidence in our classifications, and use simulations to obtain critical values (Fig. S8).
 
 \paragraph{Grouping of cases:}
 Particularly for low-quality data, we may not be able to distinguish all cases. Thus, we group $4^{th}$ and $5^{th}$ degree relatives together with unrelated. Similarly, we group  half-siblings, avuncular and grandparent-grandchild to  $2^{nd}$-degree relatives in the final results. We report the final pairwise classification in the following categories: Unrelated, Third Degree, Second Degree, Parent-Child, Siblings, Identical individuals.
@@ -223,12 +226,12 @@ To investigate the limits of our method, we plotted the true-positive and false-
 
 
 \paragraph{Example case of siblings:}
-In Fig.\ref{fig1:ibd} we show the inferred IBD fragments from different KIN-HMMs when they are applied to simulated data from a pair of siblings. In this case, the siblings-model predictions match true IBD states the most, as reflected by the highest log-likelihood. 
+In Fig.\ref{fig1:ibd} we show the inferred IBD fragments from different KIN-HMMs when they are applied to simulated data from a pair of siblings. The models for identical, parent-child or unrelated relationships allow for just one IBD state, resulting in a flat line and low likelihood for this data. The other three cases all allow for different IBD-states, but the siblings-model predictions match true IBD states the most, as reflected by the highest log-likelihood and the close correspondence of the inferred and true IBD states. 
 
 \begin{figure}[h!]
     \includegraphics[width=16cm]{plots/inkscape_finalImg/IBDplot_title.png}
     \centering
-    \caption{Comparison of pairwise difference data and inferred IBD fragments. The top panel shows the proportion of differences in each window along the genome for a pair of simulated siblings. Dashed lines represent $p_0$, $p_1$ and $p_2$ estimates. The second panel shows the true IBD state for each window. The remaining panels show the IBD states predicted by particular relatedness models. The log likelihood value for each model is shown on upper left corner of the panel. Light and shaded background represent distinct chromosomes.}
+    \caption{Comparison of pairwise difference data and inferred IBD fragments. The top panel shows the proportion of differences in each window along the genome for a pair of simulated siblings. Dashed lines represent $p_0$, $p_1$ and $p_2$ estimates. The second panel shows the true IBD state for each window. The remaining panels show the IBD states predicted by particular relatedness models. The log-likelihood value for each model is shown on upper left corner of the panel. Light and shaded backgrounds represent distinct chromosomes.}
     \label{fig1:ibd}
 \end{figure}
 
@@ -242,7 +245,7 @@ Our HMM to detect ROH tracts works similarly to the KIN-HMM described above, but
 
 where $\Theta$ is a vector of initial probabilities ($\pi$), transition matrix ($A$) and $M$.
 
-Since the source of ROH may not be known, we estimate both transitions and emissions. We calculate the emissions using a beta-binomial likelihood, and fix the mean of the distributions corresponding to $Y_w$ = 3 and $Y_w$ = 2 at expected proportion of differences in a homozygous tract ($p_3$) and expected proportion of differences in a non-homozygous tract ($p_2$) respectively. The expectation step outputs the posterior probability $\Gamma$ of being in state $Y_w=3$ or the state $Y_w=2$ in each window. The maximization step for emissions is analogous to that in the KIN model (eq. \ref{eq:4}), and the optimization step here is done with the following cost function:
+Since the source of ROH may not be known, we estimate both transitions and emissions. We calculate the emissions using a beta-binomial likelihood, and fix the mean of the distributions corresponding to $Y_w$ = 3 and $Y_w$ = 2 at expected proportion of differences in a homozygous tract ($p_4$) and expected proportion of differences in a non-homozygous tract ($p_2$) respectively. The expectation step outputs the posterior probability $\Gamma$ of being in state $Y_w=3$ or the state $Y_w=2$ in each window. The maximization step for emissions is analogous to that in the KIN model (eq. \ref{eq:4}), and the optimization step here is done with the following cost function:
 
 \begin{align}\label{eq:11}
 \mathcal{C} = \sum_{w=1}^L \sum_{i=2}^3 P(\Delta_w|\delta_{i},p_{i}) \Gamma_{wi} ,
@@ -330,15 +333,33 @@ We first evaluated the performance of the ROH-HMM ( Fig.\ref{fig2:ROH}). We comp
 \label{table1}
 \end{table}
 
+\begin{table}[h!]
+\caption{\label{tab:Table 3}Model performance for ROH prediction. Here we test ROH-HMM in four different cases of simulations: Control (without ROH, ascertainment bias or contamination), R (with ROH), RA (with ROH and ascertainment bias), RC (with ROH and contamination)}
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|}
+    \hline
+    Coverage & R(Sensitivity) & R(Specificity) & RA(Sensitivity) & RA(Specificity) & RC(Sensitivity) & RC(Specificity)\\
+    \hline
+    4x & 0.007 & 0.006 & 0.087 & 0.038 & 0.089 & 0.039 & 0.101 & 0.042\\
+    \hline
+    0.5x & 0.006 & 0.005 & 0.085 & 0.036 & 0.087 & 0.036 & 0.098 & 0.039\\
+    \hline
+    0.2x & 0.004 & 0.003 & 0.073 & 0.03 & 0.073 & 0.028 & 0.084 & 0.031\\
+    \hline
+    0.1x & 0.003 & 0.002 & 0.054 & 0.023 & 0.054 & 0.023 & 0.065 & 0.025\\
+    \hline
+\end{tabular}
+\label{table2}
+\end{table}
+
 
 \paragraph{IBD prediction:}
-We investigated the accuracy of IBD state prediction along the genome by counting the number of genomic windows where we correctly predict IBD state for different relatedness and coverages (Fig. \ref{fig4:IBDstate_accuracy}). The accuracy for coverages of 0.1x or higher is consistent and varies between 1.0 and 0.836, depending on relatedness. However, the accuracy decreases at lower coverages for most relatedness cases and ranges from 1.0 to 0.563 at 0.03x. The exceptions are for identical individuals and parent-child pairs, where the accuracy is nearly perfect for all investigated coverages, even at 0.03x coverage. We find that adding contamination, ascertainment bias in our simulations has little effect on IBD prediction. Adding ROH to the simulations reduces the IBD prediction in two cases: the accuracy for second degree is decreased by $1.5$ to $5\%$ and for siblings by $5$ to $17\%$ (Fig. S9). We see this adverse effect of ROH in case of siblings, perhaps because only in case of siblings we do not introduce long ROH directly, but long and short ROH may be present through parents (see section \ref{method}). Unidentified short ROH may cause a difficulty in differentiating between different combinations of IBD ($Z_w$) and ROH states ($H_w$). However, this does not affect the power to identify siblings in presence of ROH even at $0.05x$ (see Fig. \ref{fig3:Comparison_READ_KIN})
+We investigated the accuracy of IBD state prediction along the genome by counting the number of genomic windows where we correctly predict IBD state for different relatedness and coverages (Fig. \ref{fig4:IBDstate_accuracy}). The accuracy for coverages of 0.1x or higher is consistent and varies between 1.0 and 0.78, depending on relatedness. However, the accuracy decreases at lower coverages for most relatedness cases and ranges from 1.0 to 0.48 at 0.03x. The exceptions are for identical individuals and parent-child pairs, where the accuracy is nearly perfect for all investigated coverages, even at 0.03x coverage. We find that adding contamination, ascertainment bias in our simulations has little effect on IBD prediction. Adding ROH to the simulations reduces the IBD prediction in two cases: the accuracy for second degree is decreased by $1.5$ to $5\%$ and for siblings by $5$ to $17\%$ (Fig. S9). We see this adverse effect of ROH in case of siblings, perhaps because only in case of siblings we do not introduce long ROH directly, but long and short ROH may be present through parents (see section \ref{method}). Unidentified short ROH may cause a difficulty in differentiating between different combinations of IBD ($Z_w$) and ROH states ($H_w$). However, this does not affect the power to identify siblings in presence of ROH even at $0.05x$ (see Fig. \ref{fig3:Comparison_READ_KIN})
 
 
 \begin{figure}[h!]
     \includegraphics[width=16cm]{plots/plotimg/plot_IBDaccuracy.png}
     \centering
-    \caption{Evaluation of IBD estimation at different coverages. y-axis shows accuracy calculated over 60 simulations with each relatedness case and six different coverages shown on x-axis. The error bars are drawn at 1 standard deviation from the mean. Here, accuracy corresponding to relatedness cases for Parent-Child and Identical individuals is always 1, and overlaps with each other. Accuracy is defined as the sum of true positives and true negatives divided by the total number of windows. We consider a prediction is true if it matches the IBD state at the central position of the window.}
+    \caption{Evaluation of IBD estimation at different coverages. y-axis shows accuracy calculated over 60 simulations with each relatedness case and six different coverages shown on x-axis. The error bars are drawn at 1 standard deviation from the mean. Here, accuracy corresponding to relatedness cases for Parent-Child and Identical individuals is always 1, and overlaps with each other. Accuracy is defined as the proportion of correctly predicted IBD states, when compared to the central position of the window.}
     \label{fig4:IBDstate_accuracy}
 \end{figure}
 
@@ -363,7 +384,7 @@ To test KIN on real ancient data, we applied it to a Neandertal dataset from Cha
 
 Our estimates are consistent with those obtained using READ, except that READ is unable to detect 3rd-degree relationships, and does not distinguish between sibling and parent-child relationships. We also find that both KIN and READ classify Chagyrskaya06 and Chagyrskaya14 as parent-child with low confidence, but from the morphology they likely stem from the same individual. We believe that the low confidence mis-classification may be due to uncorrected non-human contamination present in these libraries ($1\%$ and $2.9\%$ respectively \cite{laurits_skov_genetic_nodate}), biasing the estimated differences between the individuals to higher values.
 
-We compared the IBD estimates obtained using KIN to those from lcMLkin for all pairs for whom READ results (with s.d. $>$1) and KIN results ($\Delta LL>$1) match (Fig. S10). We find that lcMLkin creates four different clusters for different relatedness cases (identical, parent-child, $2^{nd}$ degree and unrelated). However, the location of these clusters strongly deviate from the expected values, likely due to the low coverage and ROH. Remains from the same individual, for example, are expected to be at $k_0 = 0$ and $r = 1$, but are at $k_0 \approx 0.3$, $r \approx 0.6$.
+We compared the IBD estimates obtained using KIN to those from lcMLkin for all pairs for whom READ results (with s.d. $>$1) and KIN results ($\Delta LL>$1) match (Fig. S10). We find that lcMLkin creates four different clusters based on the coefficient of relatedness ($r$) and the proportion of the genome in the unrelated state ($k_0)$ for different relatedness cases (identical, parent-child, $2^{nd}$ degree and unrelated). However, the location of these clusters strongly deviate from the expected values, likely due to the low coverage and ROH. Remains from the same individual, for example, are expected to be at $k_0 = 0$ and $r = 1$, but are at $k_0 \approx 0.3$, $r \approx 0.6$ for lcMLkin (Figure S10).
 
 
 \begin{figure}[h!]
@@ -378,9 +399,7 @@ We compared the IBD estimates obtained using KIN to those from lcMLkin for all p
 We further applied KIN to a genome-wide dataset of 118 ancient individuals from the Lech Valley \cite{mittnik_kinship-based_2019}. We compared our relatedness estimates to those obtained by the authors using READ and lcMLkin. We found that KIN was able to confidently classify $85\%$ of the 6903 possible comparisons ($\Delta LL>1$), READ $94\%$ ($s.d.>1$) and lcMLkin 53\% of pairs (\cite{mittnik_kinship-based_2019}). 
 
 
-Only for 28 pairs, KIN has confident classifications that differ from those obtained using READ (table S2, Fig. S11). For 20 of these comparisons, KIN predicts a third-degree relationship, which READ classifies as unrelated. 
-
-lcMLkin predicts $3^{rd}$ - $5^{th}$ in 14 of these cases, unrelated in 1 case (see Fig. S11), second degree in 1 case (see Fig. S11), and does not have enough data for classification in 4 cases. For 10 additional pairs, lcMLkin predicts $3^{rd}$ - $5^{th}$ degree, but KIN infers them to be unrelated.
+Only for 28 pairs, KIN has confident classifications that differ from those obtained using READ (table S2, Fig. S11). Twenty of these comparisons, KIN predicts to be third-degree relationships, and  READ concordantly classifies them as unrelated (as it only infers first and second degree relationships). lcMLkin predicts $3^{rd}$ - $5^{th}$ in 14 of these cases, unrelated in 1 case (see Fig. S11), second degree in 1 case (see Fig. S11), and does not have enough data for classification in 4 cases. For 10 additional pairs, lcMLkin predicts $3^{rd}$ - $5^{th}$ degree, but KIN infers them to be unrelated. There are a total of 83 pairs where READ obtains a confident call ($s.d.>1$), but KIN does not ($\Delta LL<1$). In 80 of these cases, READ classifies them as unrelated, KIN classifies $3^{rd}$ degree, while lcMLkin predicts $3^{rd}$ - $5^{th}$ degree. In rest 3 cases READ classifies unrelated, while KIN and lcMLkin agree on $2^{nd}$ degree.
 
 For less than third-degree relations, only eight cases are classified differently between KIN and READ. lcMLkin matches KIN's prediction in two cases, and does not have enough data in 5 cases. In the last case, all three methods differ (table S3, Fig. S11), and the true relatedness is unresolved in this case. Finally, there are three disagreements between KIN and lcMLkin in classification of parent-child versus siblings (READ predicts first degree for all three pairs). We plotted the pairwise differences for these three pairs in Fig. S12, and found that the proportion of differences along the genome aligns with the prediction of KIN.
 
@@ -389,7 +408,7 @@ For less than third-degree relations, only eight cases are classified differentl
 \section{Discussion}\label{discussion}
 Here, we present a new method called KIN to estimate genetic kinship and the location of IBD tracts from low-coverage data, in presence of long ROH, contamination, as well as ascertainment bias. Our method utilizes a set of HMMs to estimate IBD tracts and uses them to classify each pair of individuals into a possible relatedness case, along with a measure of classification confidence (Fig. S1). We evaluated the method performance of KIN, and compared it to that of READ using simulated pedigrees. Finally, we show applications of KIN on two ancient datasets.
 
-For detecting ROH, there is only one method available that works with low coverage ancient DNA \cite{ringbauer_parental_2021}. This software can infer ROH at coverages $\geq0.3x$, but requires a reference panel. In the absence of a method to detect long ROH at low coverages without a reference panel, we developed a HMM based method, and tested it on simulations to show that it can be used reliably at coverage $\geq 0.1x$ to detect ROH regions with lengths on the order of 10cM. 
+For detecting ROH, there is only one method available that works with low coverage ancient DNA \cite{ringbauer_parental_2021}. This software can infer ROH at coverages $\geq0.3x$, but requires a large reference panel. Instead, our method detects long ROH based on just the expected heterozygosity $p_0$, which can be estimated from a small number of unrelated individuals.  On simulations, we find that our method reliably inferrs ROH regions  with lengths on the order of 10cM from samples sequenced to coverage $\geq 0.1x$ . 
 In our simulations, we find that adding long ROH ($~17\%$) to simulations slightly improves the power of both KIN and READ, particularly at lower coverages. This is likely because ROH actually reduces the variance in differences depending on the relatedness, and makes it easier to correctly classify relatedness. For READ, the presence of ROH causes a bias towards inferring closer relatedness cases, but the model we use in KIN reduces this bias (see Fig. \ref{fig3:Comparison_READ_KIN}). 
 
 We show that KIN reliably detects IBD tracts for up to 0.1x coverage even in presence of contamination and ascertainment bias, and the accuracy for IBD detection reduces with lower coverages. Adding ROH to the simulations adversely affects IBD prediction in siblings (Fig. S9), but this does not affect the power to correctly classify siblings (Fig. \ref{fig3:Comparison_READ_KIN}).
