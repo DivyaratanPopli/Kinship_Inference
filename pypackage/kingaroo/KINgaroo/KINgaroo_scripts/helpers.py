@@ -135,7 +135,7 @@ def get_merged_chrm(libraries, chrm, interval):
 
     id_diffs =[("hapProbs/hapProbs_{}_chrm%s_diffs.csv" %(chrm)).format(n) for n in libraries]
     id_diffs_list= hapProbsAll(haplist=id_diffs, hap='id')
-    print("id_diffs_list...............................................................", id_diffs_list)
+    #print("id_diffs_list...............................................................", id_diffs_list)
     diffs_list = findDiff(inds=probs_list, posall=pos_list)
     id_diffs_list[id_diffs_list==-9]=np.nan
 

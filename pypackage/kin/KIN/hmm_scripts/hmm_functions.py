@@ -374,13 +374,13 @@ def hmm(listind, hbdfolder, difffile, totalfile, listf, targets, pfile, Afiles, 
         pos=np.insert(pos, 0, 0, axis=0)
 
 
-        pi= np.array([1/3,1/3,1/3])
+        #pi= np.array([1/3,1/3,1/3])
 
         likall=[]
         for rel_cnt in range(len(rels)):
 
             A=Afiles[rel_cnt]
-
+            pi = matrix_power(A,10000)[0]
             B = np.zeros((inbr_states,np.shape(A)[0],win)) #Emission probability
 
             [b0, b1, b2, b3]=[1000,1000,1000,1000]
