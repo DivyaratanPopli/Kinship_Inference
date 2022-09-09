@@ -1,3 +1,0 @@
-Building DAG of jobs...
-MissingRuleException:
-No rule to produce contam0_inbred1_run57_coverage4_asc0_inputMode_hapProbs_fil0_B1file_0_15 (if you use input functions make sure that they don't raise unexpected exceptions).

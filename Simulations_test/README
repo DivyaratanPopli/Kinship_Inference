@@ -1,0 +1,2 @@
+This folder contains the scripts to generate all simulations required for testing KIN. dataset is generated with msprime, followed by artificial mating and processing with ped-sim. 
+hbd_hmm/ contains scripts to generate the ROH information, and KIN_hmm/ has scripts to run KIN, and data for model performance plots can be generated in KIN_hmm/roc/ and KIN_hmm/rocNo3deg/

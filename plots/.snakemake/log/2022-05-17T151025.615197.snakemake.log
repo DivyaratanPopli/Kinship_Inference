@@ -1,4 +1,0 @@
-ModuleNotFoundError in line 1 of /mnt/diversity/divyaratan_popli/100arc/inbreeding/model_git/plots/Snakefile:
-No module named 'matplotlib'
-  File "/mnt/diversity/divyaratan_popli/100arc/inbreeding/model_git/plots/Snakefile", line 1, in <module>
-  File "/mnt/diversity/divyaratan_popli/100arc/inbreeding/model_git/plots/plot_script.py", line 3, in <module>

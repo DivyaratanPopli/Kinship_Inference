@@ -1,0 +1,316 @@
+import numpy as np
+import scipy
+import random
+import pandas as pd
+from scipy.stats import binom
+from math import isclose
+from scipy.special import gammaln
+from scipy import optimize
+import math
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+from scipy.special import loggamma
+from scipy.special import beta as Betaf
+from scipy.optimize import minimize
+from numpy.linalg import matrix_power
+from scipy.stats import chisquare
+from hmm_inbred_constVar_testing import *
+
+
+instates=[0,1,2]
+
+
+readrel=['un','gr','fir','id']
+readrel_nf=['un','gr','fir','id','NF']
+
+kinrel=['un','deg5','deg4','deg3','gr','hsib','avu','sib','pc','id']
+kinrel_nf=['un','deg5','deg4','deg3','gr','hsib','avu','sib','pc','id','NF']
+
+pclist=['0_8','1_8','1_9','1_10','2_9','2_10','3_11','4_11','10_12','11_12','5_13','12_13','6_14','13_14','8_15','8_16','9_16','10_16']
+grlist=['1_12','2_12','3_12','4_12','10_13','11_13','12_14','12_16','5_14']
+idlist=['0_15', '1_16']
+siblist=['9_10']
+firlist=pclist+siblist
+thirdlist=['9_13','1_13','2_13','3_13','4_13','8_12','13_16','10_14','11_14']
+fourthlist=['8_13','9_14','1_14','2_14','3_14','4_14']
+fifthlist=['8_14']
+halfsib=['8_9','8_10']
+avulist=['9_12']
+seclist=grlist+halfsib+avulist
+
+truerel=['un','deg5','deg4','deg3','gr','hsib','avu','sib','pc','id']
+runlist=list(range(1,61))
+totalch=list(range(1,23))
+asclist=[0,2,3]
+
+covlist=[4, 0.5, 0.2, 0.1, 0.05, 0.03]
+Mfilist=[0]
+cntlist=[0,1]
+inplist=['hapProbs','pshap']
+#expected overlaps: [4,000,000, 160,000-40,000, 26000-6400, 10,000-2500, 3600-900, 1600- 400]
+inds=list(range(17))
+
+e=0.01    #transition matrix error
+stateno=3
+
+allrel=['un','deg5','deg4','deg3','gr','hsib','avu','sib','pc','id']
+relno=len(allrel)
+stateno=3
+
+statlist=['res','lik']
+#list_models=['allfixed','pfixed','Afixed','nonefixed']
+
+listf=[]
+for i, l1 in enumerate(inds):
+    for l2 in inds[(i+1):]:
+        s = '%s_%s' %(str(l1).strip("['']"), str(l2).strip("['']"))
+        listf.append(s)
+
+
+folders=["allLikelihoods", "read"]
+
+
+datafolder="../"
+paramfolder="/mnt/diversity/divyaratan_popli/100arc/inbreeding/sim_relatedA/transitions_combined/"
+hbdfolder="../hbd_hmm/"
+readfolder="/mnt/diversity/divyaratan_popli/100arc/readscripts/"
+
+
+rule hmm:
+    input:
+        pfile=datafolder+"contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/asc{asc}/inputMode_{inpMode}_fil{Mfil}/hmm_parameters/p1_file.gz",
+        dfile=datafolder+"contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/asc{asc}/inputMode_{inpMode}_fil{Mfil}/remHighdiv_diff.csv.gz",
+        tfile=datafolder+"contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/asc{asc}/inputMode_{inpMode}_fil{Mfil}/remHighdiv_total.csv.gz",
+        Afiles=expand(paramfolder+"transition_matrix_{rel}.csv", rel=allrel)
+
+
+    output:
+        resfiles=expand("contam{{cnt}}/inbred{{inb}}/run{{RID}}/coverage{{cov}}/filtered{{Mfil}}/asc{{asc}}/relation_{rel}_file/res_inp{{inpMode}}/pw_{{listind}}.csv.gz", rel=allrel),
+        likmerged="contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/filtered{Mfil}/asc{asc}/allLikelihoods_inp{inpMode}/pw_{listind}.csv.gz",
+
+    run:
+        l=wildcards.listind
+        print(l)
+        i1=l.split('_')[0]
+        i2=l.split('_')[1]
+        print(i1,i2)
+
+        pairf1=hbdfolder+"contam%s/inbred%s/run%s/coverage%s/filtered%s/asc%s_res/gamma_%s/pw_%s.csv.gz" %(str(wildcards.cnt),str(wildcards.inb),str(wildcards.RID),str(wildcards.cov),str(wildcards.Mfil),str(wildcards.asc),str(wildcards.inpMode),i1)
+        pairf2=hbdfolder+"contam%s/inbred%s/run%s/coverage%s/filtered%s/asc%s_res/gamma_%s/pw_%s.csv.gz" %(str(wildcards.cnt),str(wildcards.inb),str(wildcards.RID),str(wildcards.cov),str(wildcards.Mfil),str(wildcards.asc),str(wildcards.inpMode),i2)
+
+        p1thresh=datafolder+"contam%s/inbred%s/run%s/coverage%s/asc%s/inputMode_id%s_fil%s/id_remHighdiv_total.csv" %(str(wildcards.cnt),str(wildcards.inb),str(wildcards.RID),str(wildcards.cov),str(wildcards.asc),str(wildcards.inpMode),str(wildcards.Mfil))
+
+
+        hmm(difffile=input.dfile, totalfile=input.tfile, listind=wildcards.listind,
+                        listf=np.array(listf), targets=np.array(inds),pfile=input.pfile,
+                        Afiles=input.Afiles, resfiles=output.resfiles, likfile=output.likmerged,
+                        pairf1=pairf1, pairf2=pairf2,
+                        p1thresh=p1thresh, thresh=10, instates=instates, rels=allrel)
+
+
+rule get_relatable:
+    input:
+        likfile=expand("contam{{cnt}}/inbred{{inb}}/run{{RID}}/coverage{{cov}}/filtered{{Mfil}}/asc{{asc}}/{{myfolder}}_inp{{inpMode}}/pw_{listind}.csv.gz", listind=listf),
+    output:
+        liktab="contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/filtered{Mfil}/asc{asc}/relatable_{myfolder}_inp{inpMode}.csv.gz"
+    run:
+        getRelatable(filist=input.likfile, relatable=output.liktab, pairs=listf, rels=allrel)
+
+
+
+rule model_performance:
+    input:
+        infiles= "contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/filtered{Mfil}/asc{asc}/relatable_allLikelihoods_inp{inpMode}.csv.gz"
+
+    output:
+        table_cut="contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/filtered{Mfil}/asc{asc}/allLikelihoods_inp{inpMode}/performance_table_cut{c}.csv.gz"
+
+    run:
+        #filenames=np.loadtxt(fname=input.infiles, dtype='str', delimiter=',')
+        filename=input.infiles
+        lik_colind=pd.read_csv(filename, sep=",", header=0,index_col=0)
+
+        runtable_cut=pd.DataFrame(0,index=truerel, columns=kinrel_nf)
+
+        for fi in range(len(lik_colind)):
+            lik=lik_colind.loc[fi,:]
+            l=lik_colind.loc[fi,'pair']
+
+            if l in grlist:
+                label='gr'
+            elif l in pclist:
+                label='pc'
+            elif l in siblist:
+                label='sib'
+            elif l in idlist:
+                label='id'
+            elif l in thirdlist :
+                label='deg3'
+            elif l in fourthlist :
+                label='deg4'
+            elif l in halfsib :
+                label='hsib'
+            elif l in avulist :
+                label='avu'
+            elif l in fifthlist :
+                label='deg5'
+            else:
+                label='un'
+
+            maxli=lik_colind.loc[fi,'relatedness']
+
+            if lik_colind.loc[fi,'loglik_ratio'] >= float(wildcards.c):
+                runtable_cut.loc[label,maxli]=runtable_cut.loc[label,maxli]+1
+            else:
+                runtable_cut.loc[label,'NF']=runtable_cut.loc[label,'NF']+1
+
+
+        with pd.option_context('display.max_rows', len(runtable_cut.index), 'display.max_columns', len(runtable_cut.columns)):
+            runtable_cut.to_csv(output.table_cut, sep=',')
+
+
+rule get_read:
+    input:
+        tped="../contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/asc{asc}_readfiles_fil{Mfil}/read_allsamples.tped.gz",
+        tfam="../contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/asc{asc}_readfiles_fil{Mfil}/read_allsamples.tfam.gz",
+        readpy=readfolder+"READ.py",
+        readR=readfolder+"READscript.R",
+
+    output:
+        read_py="contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/filtered{Mfil}/asc{asc}/read_inppshap/READ.py",
+        read_R="contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/filtered{Mfil}/asc{asc}/read_inppshap/READscript.R",
+        tpedout="contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/filtered{Mfil}/asc{asc}/read_inppshap/read_allsamples.tped.gz",
+        tfamout="contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/filtered{Mfil}/asc{asc}/read_inppshap/read_allsamples.tfam.gz"
+    shell:
+        """
+        (
+        #wget -O {output.read_py} https://bitbucket.org/tguenther/read/raw/fdcfe0f1eeea832b3e6bf890805a7138413fab5d/READ.py
+        #wget -O {output.read_R} https://bitbucket.org/tguenther/read/raw/fdcfe0f1eeea832b3e6bf890805a7138413fab5d/READscript.R
+        cp {input.readpy} {output.read_py}
+        cp {input.readR} {output.read_R}
+
+        cp {input.tped} {output.tpedout}
+        cp {input.tfam} {output.tfamout}
+
+        )
+        """
+
+
+rule run_read:
+    input:
+        tped="contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/filtered{Mfil}/asc{asc}/read_inppshap/read_allsamples.tped.gz",
+        tfam="contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/filtered{Mfil}/asc{asc}/read_inppshap/read_allsamples.tfam.gz"
+
+    output:
+        read_results="contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/filtered{Mfil}/asc{asc}/read_inppshap/READ_results"
+    shell:
+        """
+        (
+        gzip -d {input.tped}
+        gzip -d {input.tfam}
+        cd contam{wildcards.cnt}/inbred{wildcards.inb}/run{wildcards.RID}/coverage{wildcards.cov}/filtered{wildcards.Mfil}/asc{wildcards.asc}/read_inppshap
+        echo $PWD
+        python READ.py read_allsamples
+        cd ../../../../../../../
+        echo $PWD
+        )
+        """
+
+rule read_performance:
+    input:
+        read_results="contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/filtered{Mfil}/asc{asc}/read_inppshap/READ_results"
+    output:
+        read_performance_cut="contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/filtered{Mfil}/asc{asc}/read_inppshap/performance_table_cut{c1}.csv.gz",
+    run:
+        read=input.read_results
+        readres=pd.read_csv(read,sep="\t",header=0, index_col=False)
+        cutv=float(wildcards.c1)
+        readres.loc[readres['Relationship']=='Unrelated','Relationship']='un'
+        readres.loc[readres['Relationship']=='First Degree','Relationship']='fir'
+        readres.loc[readres['Relationship']=='Second Degree','Relationship']='gr'
+        readres.loc[readres['Relationship']=='IdenticalTwins/SameIndividual','Relationship']='id'
+
+        runtable_cut=pd.DataFrame(0,index=truerel, columns=readrel_nf)
+        for i in range(readres.shape[0]):
+            a=readres['PairIndividuals'][i].split('__')[0]
+            b=readres['PairIndividuals'][i].split('__')[1]
+            l=a.split('_')[1]+'_'+b.split('_')[0]
+
+            rel=readres['Relationship'][i]
+
+
+            if l in grlist:
+                label='gr'
+            elif l in pclist:
+                label='pc'
+            elif l in siblist:
+                label='sib'
+            elif l in idlist:
+                label='id'
+            elif l in thirdlist :
+                label='deg3'
+            elif l in fourthlist :
+                label='deg4'
+            elif l in halfsib :
+                label='hsib'
+            elif l in avulist:
+                label='avu'
+            elif l in fifthlist:
+                label='deg5'
+            else:
+                label='un'
+
+
+            if rel == 'un':
+                if abs(readres['Z_lower'][i]) > float(cutv):
+                    runtable_cut.loc[label,rel]=runtable_cut.loc[label,rel]+1
+                else:
+                    runtable_cut.loc[label,'NF']=runtable_cut.loc[label,'NF']+1
+            elif rel == 'id':
+                if abs(readres['Z_upper'][i]) > float(cutv):
+                    runtable_cut.loc[label,rel]=runtable_cut.loc[label,rel]+1
+                else:
+                    runtable_cut.loc[label,'NF']=runtable_cut.loc[label,'NF']+1
+            else:
+                if min(abs(readres['Z_upper'][i]), abs(readres['Z_lower'][i])) > float(cutv):
+                    runtable_cut.loc[label,rel]=runtable_cut.loc[label,rel]+1
+                else:
+                    runtable_cut.loc[label,'NF']=runtable_cut.loc[label,'NF']+1
+
+
+        with pd.option_context('display.max_rows', len(runtable_cut.index), 'display.max_columns', len(runtable_cut.columns)):
+            runtable_cut.to_csv(output.read_performance_cut, sep=',')
+
+rule bigtable:
+    input:
+        tables_cut=expand("contam{{cnt}}/inbred{{inb}}/run{RID}/coverage{{cov}}/filtered{{Mfil}}/asc{{asc}}/{{folder}}/performance_table_cut{{c}}.csv.gz", RID=runlist),
+    output:
+        alltable_cut="contam{cnt}/inbred{inb}/model_performance_{folder}/coverage{cov}/asc{asc}/filtered{Mfil}_cut{c}.csv.gz",
+    run:
+        bigTable(tables=input.tables_cut, alltable=output.alltable_cut)
+
+"""
+rule readrule:
+    input:
+        aa=expand("contam{cnt}/inbred{inb}/model_performance_{folder}/coverage{cov}/asc{asc}/filtered{Mfil}_cut{cutoff}.csv.gz", cnt=[0,1], inb=[0,1],folder="read_inppshap", cov=covlist, Mfil=[0,1], asc=[0,2], cutoff=[0,0.5,1,1.5,2,2.5])
+
+
+rule kinrule:
+    input:
+        aa=expand("contam{cnt}/inbred{inb}/model_performance_{folder}/coverage{cov}/asc{asc}/filtered{Mfil}_cut{cutoff}.csv.gz", cnt=cntlist, inb=[0,1],folder=["allLikelihoods_inpprobHaps","allLikelihoods_inppshap"], cov=covlist, Mfil=[0], asc=[0,2], cutoff=0)
+"""
+
+rule all:
+    input:
+        #read=expand("contam{cnt}/inbred{inb}/model_performance_{folder}/coverage{cov}/asc{asc}/filtered{Mfil}_cut{cutoff}.csv.gz", cnt=config["cnt"], inb=config["inbs"],folder="read_inppshap", cov=config["cov"], Mfil=[0,1], asc=config["asc"], cutoff=0),
+        kin=expand("contam{cnt}/inbred{inb}/model_performance_{folder}/coverage{cov}/asc{asc}/filtered{Mfil}_cut{cutoff}.csv.gz", cnt=config["cnt"], inb=config["inbs"], folder=config["folder"], cov=config["cov"], Mfil=Mfilist, asc=config["asc"], cutoff=0)
+
+
+
+"""
+rule all:
+    input:
+        all=expand("contam{cnt}/inbred{inb}/model_performance_{folder}/coverage{cov}/asc{asc}/filtered{Mfil}_cut{cutoff}.csv.gz", inb=config["inbs"],folder=config["folder"], down=config["d"], Mfil=config["f"], asc=config["Asc"], cutoff=[0,0.5,1,1.5,2,2.5]),
+        tables=expand("contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/filtered{Mfil}/asc{asc}/relatable_{folder}.csv.gz", inb=config["inbs"], RID=runlist, down=config["d"], Mfil=config["f"], folder="allLikelihoods", asc=config["Asc"]),
+"""

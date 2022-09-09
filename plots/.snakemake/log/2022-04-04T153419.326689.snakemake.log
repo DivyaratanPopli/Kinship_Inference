@@ -1,3 +1,0 @@
-NameError in line 89 of /mnt/diversity/divyaratan_popli/100arc/inbreeding/model_git/plots/Snakefile:
-name 'allrel' is not defined
-  File "/mnt/diversity/divyaratan_popli/100arc/inbreeding/model_git/plots/Snakefile", line 89, in <module>

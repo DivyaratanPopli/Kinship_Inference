@@ -1,0 +1,101 @@
+#Steps to run the relatedness script
+
+#Make sure you have 5.* version of snakemake
+
+snakemake --version
+
+#go to your working directory
+
+cd working_directory
+
+#make new folders
+
+mkdir bamfiles
+
+mkdir bamfiles/stephane
+
+mkdir autosnake
+
+#clone KINgaroo_snakemake_version repository
+
+#make a tab separated bed file with all snp positions as shown in example.bed and name it allsites.bed
+
+#copy all your bamfiles to bamfiles/stephane
+
+#make a file called "targets.txt" with names of all bam files (without extension, and without special characters like '_')
+
+#make a file called "identical.txt" with names of bam files to be used to calculate 
+
+#prop. of differences for identical state (files with good coverage, low contam. If 
+
+#not sure, then keep it same as targets.txt).
+
+#same way, make a file called "unrelated.txt" with names of individuals that are
+
+#good for estimating differences for unrelated individuals.
+
+#If you want to include contamination correction then:
+
+	#make a contamination file (named contam_est). In this file keep 2 columns separated by tab: 'name' with names of samples and 'contamination' 
+	#It does not matter if the file has more columns.  
+	
+	 
+	#make 2 files named nhfile_fil0.txt, nhfile_fil1.txt with a float number showing average difference between target population and the contaminatinf population at all sites and only at polymorphic sites respectively. 
+	#We have option to calculate these differences from a vcf file. In this case you need to have a vcf.gz  and index file with extension .tbi. In the
+	#vcf file, we need the genotype of an individual in the target population, and an individual from contaminating population.
+
+
+#Finally, to run the script to get input files type on the command line:
+
+snakemake all --cores n --config is_contam=0 #where n is the number of cores you want to use, iscontam is binary (0 for no contam files)
+If you want to use contamination correction from a vcf, then use:
+snakemake all --cores n --config is_contam=1 tc_diff=0 tar_ind=i1 contam_ind=i2 contam_diff_vcf=nameOfVCFfile #where i1 and i2 are names of individuals to be used from vcf
+If you want to use contamination correction using your own nh_file, then use:
+snakemake all --cores n --config is_contam=1 tc_diff=1
+
+# alternatively use "bash run_snakemake_eva.sh all --config is_contam=0" to run the pipeline on cluster
+# if you get an error, make sure to use a conda env with latest version of pybedtools and pysam.You can use environment.yml file for this
+conda env create -f environment.yml
+conda activate relcap_env
+
+
+#This will prepare the input files for the model
+
+#When it finishes, clone KIN_snakemake_version in a folder
+
+mkdir autosnake
+
+
+#You don't need conda env for this part
+conda deactivate
+#run this on command line:
+
+snakemake all --cores 100 #for running on a number cruncher with 100 cores
+
+#Our model uses python3 but READ uses python2, so make sure that if you use conda env, it allows both versions (environment here does not).
+
+#The output will be hmm_numba/filtered0/merged_relatable_allLikelihoods.csv in folder hmm_numba
+	#Columns in output file:
+	#-pair: name of pair
+	#-relatedness: most likely relatedness
+	#-second_guess: second most likely relatedness outside the degree of the most likely relatedness
+	#-loglik_ratio: log likelihood ratio between relatedness and second_guess.
+	#-withinDeg_second_guess: If relatedness is sib/pc, then it shows pc/sib
+	#-withinDeg_ll: If relatedness is sib/pc, then shows the log liklihood ratio between sib and pc (or the other way round). In general withinDeg_ll>2 is trustable 
+
+#We provide a file with IBD information: filtered0/IBDstates_allLikelihoods.csv 
+	#Columns:
+	#pair: name of pair
+	#rel: relatedness
+	#k0_prop,k1_prop,k2_prop:Proportion of genome in k_0,k_1,k_2 (obtained from posterior probabilities)
+	#k0_abs,k1_abs,k2_abs: same as above, but obtained from Viterbi algorithm
+	#IBD_len: Total length of genome where 1 chromosome is shared
+	#IBD_num: Number of IBD segments
+	
+
+#No. of overlapping sites are in overlap_fil0.csv (or fil1.csv if you want only polymorphic sites)
+#You can look for loglikelihood for any pair for each model in the file hmm_numba/filtered0/allLikelihoods/pw_pairName.csv
+#results for READ are in hmm_numba/filtered0/read/READ_results
+
+#Relatedness plot is hmm_numba/allLikelihoods/fil0/relatable_plot.png
+#Relatedness plot for READ is hmm_numba/allread/fil0/read_plot.png

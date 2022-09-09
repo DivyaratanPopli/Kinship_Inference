@@ -1,4 +1,0 @@
-Building DAG of jobs...
-WildcardError in line 95 of /mnt/diversity/divyaratan_popli/100arc/inbreeding/model_git/supplementary_info/Snakefile:
-Wildcards in input files cannot be determined from output files:
-'rel'

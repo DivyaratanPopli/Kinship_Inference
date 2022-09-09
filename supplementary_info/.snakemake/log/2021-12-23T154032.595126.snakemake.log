@@ -1,5 +1,0 @@
-NameError in line 3 of /mnt/diversity/divyaratan_popli/100arc/inbreeding/model_git/supplementary_info/Snakefile:
-name 'resfile' is not defined
-  File "/mnt/diversity/divyaratan_popli/100arc/inbreeding/model_git/supplementary_info/Snakefile", line 3, in <module>
-  File "/mnt/diversity/divyaratan_popli/100arc/inbreeding/model_git/supplementary_info/forcedROH.py", line 443, in <module>
-  File "/mnt/diversity/divyaratan_popli/100arc/inbreeding/model_git/supplementary_info/forcedROH.py", line 419, in hmm

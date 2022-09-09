@@ -1,0 +1,269 @@
+
+import numpy as np
+import pandas as pd
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+from sanitycheck_func import *
+
+
+runlist=list(range(1,1001))
+totalch=list(range(1,23))
+covlist=[4, 0.5, 0.2, 0.1, 0.05,0.03]
+Mfilist=[0,1]
+#expected overlaps: [4,000,000, 160,000-40,000, 26000-6400, 10,000-2500, 3600-900, 1600- 400]
+inds=list(range(17))
+#length=1e8
+interval=1e6
+lower=int(config['nlist'])
+
+rule grand_plot:
+    input:
+        pos="../sim_init/run{RID}/chrm{ch}/position_sim.csv.gz"
+    output:
+        grand1state="run{RID}/chrm{ch}/gr1state.csv.gz"
+    resources:
+        mem_mb=1000
+    run:
+        recombdir="../sim_init/run%s/chrm%s/sim_recomb/" %(str(wildcards.RID), str(wildcards.ch))
+        position=np.loadtxt(input.pos, dtype='float', delimiter = ",")
+        length=position[-1]
+        plot_gp(length=length,
+            interval=interval,
+            rdir=recombdir,
+            g1=1,
+            g2=12,
+            p1=1,
+            p2=10,
+            outstate=output.grand1state,
+            rel23=2,
+            ninds=len(inds))
+
+
+rule deg3_plot:
+    input:
+        pos="../sim_init/run{RID}/chrm{ch}/position_sim.csv.gz"
+
+    output:
+        deg3state="run{RID}/chrm{ch}/deg3state.csv.gz"
+    resources:
+        mem_mb=1000
+    run:
+        recombdir="../sim_init/run%s/chrm%s/sim_recomb/" %(str(wildcards.RID), str(wildcards.ch))
+        position=np.loadtxt(input.pos, dtype='float', delimiter = ",")
+        length=position[-1]
+        plot_gp(length=length,
+            interval=interval,
+            rdir=recombdir,
+            g1=1,
+            g2=13,
+            p1=1,
+            p2=12,
+            outstate=output.deg3state,
+            rel23=3,
+            ninds=len(inds))
+
+rule deg4_plot:
+    input:
+        pos="../sim_init/run{RID}/chrm{ch}/position_sim.csv.gz"
+    output:
+        deg4state="run{RID}/chrm{ch}/deg4state.csv.gz"
+    resources:
+        mem_mb=1000
+
+    run:
+        recombdir="../sim_init/run%s/chrm%s/sim_recomb/" %(str(wildcards.RID), str(wildcards.ch))
+        position=np.loadtxt(input.pos, dtype='float', delimiter = ",")
+        length=position[-1]
+        plot_gp(length=length,
+            interval=interval,
+            rdir=recombdir,
+            g1=1,
+            g2=14,
+            p1=1,
+            p2=13,
+            outstate=output.deg4state,
+            rel23=4,
+            ninds=len(inds))
+
+
+rule deg5_plot:
+    input:
+        pos="../sim_init/run{RID}/chrm{ch}/position_sim.csv.gz"
+    output:
+        deg5state="run{RID}/chrm{ch}/deg5state.csv.gz"
+
+    resources:
+            mem_mb=1000
+    run:
+        recombdir="../sim_init/run%s/chrm%s/sim_recomb/" %(str(wildcards.RID), str(wildcards.ch))
+        position=np.loadtxt(input.pos, dtype='float', delimiter = ",")
+        length=position[-1]
+        plot_gp(length=length,
+            interval=interval,
+            rdir=recombdir,
+            g1=8,
+            g2=14,
+            p1=1,
+            p2=10,
+            outstate=output.deg5state,
+            rel23=5,
+            ninds=len(inds))
+
+
+rule sib_plot:
+    input:
+        pos="../sim_init/run{RID}/chrm{ch}/position_sim.csv.gz"
+    output:
+        sib1state="run{RID}/chrm{ch}/sib1state.csv.gz"
+    resources:
+        mem_mb=1000
+
+
+    run:
+        recombdir="../sim_init/run%s/chrm%s/sim_recomb/" %(str(wildcards.RID),str(wildcards.ch))
+        position=np.loadtxt(input.pos, dtype='float', delimiter = ",")
+        length=position[-1]
+
+        plot_sib(length=length,
+            interval=interval,
+            rdir=recombdir,
+            rel='sib',
+            p11=2,
+            p12=3,
+            p21=4,
+            p22=5,
+            outstate=output.sib1state,
+            ninds=len(inds))
+
+
+rule avu_plot:
+    input:
+        pos="../sim_init/run{RID}/chrm{ch}/position_sim.csv.gz"
+    output:
+        avu1state="run{RID}/chrm{ch}/avu1state.csv.gz"
+    resources:
+        mem_mb=1000
+
+    run:
+        recombdir="../sim_init/run%s/chrm%s/sim_recomb/" %(str(wildcards.RID),str(wildcards.ch))
+        position=np.loadtxt(input.pos, dtype='float', delimiter = ",")
+        length=position[-1]
+
+        plot_sib(length=length,
+            interval=interval,
+            rdir=recombdir,
+            rel='avu',
+            p11=2,
+            p12=3,
+            p21=4,
+            p22=5,
+            outstate=output.avu1state,
+            ninds=len(inds))
+
+
+rule halfsib_plot:
+    input:
+        pos="../sim_init/run{RID}/chrm{ch}/position_sim.csv.gz"
+    output:
+        hsib1state="run{RID}/chrm{ch}/hsib1state.csv.gz"
+    resources:
+        mem_mb=1000
+
+    run:
+        recombdir="../sim_init/run%s/chrm%s/sim_recomb/" %(str(wildcards.RID),str(wildcards.ch))
+        position=np.loadtxt(input.pos, dtype='float', delimiter = ",")
+        length=position[-1]
+
+        plot_halfsib(length=length,
+            interval=interval,
+            rdir=recombdir,
+            outstate=output.hsib1state,
+            ninds=len(inds))
+
+
+rule merge_states:
+    input:
+        grandf=expand("run{{RID}}/chrm{ch}/gr1state.csv.gz",ch=totalch),
+        sibf=expand("run{{RID}}/chrm{ch}/sib1state.csv.gz",ch=totalch),
+        deg3f=expand("run{{RID}}/chrm{ch}/deg3state.csv.gz",ch=totalch),
+        hsibf=expand("run{{RID}}/chrm{ch}/hsib1state.csv.gz",ch=totalch),
+        avuf=expand("run{{RID}}/chrm{ch}/avu1state.csv.gz",ch=totalch),
+        deg4f=expand("run{{RID}}/chrm{ch}/deg4state.csv.gz",ch=totalch),
+        deg5f=expand("run{{RID}}/chrm{ch}/deg5state.csv.gz",ch=totalch),
+
+    output:
+        outg="run{RID}/grand_state_all.gz",
+        outs="run{RID}/sib_state_all.gz",
+        out3="run{RID}/deg3_state_all.gz",
+        outh="run{RID}/hsib_state_all.gz",
+        outa="run{RID}/avu_state_all.gz",
+        out4="run{RID}/deg4_state_all.gz",
+        out5="run{RID}/deg5_state_all.gz",
+
+    resources:
+            mem_mb=1000
+
+    run:
+        init_s= np.empty(0)
+        init_g= np.empty(0)
+        init_3= np.empty(0)
+        init_h= np.empty(0)
+        init_a= np.empty(0)
+        init_4= np.empty(0)
+        init_5= np.empty(0)
+
+        gfiles=input.grandf
+        sfiles=input.sibf
+        files3=input.deg3f
+        hfiles=input.hsibf
+        afiles=input.avuf
+        files4=input.deg4f
+        files5=input.deg5f
+
+        for fi in range(len(gfiles)):
+
+            if sfiles[fi].split('chrm')[1].split('/')[0] != str(fi+1) or gfiles[fi].split('chrm')[1].split('/')[0] !=str(fi+1):
+                print("sibstate or grandstate files are not sorted for merge_all fn,chrm=", )
+
+
+            more_s=np.loadtxt(sfiles[fi],dtype='float', delimiter = ",")
+            init_s= np.append(init_s,more_s)
+
+            more_g=np.loadtxt(gfiles[fi],dtype='float', delimiter = ",")
+            init_g= np.append(init_g,more_g)
+
+            more_3=np.loadtxt(files3[fi],dtype='float', delimiter = ",")
+            init_3= np.append(init_3,more_3)
+
+            more_h=np.loadtxt(hfiles[fi],dtype='float', delimiter = ",")
+            init_h= np.append(init_h,more_h)
+
+            more_a=np.loadtxt(afiles[fi],dtype='float', delimiter = ",")
+            init_a= np.append(init_a,more_a)
+
+            more_4=np.loadtxt(files4[fi],dtype='float', delimiter = ",")
+            init_4= np.append(init_4,more_4)
+
+            more_5=np.loadtxt(files5[fi],dtype='float', delimiter = ",")
+            init_5= np.append(init_5,more_5)
+
+        np.savetxt(fname= output.outs, X=init_s, delimiter=",")
+
+        np.savetxt(fname=output.outg, X=init_g, delimiter=",")
+
+        np.savetxt(fname=output.out3, X=init_3, delimiter=",")
+
+        np.savetxt(fname=output.outh, X=init_h, delimiter=",")
+
+        np.savetxt(fname=output.outa, X=init_a, delimiter=",")
+
+        np.savetxt(fname=output.out4, X=init_4, delimiter=",")
+
+        np.savetxt(fname=output.out5, X=init_5, delimiter=",")
+
+
+
+rule all:
+    input:
+        figureg=expand("run{RID}/grand_state_all.gz", RID=list(range(lower,lower+50))),

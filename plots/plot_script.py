@@ -532,13 +532,13 @@ def IBDstates(fold, outf, list_inds, runlist, var):
 
             for cov in [4,0.5,0.2,0.1,0.05,0.03]:
                 if var=='control':
-                    vname=fold+"hmm_numba_viterbi_all_win/contam0/inbred0/run%s/coverage%s/filtered0/asc0/relation_%s_file/res_inphapProbs/pw_%s.csv.gz" %(run,cov,rel,pair)
+                    vname=fold+"hmm_numba/contam0/inbred0/run%s/coverage%s/filtered0/asc0/relation_%s_file/res_inphapProbs/pw_%s.csv.gz" %(run,cov,rel,pair)
                 elif var=='c':
-                    vname=fold+"hmm_numba_viterbi_all_win/contam1/inbred0/run%s/coverage%s/filtered0/asc0/relation_%s_file/res_inphapProbs/pw_%s.csv.gz" %(run,cov,rel,pair)
+                    vname=fold+"hmm_numba/contam1/inbred0/run%s/coverage%s/filtered0/asc0/relation_%s_file/res_inphapProbs/pw_%s.csv.gz" %(run,cov,rel,pair)
                 elif var=='a':
-                    vname=fold+"hmm_numba_viterbi_all_win/contam0/inbred0/run%s/coverage%s/filtered0/asc2/relation_%s_file/res_inphapProbs/pw_%s.csv.gz" %(run,cov,rel,pair)
+                    vname=fold+"hmm_numba/contam0/inbred0/run%s/coverage%s/filtered0/asc2/relation_%s_file/res_inphapProbs/pw_%s.csv.gz" %(run,cov,rel,pair)
                 elif var=='r':
-                    vname=fold+"hmm_numba_viterbi_all_win/contam0/inbred1/run%s/coverage%s/filtered0/asc0/relation_%s_file/res_inphapProbs/pw_%s.csv.gz" %(run,cov,rel,pair)
+                    vname=fold+"hmm_numba/contam0/inbred1/run%s/coverage%s/filtered0/asc0/relation_%s_file/res_inphapProbs/pw_%s.csv.gz" %(run,cov,rel,pair)
 
                 viterbi=np.loadtxt(vname, dtype='float', delimiter = ",")
 

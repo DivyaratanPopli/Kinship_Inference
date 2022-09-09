@@ -1,0 +1,145 @@
+import numpy as np
+import pandas as pd
+from hmm_parameter_sim_func import *
+
+length=1e8
+interval=1e6
+
+
+runlist=list(range(1,1001))
+totalch=list(range(1,23))
+covlist=[4,0.5,0.2,0.1,0.05,0.03]
+inds=list(range(17))
+
+e=1e-6    #transition matrix error
+e1=1e-6
+relno=10
+stateno=3
+
+simfolder="../sanity_check_1M/"
+
+listf=[]
+for i, l1 in enumerate(inds):
+    for l2 in inds[(i+1):]:
+        s = '%s_%s' %(str(l1).strip("['']"), str(l2).strip("['']"))
+        listf.append(s)
+
+rule getA:
+    input:
+        states=simfolder+ "run{RID}/sib_state_all.gz",
+        stateg=simfolder+ "run{RID}/grand_state_all.gz",
+        stateh=simfolder+ "run{RID}/hsib_state_all.gz",
+        statea=simfolder+ "run{RID}/avu_state_all.gz",
+        state3=simfolder+ "run{RID}/deg3_state_all.gz",
+        state4=simfolder+ "run{RID}/deg4_state_all.gz",
+        state5=simfolder+ "run{RID}/deg5_state_all.gz",
+
+    output:
+        sibAfile="run{RID}/sib_transition.csv",
+        grandAfile="run{RID}/grand_transition.csv",
+        hsibAfile="run{RID}/hsib_transition.csv",
+        avuAfile="run{RID}/avu_transition.csv",
+        deg3Afile="run{RID}/deg3_transition.csv",
+        deg4Afile="run{RID}/deg4_transition.csv",
+        deg5Afile="run{RID}/deg5_transition.csv",
+    run:
+        get_transition(sibstate=input.states,
+                        grstate=input.stateg,
+                        hsibstate=input.stateh,
+                        avustate=input.statea,
+                        deg3state=input.state3,
+                        deg4state=input.state4,
+                        deg5state=input.state5,
+                        sibAfile=output.sibAfile,
+                        grandAfile=output.grandAfile,
+                        hsibAfile=output.hsibAfile,
+                        avuAfile=output.avuAfile,
+                        deg3Afile=output.deg3Afile,
+                        deg4Afile=output.deg4Afile,
+                        deg5Afile=output.deg5Afile,
+                        no_st=stateno)
+
+
+
+rule averageA:
+    input:
+        sibAfile=expand("run{RID}/sib_transition.csv", RID=runlist),
+        grandAfile=expand("run{RID}/grand_transition.csv", RID=runlist),
+        hsibAfile=expand("run{RID}/hsib_transition.csv", RID=runlist),
+        avuAfile=expand("run{RID}/avu_transition.csv", RID=runlist),
+        deg3Afile=expand("run{RID}/deg3_transition.csv", RID=runlist),
+        deg4Afile=expand("run{RID}/deg4_transition.csv", RID=runlist),
+        deg5Afile=expand("run{RID}/deg5_transition.csv", RID=runlist),
+
+    output:
+        sibA="transition_matrix_sib.csv",
+        grandA="transition_matrix_gr.csv",
+        hsibA="transition_matrix_hsib.csv",
+        avuA="transition_matrix_avu.csv",
+        pcA="transition_matrix_pc.csv",
+        idA="transition_matrix_id.csv",
+        unA="transition_matrix_un.csv",
+        deg3A="transition_matrix_deg3.csv",
+        deg4A="transition_matrix_deg4.csv",
+        deg5A="transition_matrix_deg5.csv",
+
+    run:
+        avgA(siblistA=input.sibAfile,
+                grandlistA=input.grandAfile,
+                hsiblistA=input.hsibAfile,
+                avulistA=input.avuAfile,
+                deg3listA=input.deg3Afile,
+                deg4listA=input.deg4Afile,
+                deg5listA=input.deg5Afile,
+                e1=e1,
+                e=e,
+                l=stateno,
+                sibAfinal=output.sibA,
+                grandAfinal=output.grandA,
+                hsibAfinal=output.hsibA,
+                avuAfinal=output.avuA,
+                pcAfinal=output.pcA,
+                idAfinal=output.idA,
+                unAfinal=output.unA,
+                deg3Afinal=output.deg3A,
+                deg4Afinal=output.deg4A,
+                deg5Afinal=output.deg5A,
+                )
+
+
+
+
+
+"""
+def plist(wc):
+    r= wc.RID
+
+    names=expand(simfolder+"inbred{inb}/run{RID}/down1_pw_{listind}.csv",RID=r, listind=listf)
+    return names
+
+rule getp1:
+    input:
+        mergedfiles= plist
+
+
+    output:
+        pfile="run{RID}/p1_file",
+        p_all="run{RID}/p_all.csv"
+
+    run:
+        p_initial(targets=input.mergedfiles,
+        outfile=output.pfile,
+        allp=output.p_all)
+
+
+rule hmm_parameters:
+    input:
+        sibA="transition_matrix_sib.csv",
+        grandA="transition_matrix_grand.csv",
+        pcA="transition_matrix_pc.csv",
+        idA="transition_matrix_id.csv",
+        unA="transition_matrix_un.csv",
+        pfile=expand("run{RID}/p1_file",RID=runlist)
+
+
+"""

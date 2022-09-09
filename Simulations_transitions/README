@@ -1,0 +1,2 @@
+This folder contains the scripts to generate transition matrices needed for KIN. dataset is generated with msprime, followed by artificial mating and processing. 
+The files were copied from /mnt/diversity/divyaratan_popli/100arc/inbreeding/sim_relatedA/.
