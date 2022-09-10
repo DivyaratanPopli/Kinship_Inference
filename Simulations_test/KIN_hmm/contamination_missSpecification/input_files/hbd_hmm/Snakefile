@@ -1,0 +1,180 @@
+
+import numpy as np
+import scipy
+import random
+import pandas as pd
+from scipy.stats import binom
+from math import isclose
+from scipy.special import gammaln
+from scipy import optimize
+import math
+import matplotlib
+matplotlib.use('Agg')
+from scipy.special import loggamma
+from scipy.special import beta as Betaf
+from scipy.optimize import minimize
+from numpy.linalg import matrix_power
+from scipy.stats import chisquare
+from hmm_func_hbd import *
+
+
+
+instates=[0,1,2]
+
+
+readrel=['gr','un','id','fir']
+
+pclist=['0_8','1_8','1_9','1_10','2_9','2_10','3_11','4_11','10_12','11_12','5_13','12_13']
+grlist=['1_12','2_12','3_12','4_12','10_13','11_13','9_12','8_12']
+idlist=['0_14', '1_15']
+siblist=['9_10']
+firlist=pclist+siblist
+thirdlist=['9_13','1_13','2_13','3_13','4_13']
+runlist=list(range(1,61))
+totalch=list(range(1,23))
+
+
+Mfilist=[0,1]
+#expected overlaps: [4,000,000, 160,000-40,000, 26000-6400, 10,000-2500, 3600-900, 1600- 400]
+inds=list(range(17))
+
+e=0.01    #transition matrix error
+stateno=3
+
+stateno=3
+
+covlist=[4,0.5,0.2,0.1,0.05,0.03]
+
+statlist=['res','lik']
+#list_models=['allfixed','pfixed','Afixed','nonefixed']
+
+listf=[]
+for i, l1 in enumerate(inds):
+    for l2 in inds[(i+1):]:
+        s = '%s_%s' %(str(l1).strip("['']"), str(l2).strip("['']"))
+        listf.append(s)
+
+
+folders=["allLikelihoods", "read"]
+
+datafolder="../"
+originalf="../../../../"
+
+rule hmm:
+    input:
+        p1file=datafolder + "missC{mcont}_{mind}/contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/asc{asc}/inputMode_{inpMode}_fil{Mfil}/hmm_parameters/p1_file.gz",
+        dfile=datafolder + "missC{mcont}_{mind}/contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/asc{asc}/inputMode_id{inpMode}_fil{Mfil}/id_remHighdiv_diff.csv.gz",
+        tfile=datafolder + "missC{mcont}_{mind}/contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/asc{asc}/inputMode_id{inpMode}_fil{Mfil}/id_remHighdiv_total.csv.gz",
+        chfile=originalf + "contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/asc{asc}/inputMode_id{inpMode}_fil{Mfil}/id_chrm.csv.gz"
+
+    output:
+        resfile="missC{mcont}_{mind}/contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/filtered{Mfil}/asc{asc}_res/gamma_{inpMode}/pw_{listind}.csv.gz",
+        likfile="missC{mcont}_{mind}/contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/filtered{Mfil}/asc{asc}_res/lik_{inpMode}/pw_{listind}.csv.gz",
+
+    run:
+        l=wildcards.listind
+
+        hmm(dfile=input.dfile, tfile=input.tfile, chrmf=input.chfile, p1file=input.p1file, ind=l,
+                        resfile=output.resfile, likfile=output.likfile,
+                        upA='initial')
+
+rule all_hbd:
+    input: expand("missC{mcont}_{mind}/contam1/inbred0/run{RID}/coverage{cov}/filtered0/asc0_res/gamma_hapProbs/pw_{listind}.csv.gz", RID=runlist, cov=covlist, listind=inds, mcont=config["mc"], mind=config["mi"])
+"""
+rule accuracy:
+    input:
+        resfile="contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/filtered{Mfil}/asc{asc}_res/gamma_{inpMode}/pw_{listind}.csv.gz",
+        diffall=datafolder+ "post_sim/inbred{inb}/run{RID}/hbd_merged/diff_all.csv.gz",
+        totalall=datafolder+ "post_sim/inbred{inb}/run{RID}/hbd_merged/total_all.csv.gz",
+    output:
+        outf="contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/filtered{Mfil}/asc{asc}_res/dev_{inpMode}/pw_{listind}.csv.gz",
+        outf_noROH="contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/filtered{Mfil}/asc{asc}_res/dev_noROH_{inpMode}/pw_{listind}.csv.gz",
+        outf_ROH="contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/filtered{Mfil}/asc{asc}_res/dev_ROH_{inpMode}/pw_{listind}.csv.gz"
+    run:
+        l=int(wildcards.listind)
+        reso=pd.read_csv(input.resfile, sep=',', header=0, index_col=0)
+        hd=np.loadtxt(input.diffall, delimiter=',', dtype='float')[:,l]
+        ht=np.loadtxt(input.totalall, delimiter=',', dtype='float')[:,l]
+
+        hbd_array=hd/ht
+
+        #hbd_array[hbd_array<=0.5]=0
+        #hbd_array[hbd_array>0.5]=1
+
+        res=np.asarray(reso['g_noin'])
+        print(res)
+        xx=np.where(res!=9)
+        res1=res[xx]
+        hbd1=hbd_array[xx]
+        #correct=sum(res1==hbd1)/len(res1)
+        dev=res1-hbd1
+
+
+        hbd1_noROH=hbd1[hbd1==1]
+        res1_noROH=res1[hbd1==1]
+        dev_noROH=res1_noROH - hbd1_noROH
+
+
+        hbd1_ROH=hbd1[hbd1<1]
+        res1_ROH=res1[hbd1<1]
+        dev_ROH=res1_ROH - hbd1_ROH
+
+        np.savetxt(fname=output.outf, X=dev, delimiter=',')
+        np.savetxt(fname=output.outf_noROH, X=dev_noROH, delimiter=',')
+        np.savetxt(fname=output.outf_ROH, X=dev_ROH, delimiter=',')
+
+
+rule test:
+    input: expand("contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/filtered{Mfil}/asc{asc}_res/dev_{inpMode}/pw_{listind}.csv.gz", cnt=1, inb=0, Mfil=[0],asc=0, folder=["noinbred"], inpMode="hapProbs", listind=inds, RID=runlist, cov=4)
+
+
+
+rule model_performance:
+    input:
+        inf=expand("contam{{cnt}}/inbred{{inb}}/run{RID}/coverage{{cov}}/filtered{{Mfil}}/asc{{asc}}_res/dev_{{inpMode}}/pw_{listind}.csv.gz",RID=runlist,listind=inds),
+        inf_noROH=expand("contam{{cnt}}/inbred{{inb}}/run{RID}/coverage{{cov}}/filtered{{Mfil}}/asc{{asc}}_res/dev_noROH_{{inpMode}}/pw_{listind}.csv.gz",RID=runlist,listind=inds),
+        inf_ROH=expand("contam{{cnt}}/inbred{{inb}}/run{RID}/coverage{{cov}}/filtered{{Mfil}}/asc{{asc}}_res/dev_ROH_{{inpMode}}/pw_{listind}.csv.gz",RID=runlist,listind=inds),
+    output:
+        outf1="contam{cnt}/inbred{inb}/inbred_detection/asc{asc}/{inpMode}/coverage{cov}_fil{Mfil}_inbred_performance.csv.gz",
+        outf2="contam{cnt}/inbred{inb}/inbred_detection/asc{asc}/{inpMode}/coverage{cov}_fil{Mfil}_noinbred_performance.csv.gz",
+        outf1_noROH="contam{cnt}/inbred{inb}/inbred_detection/asc{asc}/{inpMode}/coverage{cov}_fil{Mfil}_inbred_performance_noROH.csv.gz",
+        outf2_noROH="contam{cnt}/inbred{inb}/inbred_detection/asc{asc}/{inpMode}/coverage{cov}_fil{Mfil}_noinbred_performance_noROH.csv.gz",
+        outf1_ROH="contam{cnt}/inbred{inb}/inbred_detection/asc{asc}/{inpMode}/coverage{cov}_fil{Mfil}_inbred_performance_ROH.csv.gz",
+        outf2_ROH="contam{cnt}/inbred{inb}/inbred_detection/asc{asc}/{inpMode}/coverage{cov}_fil{Mfil}_noinbred_performance_ROH.csv.gz",
+    run:
+        modelPerformance(files=input.inf, outf1=output.outf1, outf2=output.outf2)
+        modelPerformance(files=input.inf_noROH, outf1=output.outf1_noROH, outf2=output.outf2_noROH)
+        modelPerformance(files=input.inf_ROH, outf1=output.outf1_ROH, outf2=output.outf2_ROH)
+
+
+
+rule table:
+    input:
+        inf=expand("contam{{cnt}}/inbred{{inb}}/inbred_detection/asc{{asc}}/{{inpMode}}/coverage{cov}_fil{{Mfil}}_{{folder}}_performance.csv.gz", cov=covlist),
+        inf_noROH=expand("contam{{cnt}}/inbred{{inb}}/inbred_detection/asc{{asc}}/{{inpMode}}/coverage{cov}_fil{{Mfil}}_{{folder}}_performance_noROH.csv.gz", cov=covlist),
+        inf_ROH=expand("contam{{cnt}}/inbred{{inb}}/inbred_detection/asc{{asc}}/{{inpMode}}/coverage{cov}_fil{{Mfil}}_{{folder}}_performance_ROH.csv.gz", cov=covlist),
+
+    output:
+        outf="contam{cnt}/inbred{inb}/inbred_detection/asc{asc}/{inpMode}/performance_table/fil{Mfil}_{folder}.csv.gz"
+    run:
+        tablef(inf=input.inf, inf_noROH=input.inf_noROH, inf_ROH=input.inf_ROH, outf=output.outf)
+
+
+
+rule alltables:
+    input:
+        in1=expand("contam{cnt}/inbred{inb}/inbred_detection/asc{asc}/{inpMode}/performance_table/fil{Mfil}_{folder}.csv.gz", cnt=config["cnt"], inb=config["i"], Mfil=[0],asc=config["a"], folder=["inbred", "noinbred"], inpMode=config["inp"]),
+
+
+
+
+
+
+
+
+rule all:
+    input:
+        all=expand("inbred{inb}/model_performance_{folder}/down{down}/filtered{Mfil}.csv", inb=[0,1],folder=["allLikelihoods"], down=config["d"], Mfil=0),
+        tables=expand("inbred{inb}/run{RID}/downsample{down}/filtered{Mfil}/relatable_{folder}.csv",inb=[0,1], RID=runlist, down=config["d"], Mfil=0, folder=["allLikelihoods"]),
+
+"""

@@ -1,0 +1,480 @@
+import os
+import msprime as msp
+import numpy as np
+import random
+import pandas as pd
+from scipy import stats
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+#from simulation_hapcallingall_function import *
+
+from input_preparation_func import makePseudohap, filterPseudohap, READInput, findDiff, getWin, mergeChrm, getP, identicalDiff, contamFilemiss, nhFile, contamAll,getHighDiv, remHighDiv
+
+
+length=95814313 #end - start for chr 13
+interval=1e7
+#interval_1M=1e6
+pedsim_folder= "/mnt/diversity/divyaratan_popli/100arc/inbreeding/pedsim/ped-sim/"
+
+runlist=list(range(1,61))
+totalch=list(range(1,23))
+
+allcoverage=[4, 0.5, 0.2, 0.1, 0.05, 0.03]
+
+
+#Mfilist=[0,1]
+#Mfilist=config["fil"]
+#expected overlaps: [4,000,000, 160,000-40,000, 26000-6400, 10,000-2500, 3600-900, 1600- 400]
+cntlist=[1]
+#inblist=[0,1]
+inblist=[0]
+asclist=[0]
+Mfilist=[0]
+#asclist=config["a"]
+inplist=['hapProbs']
+inds=list(range(17))
+covlist=[4, 0.5, 0.2, 0.1, 0.05, 0.03]
+
+mind_list=[10]
+mcont_list=[0.5,1.5,2.5,3.5,4.5,5.5]
+e=0.01    #transition matrix error
+relno=7
+stateno=3
+
+contam_est=[2,0,0,0,0,0,2.5,0,3,0,2.5,0,1.5,0,1,0.5,1]
+
+listf=[]
+for i, l1 in enumerate(inds):
+    for l2 in inds[(i+1):]:
+        s = '%s_%s' %(str(l1).strip("['']"), str(l2).strip("['']"))
+        listf.append(s)
+
+listidentical=inds
+
+related_total=8+2+2+2##       4 children, 1 grandchild, 1 (3rd) degree, 1 (4th) degree
+unrelated_total=16#8 individuals
+identical_total=4##      2 identical
+others_total=2+2+2+10 ##high quality genomes from vindija, altai, denisova, and human
+human_total=10
+nea_nh=0
+human_nh=24
+
+#even-numbered are females. odd-numbered are males
+"""
+rule sim:
+    output:
+        unrelated_sim= "sim_init/run{RID}/chrm{ch}/unrelated_sim.csv.gz",       #only unrelated genotypes, all others are 0 now
+        position_file= "sim_init/run{RID}/chrm{ch}/position_sim.csv.gz"
+
+    run:
+
+        rec=simulate_seq(unrelated=unrelated_total,         #8 individuals,
+        related= related_total, ##       4 children, 1 grandchild, 1 (3rd) degree, 1 (4th) degree
+        identical= identical_total,   ##      2 identical
+        others= others_total,                  ##high quality genomes from vindija, altai, denisova, and human
+        out_gen=output.unrelated_sim,
+        pos_file= output.position_file,  #output: position of all mutations
+        chrm=wildcards.ch,                  #chromosome number + '/'
+        RID=wildcards.RID,
+        Ne=1e4,
+        length=length,
+        recombination_rate=1e-8,
+        mutation_rate=1e-8,
+        recombination_rate_child=1e-8
+
+        )
+
+
+rule pedsim:
+    input:
+        genmap = pedsim_folder + "refined_mf.simmap",
+        intf = pedsim_folder + "interfere/nu_p_campbell.tsv",
+        def1 = pedsim_folder + "{sex}/gf.def"
+    output:
+        ibdfile = "pedsim/{sex}/run{RID}/chrm{ch}/index{i}.seg"
+    resources:
+        mem_mb=2000
+    shell:
+        "/mnt/diversity/divyaratan_popli/100arc/inbreeding/pedsim/ped-sim/ped-sim -d {input.def1} -m {input.genmap} -o pedsim/{wildcards.sex}/run{wildcards.RID}/chrm{wildcards.ch}/index{wildcards.i} --intf {input.intf}"
+
+
+rule post_sim:
+    input:
+        unrelated_sim= "sim_init/run{RID}/chrm{ch}/unrelated_sim.csv.gz",       #only unrelated genotypes, all others are 0 now
+        position_file= "sim_init/run{RID}/chrm{ch}/position_sim.csv.gz",
+        ibdfiles= expand("pedsim/{sex}/run{{RID}}/chrm{{ch}}/index{i}.seg", sex=["male","female"], i=list(range(7)))
+    output:
+        diploid_sim= "post_sim/inbred0/run{RID}/chrm{ch}/diploid_sim.csv.gz",
+        diploid_sim_i= "post_sim/inbred1/run{RID}/chrm{ch}/diploid_sim.csv.gz",
+        outhbd="post_sim/inbred0/run{RID}/chrm{ch}/hbd_sim.csv.gz",
+        outhbd_i="post_sim/inbred1/run{RID}/chrm{ch}/hbd_sim.csv.gz",
+
+    run:
+        rec=postSim(genfile=input.unrelated_sim,
+        posfile=input.position_file,
+        unrelated=unrelated_total,         #8 individuals,
+        related=related_total, ##       4 children, 1 grandchild, 1 (3rd deg) relative
+        identical= identical_total,   ##      2 identical
+        others=others_total,                  ##high quality genomes from vindija and altai, denisova and modern humans
+        diploid_sim=output.diploid_sim,
+        diploid_sim_i=output.diploid_sim_i,
+        out_hbdall=output.outhbd,
+        out_hbdall_i=output.outhbd_i,
+        chrm=wildcards.ch,                  #chromosome number + '/'
+        RID=wildcards.RID,
+        Ne=1e3,
+        length=length,
+        recombination_rate=1e-8,
+        mutation_rate=1e-8,
+        ibdfiles=input.ibdfiles
+        )
+
+
+rule get_reads:
+    input:
+        gen_file="post_sim/inbred0/run{RID}/chrm{ch}/diploid_sim.csv.gz"
+    output:
+        reads="post_sim/run{RID}/chrm{ch}/coverage{cov}/contam{cnt}/prereads.csv.gz"
+    run:
+        getReads(genf=input.gen_file, coverage=wildcards.cov, iscontam=wildcards.cnt,
+        contaml=contam_est, totalind=int((unrelated_total+related_total+identical_total)/2), c_no=human_total, outf=output.reads)
+
+
+rule final_reads:
+    input:
+        read01="post_sim/run{RID}/chrm{ch}/coverage{cov}/contam{cnt}/prereads.csv.gz",
+        gen_file="post_sim/inbred{inb}/run{RID}/chrm{ch}/diploid_sim.csv.gz",
+    output:
+        reads="post_sim/inbred{inb}/run{RID}/chrm{ch}/coverage{cov}/contam{cnt}/reads.csv.gz"
+    run:
+        finalReads(genf=input.gen_file,read01=input.read01,totalind=int((unrelated_total+related_total+identical_total)/2), outf=output.reads)
+
+
+rule get_ascertainment:
+    input:
+        diploid_sim= "post_sim/inbred0/run{RID}/chrm{ch}/diploid_sim.csv.gz",
+        position_file= "sim_init/run{RID}/chrm{ch}/position_sim.csv.gz",
+    output:
+        position_out= "sim_init/run{RID}/chrm{ch}/asc{asc}_ascertained_position_sim.csv.gz",
+
+    run:
+        getAscertainment(ascertainment_scheme=wildcards.asc,
+        dipfile=input.diploid_sim,
+        posfile=input.position_file,
+        pos_out=output.position_out,
+        chrm=wildcards.ch
+        )
+
+
+
+rule prob_diffs:
+    input:
+        reads="post_sim/inbred{inb}/run{RID}/chrm{ch}/coverage{cov}/contam{cnt}/reads.csv.gz",
+        pos_asc="sim_init/run{RID}/chrm{ch}/asc{asc}_ascertained_position_sim.csv.gz",
+        pos_all="sim_init/run{RID}/chrm{ch}/position_sim.csv.gz"
+    output:
+        probs="post_sim/inbred{inb}/run{RID}/chrm{ch}/coverage{cov}/contam{cnt}/asc{asc}/hapProbs.csv.gz",
+        idDiff="post_sim/inbred{inb}/run{RID}/chrm{ch}/coverage{cov}/contam{cnt}/asc{asc}/idhapProbs.csv.gz",
+        pshap="post_sim/inbred{inb}/run{RID}/chrm{ch}/coverage{cov}/contam{cnt}/asc{asc}/pshap.csv.gz",
+        idhapDiff="post_sim/inbred{inb}/run{RID}/chrm{ch}/coverage{cov}/contam{cnt}/asc{asc}/idpshap.csv.gz",
+    run:
+        probDiffs(readsf=input.reads, pos_ascf=input.pos_asc, pos_allf=input.pos_all, chrm=wildcards.ch,
+        fout_prob=output.probs, fout_idDiff=output.idDiff, fout_pshap=output.pshap,
+        fout_idhap=output.idhapDiff)
+
+
+rule Mfilter_tped:      #makes monomorphic filter and READ input file
+    input:                      #each chromosome
+        infiles="post_sim/inbred{inb}/run{RID}/chrm{ch}/coverage{cov}/contam{cnt}/asc{asc}/pshap.csv.gz",
+        posf="sim_init/run{RID}/chrm{ch}/asc{asc}_ascertained_position_sim.csv.gz"
+    output:
+        fil="post_sim/inbred{inb}/run{RID}/chrm{ch}/coverage{cov}/contam{cnt}/asc{asc}/pshap/pos_filtered{Mfil}.gz",
+        read="post_sim/inbred{inb}/run{RID}/chrm{ch}/coverage{cov}/contam{cnt}/asc{asc}/readfiles_fil{Mfil}/allsamples.tped.gz",
+
+    run:
+        filterPseudohap(filist=input.infiles, posfile=input.posf, outfilter=output.fil, readfile=output.read,
+        fil=wildcards.Mfil, fil_version='hap')
+
+
+
+rule Mfilter_prob:      #makes monomorphic filter and READ input file
+    input:                      #each chromosome
+        infiles="post_sim/inbred{inb}/run{RID}/chrm{ch}/coverage{cov}/contam{cnt}/asc{asc}/hapProbs.csv.gz",
+        posf="sim_init/run{RID}/chrm{ch}/asc{asc}_ascertained_position_sim.csv.gz"
+    output:
+        fil="post_sim/inbred{inb}/run{RID}/chrm{ch}/coverage{cov}/contam{cnt}/asc{asc}/hapProbs/pos_filtered{Mfil}.gz",
+    run:
+        filterPseudohap(filist=input.infiles, posfile=input.posf, outfilter=output.fil, readfile='none',
+        fil=wildcards.Mfil, fil_version='prob')
+
+
+rule READ_input:
+    input:
+        tped=expand("post_sim/inbred{{inb}}/run{{RID}}/chrm{ch}/coverage{{cov}}/contam{{cnt}}/asc{{asc}}/readfiles_fil{{Mfil}}/allsamples.tped.gz", ch=totalch),
+        posf=expand("post_sim/inbred{{inb}}/run{{RID}}/chrm{ch}/coverage{{cov}}/contam{{cnt}}/asc{{asc}}/pshap/pos_filtered{{Mfil}}.gz", ch=totalch)
+    output:
+        read="contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/asc{asc}_readfiles_fil{Mfil}/read_allsamples.tped.gz",
+        tfam="contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/asc{asc}_readfiles_fil{Mfil}/read_allsamples.tfam.gz"
+    resources:
+        mem_mb=150000
+    run:
+        READInput(filist=input.tped,read=output.read, posfile=input.posf,
+                tfam=output.tfam, libraries=inds)
+
+
+
+rule find_diff:
+    input:
+        indf="post_sim/inbred{inb}/run{RID}/chrm{ch}/coverage{cov}/contam{cnt}/asc{asc}/{inpMode}.csv.gz",
+        infilter="post_sim/inbred{inb}/run{RID}/chrm{ch}/coverage{cov}/contam{cnt}/asc{asc}/{inpMode}/pos_filtered{Mfil}.gz",
+        posallf="sim_init/run{RID}/chrm{ch}/asc{asc}_ascertained_position_sim.csv.gz"
+
+    output:
+        diff="post_sim/inbred{inb}/run{RID}/chrm{ch}/coverage{cov}/contam{cnt}/asc{asc}/diffs/inputMode_{inpMode}_fil{Mfil}/alldiffs.csv.gz"
+    run:
+        findDiff(indfile=input.indf,infilter=input.infilter, posall=input.posallf, difffile=output.diff,fil=wildcards.Mfil)
+
+
+rule identical_diff:
+    input:
+        ind="post_sim/inbred{inb}/run{RID}/chrm{ch}/coverage{cov}/contam{cnt}/asc{asc}/id{inpMode}.csv.gz",
+        infilter="post_sim/inbred{inb}/run{RID}/chrm{ch}/coverage{cov}/contam{cnt}/asc{asc}/{inpMode}/pos_filtered{Mfil}.gz",
+        posallf="sim_init/run{RID}/chrm{ch}/asc{asc}_ascertained_position_sim.csv.gz"
+
+    output:
+        diff="post_sim/inbred{inb}/run{RID}/chrm{ch}/coverage{cov}/contam{cnt}/asc{asc}/diffs/inputMode_id{inpMode}_fil{Mfil}/iddiffs.csv.gz",
+
+    run:
+        identicalDiff(indfile=input.ind,posall=input.posallf,
+                infilter=input.infilter, difffile=output.diff,fil=wildcards.Mfil)
+
+
+
+rule get_win:
+    input:
+        pwfile="post_sim/inbred{inb}/run{RID}/chrm{ch}/coverage{cov}/contam{cnt}/asc{asc}/diffs/inputMode_{inpMode}_fil{Mfil}/alldiffs.csv.gz",
+        posf="post_sim/inbred{inb}/run{RID}/chrm{ch}/coverage{cov}/contam{cnt}/asc{asc}/{inpMode}/pos_filtered{Mfil}.gz"
+    output:
+        df="post_sim/inbred{inb}/run{RID}/chrm{ch}/coverage{cov}/contam{cnt}/asc{asc}/wins/inputMode_{inpMode}_fil{Mfil}/allwind.csv.gz",
+        tf="post_sim/inbred{inb}/run{RID}/chrm{ch}/coverage{cov}/contam{cnt}/asc{asc}/wins/inputMode_{inpMode}_fil{Mfil}/allwint.csv.gz"
+
+
+    run:
+        getWin(diff=input.pwfile,
+            dfile=output.df, tfile=output.tf, posf=input.posf,
+            interval=interval)
+
+
+rule identical_win:
+    input:
+        pwfile="post_sim/inbred{inb}/run{RID}/chrm{ch}/coverage{cov}/contam{cnt}/asc{asc}/diffs/inputMode_id{inpMode}_fil{Mfil}/iddiffs.csv.gz",
+        posf="post_sim/inbred{inb}/run{RID}/chrm{ch}/coverage{cov}/contam{cnt}/asc{asc}/{inpMode}/pos_filtered{Mfil}.gz"
+
+    output:
+        df="post_sim/inbred{inb}/run{RID}/chrm{ch}/coverage{cov}/contam{cnt}/asc{asc}/wins/inputMode_id{inpMode}_fil{Mfil}/idwind.csv.gz",
+        tf="post_sim/inbred{inb}/run{RID}/chrm{ch}/coverage{cov}/contam{cnt}/asc{asc}/wins/inputMode_id{inpMode}_fil{Mfil}/idwint.csv.gz",
+
+    run:
+        getWin(diff=input.pwfile,
+            dfile=output.df, tfile=output.tf, posf=input.posf,
+            interval=interval)
+
+
+rule hbd_win:
+    input:
+        pwfile="post_sim/inbred{inb}/run{RID}/chrm{ch}/hbd_sim.csv.gz",
+        posf="sim_init/run{RID}/chrm{ch}/position_sim.csv.gz"
+    output:
+        df="post_sim/inbred{inb}/run{RID}/chrm{ch}/hbd_windows/diff_sites.csv.gz",
+        tf="post_sim/inbred{inb}/run{RID}/chrm{ch}/hbd_windows/total_sites.csv.gz"
+
+    run:
+        getWin(diff=input.pwfile,
+            dfile=output.df, tfile=output.tf, posf=input.posf,
+            interval=interval)
+
+
+rule merge_hbd:
+    input:
+        hbdd=expand("post_sim/inbred{{inb}}/run{{RID}}/chrm{ch}/hbd_windows/diff_sites.csv.gz", ch=totalch),
+        hbdt=expand("post_sim/inbred{{inb}}/run{{RID}}/chrm{ch}/hbd_windows/total_sites.csv.gz", ch=totalch),
+
+    output:
+        diffall="post_sim/inbred{inb}/run{RID}/hbd_merged/diff_all.csv.gz",
+        totalall="post_sim/inbred{inb}/run{RID}/hbd_merged/total_all.csv.gz",
+        chfile="post_sim/inbred{inb}/run{RID}/hbd_merged/chrm.csv.gz"
+
+    run:
+        mergeChrm(dinfiles=input.hbdd,
+                    tinfiles=input.hbdt,
+                    dfile=output.diffall,
+                    tfile=output.totalall,
+                    chfile=output.chfile)
+
+
+
+rule merge_chrm:
+    input:
+        dinfiles= expand("post_sim/inbred{{inb}}/run{{RID}}/chrm{ch}/coverage{{cov}}/contam{{cnt}}/asc{{asc}}/wins/inputMode_{{inpMode}}_fil{{Mfil}}/allwind.csv.gz",ch=totalch),
+        tinfiles= expand("post_sim/inbred{{inb}}/run{{RID}}/chrm{ch}/coverage{{cov}}/contam{{cnt}}/asc{{asc}}/wins/inputMode_{{inpMode}}_fil{{Mfil}}/allwint.csv.gz",ch=totalch),
+
+    output:
+        dfile= "contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/asc{asc}/inputMode_{inpMode}_fil{Mfil}/merged_wind.csv.gz",
+        tfile= "contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/asc{asc}/inputMode_{inpMode}_fil{Mfil}/merged_wint.csv.gz",
+        chfile= "contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/asc{asc}/inputMode_{inpMode}_fil{Mfil}/chrm.csv.gz"
+
+    run:
+
+        mergeChrm(dinfiles=input.dinfiles,
+                    tinfiles=input.tinfiles,
+                    dfile=output.dfile,
+                    tfile=output.tfile,
+                    chfile=output.chfile)
+
+
+rule merge_identicalchrm:
+    input:
+        dinfiles= expand("post_sim/inbred{{inb}}/run{{RID}}/chrm{ch}/coverage{{cov}}/contam{{cnt}}/asc{{asc}}/wins/inputMode_id{{inpMode}}_fil{{Mfil}}/idwind.csv.gz",ch=totalch),
+        tinfiles= expand("post_sim/inbred{{inb}}/run{{RID}}/chrm{ch}/coverage{{cov}}/contam{{cnt}}/asc{{asc}}/wins/inputMode_id{{inpMode}}_fil{{Mfil}}/idwint.csv.gz",ch=totalch)
+
+    output:
+        dfile= "contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/asc{asc}/inputMode_id{inpMode}_fil{Mfil}/id_wind.csv.gz",
+        tfile= "contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/asc{asc}/inputMode_id{inpMode}_fil{Mfil}/id_wint.csv.gz",
+        chfile= "contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/asc{asc}/inputMode_id{inpMode}_fil{Mfil}/id_chrm.csv.gz"
+
+    run:
+        mergeChrm(dinfiles=input.dinfiles,
+                            tinfiles=input.tinfiles,
+                            dfile=output.dfile,
+                            tfile=output.tfile,
+                            chfile=output.chfile)
+
+"""
+rule contam_file:
+    output:
+        indf="contam_est_cont{mcont}_ind{mind}dev.gz",
+        pairf="contam_est_cont{mcont}_ind{mind}dev_pairwise.gz"
+    run:
+        contamFilemiss(contaml=contam_est, outfile_i=output.indf, outfile_p=output.pairf, miss_contam=wildcards.mcont, miss_ind=wildcards.mind)
+
+"""
+rule nh_file:
+    input:
+        genf=expand("sim_init/run{{RID}}/chrm{ch}/unrelated_sim.csv.gz", ch=totalch),
+        all_posf=expand("sim_init/run{{RID}}/chrm{ch}/position_sim.csv.gz", ch=totalch),
+        fil_posf=expand("post_sim/inbred{{inb}}/run{{RID}}/chrm{ch}/coverage{{cov}}/contam{{cnt}}/asc{{asc}}/{{inpMode}}/pos_filtered{{Mfil}}.gz", ch=totalch),
+
+    output:
+        nhf="contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/asc{asc}/inputMode_{inpMode}_fil{Mfil}/NHfile.csv.gz"
+    run:
+        nhFile(genf=input.genf,fil_posf=input.fil_posf, all_posf=input.all_posf, nhf=output.nhf,ind1=nea_nh, ind2=human_nh)
+"""
+
+rule contam_all:
+    input:
+        dfile="../../../contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/asc{asc}/inputMode_{inpMode}_fil{Mfil}/merged_wind.csv.gz",
+        tfile="../../../contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/asc{asc}/inputMode_{inpMode}_fil{Mfil}/merged_wint.csv.gz",
+        contam_est="contam_est_cont{mcont}_ind{mind}dev_pairwise.gz",
+        nhf="../../../contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/asc{asc}/inputMode_{inpMode}_fil{Mfil}/NHfile.csv.gz"
+    output:
+        difffile="missC{mcont}_{mind}/contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/asc{asc}/inputMode_{inpMode}_fil{Mfil}/contam_diff.csv.gz",
+        totalfile="missC{mcont}_{mind}/contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/asc{asc}/inputMode_{inpMode}_fil{Mfil}/contam_total.csv.gz",
+
+    run:
+        contamAll(dfile=input.dfile, tfile=input.tfile, iscnt=wildcards.cnt, cfile=input.contam_est, Dnhfile=input.nhf, difffile=output.difffile, totalfile=output.totalfile)
+
+
+
+rule contam_id:
+    input:
+        dfile="../../../contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/asc{asc}/inputMode_id{inpMode}_fil{Mfil}/id_wind.csv.gz",
+        tfile="../../../contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/asc{asc}/inputMode_id{inpMode}_fil{Mfil}/id_wint.csv.gz",
+        contam_est="contam_est_cont{mcont}_ind{mind}dev.gz",
+        nhf="../../../contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/asc{asc}/inputMode_{inpMode}_fil{Mfil}/NHfile.csv.gz",
+
+    output:
+        difffile="missC{mcont}_{mind}/contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/asc{asc}/inputMode_id{inpMode}_fil{Mfil}/id_contam_diff.csv.gz",
+        totalfile="missC{mcont}_{mind}/contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/asc{asc}/inputMode_id{inpMode}_fil{Mfil}/id_contam_total.csv.gz"
+
+    run:
+        contamAll(dfile=input.dfile, tfile=input.tfile, iscnt=wildcards.cnt, cfile=input.contam_est, Dnhfile=input.nhf, difffile=output.difffile, totalfile=output.totalfile)
+
+
+rule get_highDiv:
+    input:
+        difffile = "missC{mcont}_{mind}/contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/asc{asc}/inputMode_{inpMode}_fil{Mfil}/contam_diff.csv.gz",
+        totalfile = "missC{mcont}_{mind}/contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/asc{asc}/inputMode_{inpMode}_fil{Mfil}/contam_total.csv.gz",
+
+    output:
+        highdiv="missC{mcont}_{mind}/contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/asc{asc}/inputMode_{inpMode}_fil{Mfil}/windows_with_diffProp_higher_than3sd.txt.gz"
+    run:
+        getHighDiv(diff=input.difffile, total=input.totalfile, fout=output.highdiv)
+
+
+rule rem_highDiv:
+    input:
+        diff="missC{mcont}_{mind}/contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/asc{asc}/inputMode_{inpMode}_fil{Mfil}/contam_diff.csv.gz",
+        total="missC{mcont}_{mind}/contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/asc{asc}/inputMode_{inpMode}_fil{Mfil}/contam_total.csv.gz",
+        winfile="missC{mcont}_{mind}/contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/asc{asc}/inputMode_{inpMode}_fil{Mfil}/windows_with_diffProp_higher_than3sd.txt.gz"
+    output:
+        outd="missC{mcont}_{mind}/contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/asc{asc}/inputMode_{inpMode}_fil{Mfil}/remHighdiv_diff.csv.gz",
+        outt="missC{mcont}_{mind}/contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/asc{asc}/inputMode_{inpMode}_fil{Mfil}/remHighdiv_total.csv.gz",
+
+    run:
+        remHighDiv(diffname=input.diff, totalname=input.total, winfile=input.winfile, outd=output.outd, outt=output.outt)
+
+
+
+rule rem_highDiv_id:
+    input:
+        diff="missC{mcont}_{mind}/contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/asc{asc}/inputMode_id{inpMode}_fil{Mfil}/id_contam_diff.csv.gz",
+        total="missC{mcont}_{mind}/contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/asc{asc}/inputMode_id{inpMode}_fil{Mfil}/id_contam_total.csv.gz",
+        winfile="missC{mcont}_{mind}/contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/asc{asc}/inputMode_{inpMode}_fil{Mfil}/windows_with_diffProp_higher_than3sd.txt.gz"
+    output:
+        outd="missC{mcont}_{mind}/contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/asc{asc}/inputMode_id{inpMode}_fil{Mfil}/id_remHighdiv_diff.csv.gz",
+        outt="missC{mcont}_{mind}/contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/asc{asc}/inputMode_id{inpMode}_fil{Mfil}/id_remHighdiv_total.csv.gz",
+
+    run:
+        remHighDiv(diffname=input.diff, totalname=input.total, winfile=input.winfile, outd=output.outd, outt=output.outt)
+
+
+rule get_p1:
+    input:
+        difffile= "missC{mcont}_{mind}/contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/asc{asc}/inputMode_{inpMode}_fil{Mfil}/remHighdiv_diff.csv.gz",
+        totalfile= "missC{mcont}_{mind}/contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/asc{asc}/inputMode_{inpMode}_fil{Mfil}/remHighdiv_total.csv.gz",
+
+        id_difffile= "missC{mcont}_{mind}/contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/asc{asc}/inputMode_id{inpMode}_fil{Mfil}/id_remHighdiv_diff.csv.gz",
+        id_totalfile= "missC{mcont}_{mind}/contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/asc{asc}/inputMode_id{inpMode}_fil{Mfil}/id_remHighdiv_total.csv.gz",
+
+    output:
+        pfile="missC{mcont}_{mind}/contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/asc{asc}/inputMode_{inpMode}_fil{Mfil}/hmm_parameters/p1_file.gz",
+        p_all="missC{mcont}_{mind}/contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/asc{asc}/inputMode_{inpMode}_fil{Mfil}/hmm_parameters/p_all.gz",
+        phalf="missC{mcont}_{mind}/contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/asc{asc}/inputMode_{inpMode}_fil{Mfil}/hmm_parameters/phalf_file.gz",
+        phalf_all="missC{mcont}_{mind}/contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/asc{asc}/inputMode_{inpMode}_fil{Mfil}/hmm_parameters/phalf_all.gz",
+        newpairs="missC{mcont}_{mind}/contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/asc{asc}/inputMode_{inpMode}_fil{Mfil}/good_pairs.txt.gz",
+        newid="missC{mcont}_{mind}/contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/asc{asc}/inputMode_id{inpMode}_fil{Mfil}/id_good_pairs.txt.gz",
+        over="missC{mcont}_{mind}/contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/asc{asc}/inputMode_{inpMode}_fil{Mfil}/overlap.csv.gz",
+        id_over="missC{mcont}_{mind}/contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/asc{asc}/inputMode_id{inpMode}_fil{Mfil}/id_overlap.csv.gz",
+
+    run:
+        getP(dfile=input.difffile, tfile=input.totalfile, targets=listf,
+        pfile=output.pfile,goodpairs=output.newpairs,
+        allp=output.p_all, overf=output.over)
+
+        getP(dfile=input.id_difffile, tfile=input.id_totalfile, targets=inds,
+        pfile=output.phalf,goodpairs=output.newid,
+        allp=output.phalf_all, overf=output.id_over)
+
+
+rule all:
+    input:
+        over=expand("missC{mcont}_{mind}/contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/asc{asc}/inputMode_{inpMode}_fil{Mfil}/overlap.csv.gz",cnt=cntlist, inb=inblist, RID=runlist, cov=covlist, Mfil=Mfilist,asc=asclist, inpMode=inplist, mind=mind_list, mcont=mcont_list),
+        pfile=expand("missC{mcont}_{mind}/contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/asc{asc}/inputMode_{inpMode}_fil{Mfil}/hmm_parameters/p1_file.gz", cnt=cntlist, inb=inblist, RID=runlist, cov=covlist, Mfil=Mfilist,asc=asclist, inpMode=inplist, mind=mind_list, mcont=mcont_list),
+        id=expand("missC{mcont}_{mind}/contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/asc{asc}/inputMode_id{inpMode}_fil{Mfil}/id_remHighdiv_diff.csv.gz", cnt=cntlist, inb=inblist, RID=runlist, cov=covlist, Mfil=Mfilist,asc=asclist, inpMode=inplist, mind=mind_list, mcont=mcont_list),
+        #tped=expand("contam{cnt}/inbred{inb}/run{RID}/coverage{cov}/asc{asc}_readfiles_fil{Mfil}/read_allsamples.tped.gz",cnt=cntlist, inb=inblist, RID=config["runs"], cov=covlist, Mfil=Mfilist,asc=asclist),
+        #hbd=expand("missC{mcont}_{mind}/post_sim/inbred{inb}/run{RID}/hbd_merged/diff_all.csv.gz", inb=inblist, RID=config["runs"], mind=mind_list, mcont=mcont_list),
+
+
+
+###################################################################################sanitycheck plots
