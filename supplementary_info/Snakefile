@@ -116,7 +116,7 @@ rule variance_bnd_data:
         xnew2file="dataf/contam{cnt}_inbred{inb}_run{RID}_coverage{cov}_asc{asc}_inputMode_{inpMode}_fil{Mfil}_xnew2file_{listind}_rel{rel}",
         resfile1="dataf/contam{cnt}_inbred{inb}_run{RID}_coverage{cov}_asc{asc}_inputMode_{inpMode}_fil{Mfil}_resfile1_{listind}_rel{rel}",
         resfile2="dataf/contam{cnt}_inbred{inb}_run{RID}_coverage{cov}_asc{asc}_inputMode_{inpMode}_fil{Mfil}_resfile2_{listind}_rel{rel}",
-        betaplot="plots/contam{cnt}_inbred{inb}_run{RID}_coverage{cov}_asc{asc}_inputMode_{inpMode}_fil{Mfil}_pair{listind}_rel{rel}_betaplot.png",
+        betaplot="plots/contam{cnt}_inbred{inb}_run{RID}_coverage{cov}_asc{asc}_inputMode_{inpMode}_fil{Mfil}_pair{listind}_rel{rel}_betaplot1.png",
 
     run:
         l=wildcards.listind

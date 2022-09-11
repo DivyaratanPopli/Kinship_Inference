@@ -464,7 +464,7 @@ def plotbetas(dfile, tfile, ind, chrmf, p1file, upA, targets, outplot):
 
         a=betas[0]
         b=betas[1]
-        ax[i].plot(x, beta.pdf(x, a, b)/500,'b-', lw=3, alpha=0.6, label="$Y_w$=3")
+        ax[i].plot(x, beta.pdf(x, a, b)/500,'b-', lw=3, alpha=0.6, label="$Y_w$=4")
 
         a=betas[2]
         b=betas[3]
