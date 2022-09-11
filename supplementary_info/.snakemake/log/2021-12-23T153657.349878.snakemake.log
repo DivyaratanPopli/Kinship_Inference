@@ -1,2 +1,0 @@
-SyntaxError in line 171 of /mnt/diversity/divyaratan_popli/100arc/inbreeding/model_git/supplementary_info/Snakefile:
-No rule keywords allowed after run/shell/script/wrapper/cwl in rule plot_forcedROH. (Snakefile, line 171)
