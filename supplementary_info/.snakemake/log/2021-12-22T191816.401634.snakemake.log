@@ -1,0 +1,6 @@
+Building DAG of jobs...
+MissingInputException in line 95 of /mnt/diversity/divyaratan_popli/100arc/inbreeding/model_git/supplementary_info/Snakefile:
+Missing input files for rule variance_bnd_data:
+/mnt/diversity/divyaratan_popli/100arc/inbreeding/fastsim_gz_highDiversity/contam0/inbred1/run57/coverage0.2/asc0/inputMode_hapProbs_fil0_0/remHighdiv_total.csv.gz
+/mnt/diversity/divyaratan_popli/100arc/inbreeding/fastsim_gz_highDiversity/contam0/inbred1/run57/coverage0.2/asc0/inputMode_hapProbs_fil0_0/remHighdiv_diff.csv.gz
+/mnt/diversity/divyaratan_popli/100arc/inbreeding/fastsim_gz_highDiversity/contam0/inbred1/run57/coverage0.2/asc0/inputMode_hapProbs_fil0_0/hmm_parameters/p1_file.gz

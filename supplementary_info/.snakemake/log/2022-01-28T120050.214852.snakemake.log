@@ -1,0 +1,19 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cores: 1 (use --cores to define parallelism)
+Rules claiming more threads will be scaled down.
+Job counts:
+	count	jobs
+	1	egplot1
+	1
+
+[Fri Jan 28 12:00:52 2022]
+rule egplot1:
+    input: /mnt/diversity/divyaratan_popli/100arc/inbreeding/bronze_age_newSim/hmm_parameters_fil0/p1_file, /mnt/diversity/divyaratan_popli/100arc/inbreeding/bronze_age_newSim/mergedwin_remHighdiv_fil0/pw_diff.csv, /mnt/diversity/divyaratan_popli/100arc/inbreeding/bronze_age_newSim/mergedwin_remHighdiv_fil0/pw_total.csv, /mnt/diversity/divyaratan_popli/100arc/inbreeding/bronze_age_newSim/mergedwin_fil0/merged_chrm.csv
+    output: plots/egplot1.png
+    jobid: 0
+
+[Fri Jan 28 12:01:08 2022]
+Finished job 0.
+1 of 1 steps (100%) done
+Complete log: /mnt/diversity/divyaratan_popli/100arc/inbreeding/model_git/supplementary_info/.snakemake/log/2022-01-28T120050.214852.snakemake.log

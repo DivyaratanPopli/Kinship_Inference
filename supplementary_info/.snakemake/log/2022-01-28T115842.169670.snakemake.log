@@ -1,0 +1,28 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cores: 1 (use --cores to define parallelism)
+Rules claiming more threads will be scaled down.
+Job counts:
+	count	jobs
+	1	egplot1
+	1
+
+[Fri Jan 28 11:58:44 2022]
+rule egplot1:
+    input: /mnt/diversity/divyaratan_popli/100arc/inbreeding/bronze_age_newSim/hmm_parameters_fil0/p1_file, /mnt/diversity/divyaratan_popli/100arc/inbreeding/bronze_age_newSim/mergedwin_remHighdiv_fil0/pw_diff.csv, /mnt/diversity/divyaratan_popli/100arc/inbreeding/bronze_age_newSim/mergedwin_remHighdiv_fil0/pw_total.csv, /mnt/diversity/divyaratan_popli/100arc/inbreeding/bronze_age_newSim/mergedwin_fil0/merged_chrm.csv
+    output: plots/egplot1.png
+    jobid: 0
+
+[Fri Jan 28 11:58:58 2022]
+Error in rule egplot1:
+    jobid: 0
+    output: plots/egplot1.png
+
+RuleException:
+CalledProcessError in line 196 of /mnt/diversity/divyaratan_popli/100arc/inbreeding/model_git/supplementary_info/Snakefile:
+Command 'set -euo pipefail;  Rscript --vanilla /mnt/diversity/divyaratan_popli/100arc/inbreeding/model_git/supplementary_info/.snakemake/scripts/tmpa9vu_n38.egplot1.R' returned non-zero exit status 1.
+  File "/mnt/diversity/divyaratan_popli/100arc/inbreeding/model_git/supplementary_info/Snakefile", line 196, in __rule_egplot1
+  File "/usr/lib/python3.8/concurrent/futures/thread.py", line 57, in run
+Shutting down, this might take some time.
+Exiting because a job execution failed. Look above for error message
+Complete log: /mnt/diversity/divyaratan_popli/100arc/inbreeding/model_git/supplementary_info/.snakemake/log/2022-01-28T115842.169670.snakemake.log

@@ -1,0 +1,29 @@
+Relatedness KIN,Log liklihood ratio (KIN),Relatedness READ,Z_upper (READ),Z_lower (READ),Relatedness lcMLkin,pair,nSNPs
+Third Degree,2.84,Unrelated,,-3.31,Third Degree,AITI119_AITI2,454424
+Third Degree,1.39,Unrelated,,-1.66,Third Degree,AITI119_AITI55,25914
+Third Degree,1.98,Unrelated,,-4.02,Third Degree,AITI120_AITI2,450125
+Third Degree,2.05,Unrelated,,-1.16,Third Degree,AITI120_AITI55,27306
+Second Degree,2.53,Unrelated,,-0.89,Second Degree,AITI2_AITI55,33929
+Third Degree,2.84,Unrelated,,-2.05,Third Degree,AITI2_AITI72,587530
+Parent-offspring,1.66,Second Degree,3.1,-0.78,too low coverage,AITI33_OTTM91,5898
+Third Degree,1.64,Unrelated,,-0.46,Third Degree,AITI36_AITI72,18868
+Third Degree,1.31,Unrelated,,-2.21,too low coverage,AITI40_AITI62B,8275
+Third Degree,3.8,Unrelated,,-2.41,Third Degree,AITI40_AITI72,174552
+Third Degree,2.27,Unrelated,,-1.78,Third Degree,AITI40_AITI77A,80217
+Parent-offspring,7.35,IdenticalTwins/SameIndividual,0.04,,too low coverage,AITI62B_OTTM156,8024
+Third Degree,1.37,Unrelated,,-8.72,Unrelated,AITI72_AITI77A,224138
+Third Degree,1.79,Unrelated,,-8.3,Third Degree,AITI72_AITI77B,260000
+Parent-offspring,7.07,Second Degree,5.3,-0.1,too low coverage,AITI86_AITI87,12479
+Second Degree,1.95,Unrelated,,-1.11,Second Degree,AITI95_AITI98,249170
+Third Degree,1.2,Unrelated,,-0.38,Second Degree,ALT3_ALT4,35020
+Third Degree,1.23,Unrelated,,-2.34,too low coverage,OBKR66_OBKR82,7608
+Third Degree,2.54,Unrelated,,-6.06,Third Degree,OBKR67_OBKR80,280504
+Third Degree,2.79,Unrelated,,-5.61,Third Degree,OBKR86_WEHR1586,446568
+Third Degree,1.78,Unrelated,,-4.23,Third Degree,POST1_POST50,40875
+Second Degree,1.81,Unrelated,,-1.3,Third Degree,POST131_POST28,28501
+Third Degree,1.62,Unrelated,,-1.9,too low coverage,POST140_POST85,8784
+Third Degree,1.05,Unrelated,,-2.86,Third Degree,POST35_POST85,19786
+Third Degree,1.17,Unrelated,,-1.78,Third Degree,POST50_POST85,18548
+Third Degree,2.19,Unrelated,,-1.17,too low coverage,UNTA58147_UNTA58152,15001
+Parent-offspring,8.77,Second Degree,4.54,-0.06,too low coverage,UNTA5867_UNTA5868Sk1,8614
+Parent-offspring,2.52,Second Degree,4.7,-0.48,too low coverage,UNTA5867_UNTA5868Sk2,10554
