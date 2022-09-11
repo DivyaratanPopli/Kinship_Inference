@@ -1,0 +1,4 @@
+ModuleNotFoundError in line 1 of /mnt/diversity/divyaratan_popli/100arc/inbreeding/model_git/supplementary_info/Snakefile:
+No module named 'numba'
+  File "/mnt/diversity/divyaratan_popli/100arc/inbreeding/model_git/supplementary_info/Snakefile", line 1, in <module>
+  File "/mnt/diversity/divyaratan_popli/100arc/inbreeding/model_git/supplementary_info/delta_functions.py", line 26, in <module>
