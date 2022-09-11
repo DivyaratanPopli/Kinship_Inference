@@ -1,0 +1,19 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cores: 1 (use --cores to define parallelism)
+Rules claiming more threads will be scaled down.
+Job counts:
+	count	jobs
+	1	plot_forcedROH
+	1
+
+[Thu Dec 23 15:45:05 2021]
+rule plot_forcedROH:
+    input: /mnt/diversity/divyaratan_popli/100arc/inbreeding/fastsim_gz/contam0/inbred1/run57/coverage0.2/asc0/inputMode_hapProbs_fil0/hmm_parameters/p1_file.gz, /mnt/diversity/divyaratan_popli/100arc/inbreeding/fastsim_gz/contam0/inbred1/run57/coverage0.2/asc0/inputMode_idhapProbs_fil0/id_remHighdiv_diff.csv.gz, /mnt/diversity/divyaratan_popli/100arc/inbreeding/fastsim_gz/contam0/inbred1/run57/coverage0.2/asc0/inputMode_idhapProbs_fil0/id_remHighdiv_total.csv.gz, /mnt/diversity/divyaratan_popli/100arc/inbreeding/fastsim_gz/contam0/inbred1/run57/coverage0.2/asc0/inputMode_idhapProbs_fil0/id_chrm.csv.gz
+    output: plots/contam0_inbred1_run57_coverage0.2_asc0_inputMode_hapProbs_fil0_ind0_foreced_roh.png
+    jobid: 0
+    wildcards: cnt=0, inb=1, RID=57, cov=0.2, asc=0, inpMode=hapProbs, Mfil=0, ind=0
+
+Shutting down, this might take some time.
+Exiting because a job execution failed. Look above for error message
+Complete log: /mnt/diversity/divyaratan_popli/100arc/inbreeding/model_git/supplementary_info/.snakemake/log/2021-12-23T154502.561089.snakemake.log

@@ -1,0 +1,4 @@
+TypeError in line 3 of /mnt/diversity/divyaratan_popli/100arc/inbreeding/model_git/supplementary_info/Snakefile:
+hmm() got an unexpected keyword argument 'resfile'
+  File "/mnt/diversity/divyaratan_popli/100arc/inbreeding/model_git/supplementary_info/Snakefile", line 3, in <module>
+  File "/mnt/diversity/divyaratan_popli/100arc/inbreeding/model_git/supplementary_info/forcedROH.py", line 443, in <module>
