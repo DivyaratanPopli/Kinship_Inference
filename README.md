@@ -103,7 +103,7 @@ we also want to know the certainty associated with classification as parent-chil
 
 # Interpreting results
 
-We recommend users to filter out the results with lower than 1.0 Log Likelihood Ratio, as these results <br> may not be reliable. We provide following additional files (in the folder for KINgaroo) that may be informative to users:
+We recommend users to filter out the results with lower than 1.0 Log Likelihood Ratio, as these results may not be reliable. <br> Similarly, to differentiate between siblings/parent-child, use results with Within Degree Log Likelihood Ratio >1. We provide following additional<br> files (in the folder for KINgaroo) that may be informative to users:
 
 -hmm_parameters/p_0.txt : It has one float value representing average pairwise difference for unrelated individuals. While <br> comparing to other methods like READ, one can compare p_0 to corresponding measure for background diversity.
 -hbd_results/pw_[sample_name].csv : For each genomic window, it shows in columns the chromosome, number of overlapping sites, <br> and probability of seeing no ROH in the window.
