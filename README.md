@@ -80,7 +80,9 @@ KIN [-h] -I  -O  -T  [-r] [-c] [-t] [-p] [-i]
 -t: Minimum number of sites in a window from which ROH estimates are reliable used (by default: 10)<br>
 -p: p_0 estimate given by user (by default: Estimated from the data)<br>
 -i: Size of genomic windows in int, use the same size as for KINgaroo (by default:10000000)<br>
+
 # Output
+
 The final results are available in the file KIN_results.csv ([see example file](example_files/KIN_results.csv))<br>
 The output file has following columns:<br>
 -Pair: Name of all pairs<br>
@@ -97,7 +99,7 @@ The output file has following columns:<br>
 
 We distinguish between the columns 'Second Guess' and 'Within Degree Second Guess' as well as between 'Log Likelihood Ratio'<br>
 and 'Within Degree Log Likelihood Ratio'. This becomes important in case of classification to siblings or parent-child,<br> where we want to know how certain we are that the pair is first degree relative as indicated by 'Log Likelihood Ratio', but<br>
-we also want to know the certainty associated with classification as parent-child compared to siblings or vice-versa.
+we also want to know the certainty associated with classification as parent-child compared to siblings or vice-versa.</p>
 
 #Interpreting results
 
@@ -106,4 +108,4 @@ We recommend users to filter out the results with lower than 1.0 Log Likelihood 
 -hmm_parameters/p_0.txt : It has one float value representing average pairwise difference for unrelated individuals. While <br> comparing to other methods like READ, one can compare p_0 to corresponding measure for background diversity.
 -hbd_results/pw_[sample_name].csv : For each genomic window, it shows in columns the chromosome, number of overlapping sites, <br> and probability of seeing no ROH in the window.
 
-In the folder with KIN results, likfiles/[sample_pair].csv shows an array of likelihoods corresponding to the <br> different cases of relatedness (order: 'Unrelated','5th Degree','4th Degree','3rd Degree','Grandparent-Grandchild','Half-siblings','Avuncular','Siblings', <br> 'Parent-Child','Identical']). It may be useful to look at this array for a pair of individuals to see the log likelihood ratio for any two relatedness cases. For very low-coverage data, all log likelihood values will look similar.</p>
+In the folder with KIN results, likfiles/[sample_pair].csv shows an array of likelihoods corresponding to the <br> different cases of relatedness (order: 'Unrelated','5th Degree','4th Degree','3rd Degree','Grandparent-Grandchild','Half-siblings','Avuncular','Siblings', <br> 'Parent-Child','Identical']). It may be useful to look at this array for a pair of individuals to see the log likelihood ratio for any two relatedness cases. For very low-coverage data, all log likelihood values will look similar.
