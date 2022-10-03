@@ -98,10 +98,10 @@ The output file has following columns:<br>
 -IBD Number: Total number of IBD segments<br>
 
 We distinguish between the columns 'Second Guess' and 'Within Degree Second Guess' as well as between 'Log Likelihood Ratio'<br>
-and 'Within Degree Log Likelihood Ratio'. This becomes important in case of classification to siblings or parent-child,<br> where we want to know how certain we are that the pair is first degree relative as indicated by 'Log Likelihood Ratio', but<br>
-we also want to know the certainty associated with classification as parent-child compared to siblings or vice-versa.</p>
+and 'Within Degree Log Likelihood Ratio'. This becomes important in case of classification to siblings or parent-child,<br> where we want to know how certain we are that the pair is first degree relative as indicated by 'Log Likelihood Ratio', but
+we also want to know the certainty associated with classification as parent-child compared to siblings </br>or vice-versa.</p>
 
-#Interpreting results
+# Interpreting results
 
 We recommend users to filter out the results with lower than 1.0 Log Likelihood Ratio, as these results <br> may not be reliable. We provide following additional files (in the folder for KINgaroo) that may be informative to users:
 
