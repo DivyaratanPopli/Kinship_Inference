@@ -66,7 +66,7 @@ You can run KINgaroo from the terminal by typing:
 -cont: Name of individual from contaminating population in [-d]<br>
 -r: Enter 1 to estimate long ROH, 0 to skip (by default 1)<br>
 -p: p_0 estimate given by user (by default: Estimated from the data)<br>
-
+-N: Total number of chromosome pairs. Default=22
 # Running KIN
 ```
 KIN [-h] -I  -O  -T  [-r] [-c] [-t] [-p] [-i]
