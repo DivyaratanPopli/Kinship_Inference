@@ -81,7 +81,6 @@ def main():
         thresh=thresh,
         cores=cores,
         instates=C.STATES,
-        totalch=C.CHRM,
         p_0=p_0,
         Afiles=A_interval
     )

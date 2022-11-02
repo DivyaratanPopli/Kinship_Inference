@@ -288,8 +288,8 @@ def data2p(diff_cor, total_cor, id_diff_cor, id_total_cor, libraries, listf, hmm
 
     id_diff_cor[rem_wins,:] = 0
     id_total_cor[rem_wins,:] = 0
-    print("diff",diff_cor[rem_wins,:])
-    print("total",total_cor[rem_wins,:])
+    #print("diff",diff_cor[rem_wins,:])
+    #print("total",total_cor[rem_wins,:])
     p1=getP(obsd=diff_cor, obst=total_cor, targets=listf,
         pfile=hmm_param+'p_0.txt',goodpairs='goodpairs.csv',
         allp=hmm_param+'p_all.csv', overf='overlap.csv',  thresh=thresh)

@@ -50,7 +50,7 @@ def hmm_prep(targetfile, outfolder, datafolder, allrel, p_0):
 
 
 
-def hmm_run(hbdfolder, libraries, listf, instates, totalch, allrel, pfile, dfile, tfile, Afiles, p1thresh, outfolder, thresh, cores):
+def hmm_run(hbdfolder, libraries, listf, instates, allrel, pfile, dfile, tfile, Afiles, p1thresh, outfolder, thresh, cores):
 
     pool = mp.Pool(cores)
     [pool.apply_async(hmm, args=(listind, hbdfolder, dfile, tfile,
@@ -72,8 +72,8 @@ def hmm_results(outfolder, listf, allrel):
 
 
 
-def hmm_all(targetfile, outfolder, datafolder, allrel, hbdfolder, thresh, cores, instates, totalch, p_0, Afiles):
+def hmm_all(targetfile, outfolder, datafolder, allrel, hbdfolder, thresh, cores, instates, p_0, Afiles):
 
     libraries, listf, allrel, p_0val, dfile, tfile, p1thresh = hmm_prep(targetfile = targetfile, outfolder = outfolder, datafolder = datafolder, allrel = allrel, p_0 = p_0)
-    hmm_run(hbdfolder, libraries, listf, instates, totalch, allrel, p_0val, dfile, tfile, Afiles, p1thresh, outfolder, thresh, cores)
+    hmm_run(hbdfolder, libraries, listf, instates, allrel, p_0val, dfile, tfile, Afiles, p1thresh, outfolder, thresh, cores)
     hmm_results(outfolder, listf, allrel)

@@ -61,6 +61,9 @@ def cli():
     parser.add_argument('-test', '--test_input',
                         type=int, metavar='',
                         help='Enter 1 to test your input files')
+    parser.add_argument('-N', '--number_of_chromosomes',
+                        type=int, metavar='',
+                        help='Enter the total number of chromosomes. Default=22')
     return parser.parse_args()
 
 def main():
@@ -97,10 +100,16 @@ def main():
     else:
         testin = args.test_input
 
+
+    if args.number_of_chromosomes is None:
+        n_chrm=22
+    else:
+        n_chrm=args.number_of_chromosomes
+    CHRM=list(range(1, int(n_chrm)+1))
+
     if testin==1:
         hel.test_input(bedfile=args.bedfile, rawbams=bamfiles_dir, targetsfile=args.target_location)
     elif testin==0:
-
         libraries, listf, dwins, twins, id_dwins, id_twins, chrmlist = hel.pipeline1(targetsfile = args.target_location,
                                                                                      bedfile = args.bedfile,
                                                                                      cores = args.cores,
@@ -112,7 +121,7 @@ def main():
                                                                                      hmm_param = C.hmm_param,
                                                                                      hbdf = C.hbdf,
                                                                                      likf = C.likf,
-                                                                                     chrmf=C.CHRM)
+                                                                                     chrmf=CHRM)
 
 
         if args.contam_parameter==0:
