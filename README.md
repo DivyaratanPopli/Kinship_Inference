@@ -67,6 +67,8 @@ You can run KINgaroo from the terminal by typing:
 -r: Enter 1 to estimate long ROH, 0 to skip (by default 1)<br>
 -p: p_0 estimate given by user (by default: Estimated from the data)<br>
 -N: Total number of chromosome pairs. Default=22
+-n: You can optionally specify the noisy windows that should be filtered out in a file with list of window indexes (0-based).
+
 # Running KIN
 ```
 KIN [-h] -I  -O  -T  [-r] [-c] [-t] [-p] [-i]
@@ -105,7 +107,11 @@ we also want to know the certainty associated with classification as parent-chil
 
 We recommend users to filter out the results with lower than 1.0 Log Likelihood Ratio, as these results may not be<br> reliable. Similarly, to differentiate between siblings/parent-child, use results with Within Degree Log Likelihood Ratio >1. We provide following additional files (in the folder for KINgaroo) that may be informative to users:
 
--hmm_parameters/p_0.txt : It has one float value representing average pairwise difference for unrelated individuals. While comparing to other methods like READ, one can compare p_0 to corresponding measure for background diversity.</br>
--hbd_results/pw_[sample_name].csv : For each genomic window, it shows in columns the chromosome, number of overlapping sites, and probability of seeing no ROH in the window.
+-"hmm_parameters/p_0.txt" : It has one float value representing average pairwise difference for unrelated individuals. While comparing to other methods like READ, one can compare p_0 to corresponding measure for background diversity.</br>
+-"hbd_results/pw_[sample_name].csv" : For each genomic window, it shows in columns the chromosome, number of overlapping sites, and probability of seeing no ROH in the window.
 
-In the folder with KIN results, likfiles/[sample_pair].csv shows an array of log likelihoods corresponding to the different cases of relatedness (order: 'Unrelated','5th Degree','4th Degree','3rd Degree','Grandparent-Grandchild','Half-siblings','Avuncular','Siblings', 'Parent-Child','Identical']). It may be useful to look at this array for a pair of individuals to see the log likelihood ratio for any two relatedness cases. For very low-coverage data, all log likelihood values will look similar.
+In the folder with KIN results, "likfiles/[sample_pair].csv" shows an array of log likelihoods corresponding to the different cases of relatedness (order: 'Unrelated','5th Degree','4th Degree','3rd Degree','Grandparent-Grandchild','Half-siblings','Avuncular','Siblings', 'Parent-Child','Identical']). It may be useful to look at this array for a pair of individuals to see the log likelihood ratio for any two relatedness cases. For very low-coverage data, all log likelihood values will look similar.
+
+# Subsetting individuals for estimation of p_0
+
+In many cases the user may have samples that are very low coverage or highly contaminated, and the user would like to exclude these samples while estimating p_0 (background diversity in the population). To do this run kingaroo with target file (-T) containing only the samples that you want to use in estimation of p_0. From this run you will get output file "hmm_parameters/p_0.txt" containing p_0 and "filtered_windows.txt" containing list of windows with lot of noise. Now you can run kingaroo in another folder with the target file (-T) containing all the samples that you want to include for relatedness analysis using options -p_0 [the value in "hmm_parameters/p_0.txt"] -n [location of "filtered_windows.txt"]. Then run kin with the option -p [the value in "hmm_parameters/p_0.txt"].
