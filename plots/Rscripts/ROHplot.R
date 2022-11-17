@@ -15,9 +15,9 @@ make_panel1 <- function(data,acrval,leg){
     )) +
     scale_fill_manual(values = c("grey90", "white")) +
     theme_void()
-  plot1<-plot1+geom_line(aes(colour=Coverage),alpha=0.5, size=0.8)
+  plot1<-plot1+geom_line(aes(colour=Coverage),alpha=0.7, size=0.8)
   plot1<-plot1 + theme_bw()+ theme(legend.position = "none", axis.title.x = element_blank())+labs(y= "Het.") +
-    scale_color_manual(values=c("0.1"="Green", "0.2"="Blue","4"="Red")) +
+    scale_color_manual(values=c("0.1"="#999933", "0.2"="#117733","4"="#661100")) +
     theme(panel.grid.major = element_blank(),
           panel.grid.minor = element_blank(),
           strip.background = element_blank(),
@@ -39,10 +39,10 @@ make_panel2 <- function(data,acrval,leg){
     theme_void()
   plot2<-plot2+geom_line(aes(x=Wins, y=True_ROH, linetype="Truth"))
   #plot2
-  plot2<-plot2+geom_line(aes(x=Wins, y=Model_pred, linetype="Inferred", colour=Coverage), alpha=0.5, size=0.8)
+  plot2<-plot2+geom_line(aes(x=Wins, y=Model_pred, linetype="Inferred", colour=Coverage), alpha=0.7, size=0.8)
 
   plot2<-plot2+scale_linetype_manual(values=c("Truth"="dashed", "Inferred"="solid"))
-  plot2 <- plot2 + scale_color_manual(values=c("0.1"="Green", "0.2"="Blue","4"="Red"))
+  plot2 <- plot2 + scale_color_manual(values=c("0.1"="#999933", "0.2"="#117733","4"="#661100"))
   if (leg==1){
     plot2<-plot2 + theme_bw() + theme(legend.position = "bottom", axis.title.x = element_blank())+labs(y= "1 - P(ROH)")
     plot2<- plot2+ guides(linetype = guide_legend(nrow = 1, byrow = TRUE))+ guides(colour = guide_legend(nrow = 1, byrow = TRUE))
