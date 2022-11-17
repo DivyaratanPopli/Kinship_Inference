@@ -42,7 +42,7 @@ IBD_accuracy_plot <- function(infile,outfile){
 
   df$cov=as.factor(df$cov)
 
-  colors1 <- c("Unrelated" = "grey30", "3rd Degree" = "blue", "2nd Degree" = "darkorchid1", "Siblings"= "Green", "Parent-Child" = "orangered3", "Identical" = "darkgoldenrod1")
+  colors1 <- c("Unrelated" = "#999999", "3rd Degree" = "#E69F00", "2nd Degree" = "#009E73", "Siblings"= "#0072B2", "Parent-Child" = "#D55E00", "Identical" = "#CC79A7")
 
   f <- ggplot(
     df,
