@@ -38,7 +38,7 @@ bubbleplot_kin <- function(overlap_table, relatable, out_rel, out_over) {
   matr1$lib2 <- factor(matr1$lib2, levels=c("Chagyrskaya01","Chagyrskaya06","Chagyrskaya14","Chagyrskaya12","Chagyrskaya41","Chagyrskaya20","Chagyrskaya1141","Chagyrskaya13","Chagyrskaya19","Chagyrskaya07","Chagyrskaya17","Chagyrskaya18","Chagyrskaya02","Chagyrskaya60","Okladnikov11","Okladnikov15"))#data$SP_V1 <- ifelse(data$V1 == “A29253”, “red”, “black”)
   matr1$lib1 <- factor(matr1$lib1, levels=c("Chagyrskaya01","Chagyrskaya06","Chagyrskaya14","Chagyrskaya12","Chagyrskaya41","Chagyrskaya20","Chagyrskaya1141","Chagyrskaya13","Chagyrskaya19","Chagyrskaya07","Chagyrskaya17","Chagyrskaya18","Chagyrskaya02","Chagyrskaya60","Okladnikov11","Okladnikov15"))#data$SP_V1 <- ifelse(data$V1 == “A29253”, “red”, “black”)
 
-  colors <- c("seagreen4","steelblue2","mediumblue","steelblue3","lightpink3","thistle3","gray45","lightsalmon3","darkred","firebrick","tan","black","gray70","lightcyan3","darkorchid","pink3","pink4")#data[, c(1, 2)] <- as.data.frame(t(apply(data[, c(1, 2)], 1, sort)))#Plot all the infered relatedness
+  colors <- c("black","black","black","black","black","black","black","black","black","black","black","black","black","black","black","black","black")#data[, c(1, 2)] <- as.data.frame(t(apply(data[, c(1, 2)], 1, sort)))#Plot all the infered relatedness
 
   ##########trying heatmap.2
   #i1=unique(matr1$lib1)
@@ -57,7 +57,8 @@ bubbleplot_kin <- function(overlap_table, relatable, out_rel, out_over) {
 
   gfig_rel=ggplot(matr1, aes(lib1, lib2), col= "white") +
     geom_tile(aes(fill=relatedness), col="white")  +
-    scale_fill_manual(values = c("Identical"="khaki1","Parent-Child"="orangered3", "Siblings"="orange2","Unrelated"="gray80","Second Degree"="darkorchid1","Third Degree"="aquamarine2")) +
+    scale_fill_manual(values = c("Unrelated" = "#999999", "Third Degree" = "#E69F00", "Second Degree" = "#009E73", "Siblings"= "#0072B2", "Parent-Child" = "#D55E00", "Identical" = "#CC79A7")) +
+
 
     theme(
       panel.border = element_blank(), panel.grid.major = element_blank(),panel.grid.minor = element_blank(),
