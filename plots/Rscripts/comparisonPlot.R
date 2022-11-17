@@ -43,11 +43,14 @@ comparison_plot <- function(inf,outf){
   T_F.labs <- c("False Positive", "True Positive")
   names(T_F.labs) <- c("False_positive", "True_positive")
 
+  colors1 <- c("Control" = "#999999", "With ROH" = "#E69F00", "With Ascertainment" = "#D55E00", "With Contamination"= "#0072B2")
+
 
   plot<-ggplot(data=data, aes(x=Coverage, y=classification_proportion, group=interaction(Simulation,Method), color=Simulation, lty=Method))
   plot<-plot+geom_line()
-  plot<- plot + facet_grid(T_F ~ Relatedness, labeller = labeller(T_F = T_F.labs, Relatedness = Relatedness.labs), scales="free")
+  plot<- plot + facet_grid(T_F ~ Relatedness, labeller = labeller(T_F = T_F.labs, Relatedness = Relatedness.labs), scales="free") +
   #plot + geom_hline(yintercept=0.05, linetype="dashed")
+  scale_color_manual(values = colors1)
   plot <- plot + geom_hline(data = data.frame(T_F='False_positive'), aes(yintercept = 0.05), linetype = "dotted", alpha=0.5)
   plot <- plot+ labs(y="Classification Proportions", x = "Coverage")
   plot + theme_bw() + theme(
