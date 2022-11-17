@@ -320,7 +320,7 @@ In Fig. \ref{fig2:ROH}, we present an example of data and inference of the ROH-H
 A systematic evaluation of the performance of the ROH-HMM is given in Table \ref{tab:Table 2}: For the purpose of this analysis, we classified all windows that were at least 20\% homozygous as ROH, and the remainder as non-ROH. Likewise, we classified all windows with a posterior probability of ROH of at least 20\% as ROH. We used these cases to compute sensitivity (Se) and specificity (Sp). In the control case (simulations with no ascertainment, contamination, or ROH) we see that the specificity remains $\geq0.99$ for all coverages. In the cases where we simulate ROH, we find that sensitivity decreases from 97\% at 4x coverage to less than 65\% at 0.05x coverage, but specificity remains high at above 0.96 for all cases, suggesting that the number of erroneously called ROH segments is low.
 
 \begin{figure}[ht!]
-    \includegraphics[width=16.5cm]{pl}
+    \includegraphics[width=16.5cm]{plots/inkscape_finalImg/ROHplot_sub.png}
     \centering
     \caption{Estimation of ROH probabilities along the genome in simulations. The top row in each panel shows the proportion of differences in a simulated individual along the genome. In the bottom row, the dotted line shows the proportion of each window in ROH, and the solid lines show the estimated probability of not being in the ROH state. (A) Simulation with no ascertainment, contamination, or ROH. (B) Simulation with ROH. (C) Simulation with ROH and ascertainment. (D) Simulation with ROH and contamination.}
     \label{fig2:ROH}
