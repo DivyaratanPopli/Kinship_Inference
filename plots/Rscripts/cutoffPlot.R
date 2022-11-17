@@ -31,9 +31,12 @@ cutoff_plot <- function(infile,outfile){
   T_F.labs <- c("False Positive", "True Positive")
   names(T_F.labs) <- c("False_positive", "True_positive")
 
+  colors1 <- c("0.1"="#999933", "0.2"="#117733","4"="#661100", "0.05"="#0072B2")
+
   plot<-ggplot(data=data, aes(x=cutoff, y=classification_proportion, color=Coverage))
   plot<-plot+geom_line()
-  plot<- plot + facet_grid(T_F ~ Relatedness, labeller = labeller(T_F = T_F.labs, Relatedness = Relatedness.labs), scales="free")
+  plot<- plot + facet_grid(T_F ~ Relatedness, labeller = labeller(T_F = T_F.labs, Relatedness = Relatedness.labs), scales="free") +
+  scale_color_manual(values = colors1)
   #plot + geom_hline(yintercept=0.05, linetype="dashed")
   plot <- plot + geom_hline(data = data.frame(T_F='False_positive'), aes(yintercept = 0.05), linetype = "dotted")
   plot <- plot+ labs(y="Classification Proportions", x = "Log likelihood Ratio Cutoff")
