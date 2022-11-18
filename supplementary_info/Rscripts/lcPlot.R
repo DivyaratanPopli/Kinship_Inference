@@ -36,7 +36,8 @@ lcplot <- function(lcres,likf,kinf,outplot){
 
   lc=lc[lc$pair!='Chagyrskaya06_Chagyrskaya14',]
 
-  colors1 <- c("Unrelated" = "grey80", "Degree2" = "darkorchid1", "Parent-Child" = "orangered3", "Identical" = "darkgoldenrod1")
+  #colors1 <- c("Unrelated" = "grey80", "Degree2" = "darkorchid1", "Parent-Child" = "orangered3", "Identical" = "darkgoldenrod1")
+  colors1 <- c("Unrelated" = "#999999", "Degree2" = "#009E73", "Parent-Child" = "#D55E00", "Identical" = "#CC79A7")
 
   panel1<-ggplot(data=lc[which(lc$loglik_ratio >=1),], mapping=aes(x=k0_hat, y=r_hat, color=Relatedness)) +
   geom_point() + theme_bw() + labs(x=expression(k["0"]), y= "Coefficient of Relatedness") +
@@ -67,7 +68,7 @@ lcplot <- function(lcres,likf,kinf,outplot){
 
   #newdf[newdf$loglik_ratio<1,]=NA
 
-  colors <- c("Unrelated" = "grey80", "Degree2" = "darkorchid1", "Parent-Child" = "orangered3", "Identical" = "darkgoldenrod1")
+  colors <- c("Unrelated" = "#999999", "Degree2" = "#009E73", "Parent-Child" = "#D55E00", "Identical" = "#CC79A7")
   #alphas <-c("0"=0.01,"1"=1)
   panel2<-ggplot(data=newdf[which(newdf$loglik_ratio >=1),], mapping=aes(x=k0_prop, y=r_prop, color=Relatedness)) +
     geom_point() + theme_bw() + labs(x=expression(k["0"]), y= "Coefficient of Relatedness") +
