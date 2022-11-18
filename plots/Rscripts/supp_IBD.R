@@ -17,31 +17,31 @@ IBD_accuracy_plot <- function(infile1,infile2,infile3,infile4,outfile){
       infile=infile4
     }
     data=read.csv(file = infile, header = TRUE)
-    
-    
+
+
     data[data$rel=='deg4','rel']='Unrelated'
     data[data$rel=='deg5','rel']='Unrelated'
     data[data$rel=='un','rel']='Unrelated'
-    
+
     data[data$rel=='avu','rel']='2nd Degree'
     data[data$rel=='gr','rel']='2nd Degree'
     data[data$rel=='hsib','rel']='2nd Degree'
-    
+
     data[data$rel=='id','rel']='Identical'
     data[data$rel=='pc','rel']='Parent-Child'
     data[data$rel=='sib','rel']='Siblings'
-    
+
     data[data$rel=='deg3','rel']='3rd Degree'
-    
+
     allrel=c("Unrelated", "3rd Degree", "2nd Degree", "Siblings", "Parent-Child", "Identical")
     allcov=c(4,0.5,0.2,0.1,0.05,0.03)
-    
+
     accuracy=c()
     stdev=c()
     rel=c()
     cov=c()
     for(cv in allcov) {
-      
+
       datacv=data[data$cov==cv,]
       for(i in allrel) {
         temp=datacv[datacv$rel==i,]
@@ -52,22 +52,22 @@ IBD_accuracy_plot <- function(infile1,infile2,infile3,infile4,outfile){
       }
     }
     df=data.frame(accuracy,stdev,rel,cov)
-    
+
     df$cov=as.factor(df$cov)
     df$Scenario=j
     bigd=rbind(bigd,df)
   }
-  
+
   #bigd_un=bigd[bigd$rel=='Siblings',]
   #bigd_un_control=bigd_un[bigd_un$Scenario==1,]
   #bigd_un_c=bigd_un[bigd_un$Scenario==2,]
   #bigd_un_a=bigd_un[bigd_un$Scenario==3,]
   #bigd_un_r=bigd_un[bigd_un$Scenario==4,]
-  
+
   bigd$Scenario=as.factor(bigd$Scenario)
-  colors1 <- c("Unrelated" = "grey30", "3rd Degree" = "blue", "2nd Degree" = "darkorchid1", "Siblings"= "Green", "Parent-Child" = "orangered3", "Identical" = "darkgoldenrod1")
+  colors1 <- c("Unrelated" = "#999999", "3rd Degree" = "#E69F00", "2nd Degree" = "#009E73", "Siblings"= "#0072B2", "Parent-Child" = "#D55E00", "Identical" = "#CC79A7")
   line1 <- c("1" = "solid", "2" = "dashed", "3" = "dotted","4" = "12345678")
-  
+
   f <- ggplot(
     bigd,
     aes(x = cov, y = accuracy, ymin = accuracy-stdev, ymax = accuracy+stdev, group = interaction(rel,Scenario) ,colour=rel, linetype = Scenario)
