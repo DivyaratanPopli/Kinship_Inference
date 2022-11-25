@@ -35,7 +35,7 @@ pip3 install _path_to_kin
 
 # Running KINgaroo
 
-IMPORTANT: Please make sure that your input bamfiles are filtered (remove duplicates, and apply standard filters for quality control). Unfiltered duplicates may affect the results.
+**IMPORTANT: Please make sure that your input bamfiles are filtered (remove duplicates, and apply standard filters for quality control). Unfiltered duplicates may affect the results.**
 You can run KINgaroo from the terminal by typing:
 ```
   KINgaroo [-h] -bam  -bed  -T  -cnt  [-c] [-i] [-t] [-cest] [-d] [-tar] [-cont] [-r] [-p]
@@ -70,7 +70,7 @@ You can run KINgaroo from the terminal by typing:
 -n: You can optionally specify the noisy windows that should be filtered out in a file with list of window indexes (0-based).
 
 # Running KIN
-**Do not run kin on sample set different from that used for kingaroo. It will cause miss-assignment of relatedness to corresponding pair (see the last section).**
+**IMPORTANT: Do not run kin on sample set different from that used for kingaroo. It will cause miss-assignment of relatedness to corresponding pair (see the last section).**
 ```
 KIN [-h] -I  -O  -T  [-r] [-c] [-t] [-p] [-i]
 ```
