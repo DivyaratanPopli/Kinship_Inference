@@ -70,19 +70,17 @@ You can run KINgaroo from the terminal by typing:
 -n: You can optionally specify the noisy windows that should be filtered out in a file with list of window indexes (0-based).
 
 # Running KIN
-**IMPORTANT: Do not run kin on sample set different from that used for kingaroo. It will cause miss-assignment of relatedness to corresponding pair (see the last section).**
 ```
 KIN [-h] -I  -O  -T  [-r] [-c] [-t] [-p] [-i]
 ```
 -h: Help<br>
 -I: Path to the folder where you ran KINgaroo<br>
 -O: Output location for KIN<br>
--T: Path to file containing list of all bamfiles to be used in the analysis (should be same as that used in previous package)<br>
 -r: Location of directory containing ROH estimates (by default: same as -I)<br>
 -c: Cores (by default: all available cores)<br>
 -t: Minimum number of sites in a window from which ROH estimates are reliable used (by default: 10)<br>
 -p: p_0 estimate given by user (by default: Estimated from the data)<br>
--i: Size of genomic windows in int, use the same size as for KINgaroo (by default:10000000)<br>
+
 
 # Output
 
