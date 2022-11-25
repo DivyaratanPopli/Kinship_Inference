@@ -22,9 +22,6 @@ def cli():
     parser.add_argument('-O', '--output_location',
                         type=str, metavar='', required=True,
                         help='Output files location')
-    parser.add_argument('-T', '--target_location',
-                        type=str, metavar='', required=True,
-                        help='file with input bamfile names')
     parser.add_argument('-r', '--ROH_file_location',
                         type=str, metavar='',
                         help='ROH files location')
@@ -37,9 +34,6 @@ def cli():
     parser.add_argument('-p', '--diversity_parameter_p_0',
                         type=float, metavar='',
                         help='Input p_0 parameter, if you do not want to calculate it from given samples (Keep it same as that for KINgaroo)')
-    parser.add_argument('-i', '--interval',
-                        type=int, metavar='',
-                        help='Window size (Please choose the same size as for KINgaroo). By default:10000000')
 
     return parser.parse_args()
 
@@ -61,23 +55,28 @@ def main():
         cores = mp.cpu_count()
     else:
         cores = args.cores
+
     if args.diversity_parameter_p_0 is None:
         p_0 = -9
     else:
         p_0 = args.diversity_parameter_p_0
-    if args.interval is None:
+
+
+    with open(args.input_location+"/interval.txt","r") as f:
+        interval1=int(f.read())
+
+
+    if interval1==10000000:
         A_interval=C.A_ALL10
-    elif args.interval==10000000:
-        A_interval=C.A_ALL10
-    elif args.interval==1000000:
+    elif interval1==1000000:
         A_interval=C.A_ALL1
 
     helpers.hmm_all(
-        targetfile=args.target_location,
-        outfolder=args.output_location,
-        datafolder=args.input_location,
+        targetfile=args.input_location + "/target_samples.txt",
+        outfolder=args.output_location + "/",
+        datafolder=args.input_location + "/",
         allrel=C.RELS,
-        hbdfolder=hbdfolder,
+        hbdfolder=hbdfolder+ "/",
         thresh=thresh,
         cores=cores,
         instates=C.STATES,

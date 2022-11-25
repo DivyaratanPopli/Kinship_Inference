@@ -60,6 +60,8 @@ def prep_function(targetsfile, splitbams, bedfiles, hapProbs, hmm_param, hbd, li
     if not(os.path.isdir(lik)):
         os.mkdir(lik)
 
+    np.savetxt(fname="target_samples.txt", X=libraries, delimiter="\t", fmt='%s')
+
     return libraries, listf
 
 def split_bed(bedfile, totalch, bedfiles):
@@ -141,6 +143,9 @@ def get_merged_chrm(libraries, chrm, interval):
 
     dwins, twins = getWin(df=diffs_list, pos=pos_list,interval=interval)
     id_dwins, id_twins = getWin(df=id_diffs_list, pos=pos_list,interval=interval)
+
+    with open("interval.txt", 'w') as f:
+        print(interval,file=f)
 
     return dwins,twins,id_dwins,id_twins, np.ones(len(twins)) * chrm
 
