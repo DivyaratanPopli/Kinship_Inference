@@ -70,6 +70,7 @@ You can run KINgaroo from the terminal by typing:
 -n: You can optionally specify the noisy windows that should be filtered out in a file with list of window indexes (0-based).
 
 # Running KIN
+**Do not run kin on sample set different from that used for kingaroo. It will cause miss-assignment of relatedness to corresponding pair (see the last section).**
 ```
 KIN [-h] -I  -O  -T  [-r] [-c] [-t] [-p] [-i]
 ```
@@ -100,7 +101,7 @@ The output file has following columns:<br>
 -IBD Number: Total number of IBD segments<br>
 
 We distinguish between the columns 'Second Guess' and 'Within Degree Second Guess' as well as between 'Log Likelihood Ratio'<br>
-and 'Within Degree Log Likelihood Ratio'. This becomes important in case of classification to siblings or parent-child,<br> where we want to know how certain we are that the pair is first degree relative as indicated by 'Log Likelihood Ratio', but
+and 'Within Degree Log Likelihood Ratio'. This becomes important in case of classification to siblings or parent-child,<br> where we want tomiss assignment know how certain we are that the pair is first degree relative as indicated by 'Log Likelihood Ratio', but
 we also want to know the certainty associated with classification as parent-child compared to siblings </br>or vice-versa.</p>
 
 # Interpreting results
