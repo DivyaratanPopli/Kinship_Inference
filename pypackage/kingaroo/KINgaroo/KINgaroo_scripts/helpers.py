@@ -132,11 +132,19 @@ def parallel_bamfilter(rawbams, splitbams, bedfiles, hapProbs, lib_chrm_all, cor
 def get_merged_chrm(libraries, chrm, interval):
     print("Creating input files from chromosome %s..." %(chrm))
 
-    pslist=[("hapProbs/hapProbs_{}_chrm%s_probs.csv" %(chrm)).format(n) for n in libraries]
-    probs_list, pos_list, chrm_list = hapProbsAll(haplist=pslist, hap='noid')
+    error_in="Can not process input data. Please check all input files. In particular, bedfile and bamfiles should have chromosomes listed as 1,2,... and the bedfile should be tab-separated. Please check the README.md for example input files."
+    try:
+        pslist=[("hapProbs/hapProbs_{}_chrm%s_probs.csv" %(chrm)).format(n) for n in libraries]
+        probs_list, pos_list, chrm_list = hapProbsAll(haplist=pslist, hap='noid')
 
-    id_diffs =[("hapProbs/hapProbs_{}_chrm%s_diffs.csv" %(chrm)).format(n) for n in libraries]
-    id_diffs_list= hapProbsAll(haplist=id_diffs, hap='id')
+        id_diffs =[("hapProbs/hapProbs_{}_chrm%s_diffs.csv" %(chrm)).format(n) for n in libraries]
+        id_diffs_list= hapProbsAll(haplist=id_diffs, hap='id')
+
+    except Exception as e:
+        e.args = (error_in,)
+        raise
+
+
     #print("id_diffs_list...............................................................", id_diffs_list)
     diffs_list = findDiff(inds=probs_list, posall=pos_list)
     id_diffs_list[id_diffs_list==-9]=np.nan
@@ -156,7 +164,13 @@ def parallel_mergedchrm(libraries, totalch, interval, cores):
     pool.close()
     pool.join()
 
-    allf = [p.get() for p in res]
+    error_in="Can not process input data. Please check all input files. In particular, bedfile and bamfiles should have chromosomes listed as 1,2,... and the bedfile should be tab-separated. Please check the README.md for example input files."
+    try:
+        allf = [p.get() for p in res]
+    except Exception as e:
+        e.args = (error_in,)
+        raise
+
     df0, tf0, id_df0, id_tf0 = allf[0][0], allf[0][1], allf[0][2], allf[0][3]
     chrmf=allf[0][4].tolist()
     for i in range(1,len(allf)):
