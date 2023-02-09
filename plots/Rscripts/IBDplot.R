@@ -115,7 +115,7 @@ ibd_plot <- function(inf,p1f,outf){
 
 
   ggsave(outf,
-         width = 8, height = 8, dpi = 150, units = "in", device='png')
+         width = 8, height = 8, dpi = 150, units = "in", device='pdf')
 }
 
 ibd_plot(inf=snakemake@input[["infile_ibd"]], p1f=snakemake@input[["p1_file"]], outf=snakemake@output[["output_ibd"]])

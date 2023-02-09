@@ -42,7 +42,7 @@ rule IBDplot:
         infile_ibd="plotdata/plot_IBD.csv",
         p1_file=infold+"contam0/inbred0/run1/coverage4/asc0/inputMode_hapProbs_fil0/hmm_parameters/p1_file.gz"
     output:
-        output_ibd="plotimg/IBDplot.png"
+        output_ibd="plotimg/IBDplot.pdf"
     script:"Rscripts/IBDplot.R"
 
 rule cutoffplotf:
@@ -72,7 +72,7 @@ rule comparisonplot:
     input:
         infile_comp="plotdata/comparison_plot_data.csv.gz"
     output:
-        outfile_comp="plotimg/comparison_plot.png"
+        outfile_comp="plotimg/comparison_plot.pdf"
     script:"Rscripts/comparisonPlot.R"
 
 
@@ -81,8 +81,8 @@ rule Chagyrskaya:
         over=Chagfold + "overlap_fil1",
         rel=Chagfold + "hmm_new/filtered{Mfil}/merged_relatable_allLikelihoods.csv"
     output:
-        outfile_rel="plotimg/fil{Mfil}_relatable_plot.png",
-        outfile_over="plotimg/fil{Mfil}_overlap_plot.png"
+        outfile_rel="plotimg/fil{Mfil}_relatable_plot.pdf",
+        outfile_over="plotimg/fil{Mfil}_overlap_plot.pdf"
     script: "Rscripts/kinPlot.R"
 
 

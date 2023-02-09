@@ -65,12 +65,13 @@ bubbleplot_kin <- function(overlap_table, relatable, out_rel, out_over) {
       panel.background = element_rect(fill = "white",colour = "white", size = 0.5, linetype = "solid"))+
     theme(axis.text.x = element_text(angle = 90,hjust = 1, colour = colors, size = 14)) +
     theme(axis.text.y = element_text(angle = 0,hjust = 1, colour = colors, size = 14)) +
+    theme(legend.text = element_text(size=18),
+          legend.title=element_text(size=20)) +
     theme(axis.title.x=element_blank(), axis.title.y=element_blank()) +
-    geom_text(aes(lib1, lib2, label = matr1$loglik_ratio), color = "black", size = 5)#Plot overlap +
-  theme(legend.text = element_text(size=14),
-        legend.title=element_text(size=15))
+    geom_text(aes(lib1, lib2, label = matr1$loglik_ratio), color = "black", size = 5)#Plot overlap
 
-  ggsave(out_rel,height=12,width=14, plot = gfig_rel)
+
+  ggsave(out_rel,height=12,width=14, plot = gfig_rel, device= "pdf")
 
   gfig_over=ggplot(matr1, aes(lib1, lib2), col= "white") +
     geom_tile(aes(fill=overlap), col="white")  +
@@ -85,7 +86,7 @@ bubbleplot_kin <- function(overlap_table, relatable, out_rel, out_over) {
           legend.title=element_text(size=15))
 
 
-  ggsave(out_over,height=12,width=14, plot = gfig_over)
+  ggsave(out_over,height=12,width=14, plot = gfig_over, device= "pdf")
 }
 
 

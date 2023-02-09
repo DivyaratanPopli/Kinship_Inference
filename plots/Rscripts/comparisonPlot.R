@@ -60,7 +60,7 @@ comparison_plot <- function(inf,outf){
         legend.text = element_text(size=9)
   )
   ggsave(outf,
-         width = 8, height = 5, dpi = 150, units = "in", device='png')
+         width = 8, height = 5, dpi = 150, units = "in", device='pdf')
 
 }
 

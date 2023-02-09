@@ -92,7 +92,7 @@ rule lcMLkin:
         kinf=Chagfold + "hmm_numba/filtered0/IBDstates_allLikelihoods.csv"
 
     output:
-        outplot="plots/lcPlot.png"
+        outplot="plots/lcPlot.pdf"
     script:"Rscripts/lcPlot.R"
 
 

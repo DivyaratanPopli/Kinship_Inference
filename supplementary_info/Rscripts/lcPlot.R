@@ -80,7 +80,7 @@ lcplot <- function(lcres,likf,kinf,outplot){
             ncol=2, rel_widths = c(1,1.3), align = "hv", axis="bt")
 
   ggsave(outplot,
-         width = 8, height = 5, dpi = 150, units = "in", device='png')
+         width = 8, height = 5, dpi = 150, units = "in", device='pdf')
 }
 
 lcplot(lcres = snakemake@input[["lcres"]],likf = snakemake@input[["likf"]],kinf = snakemake@input[["kinf"]],outplot = snakemake@output[["outplot"]])
