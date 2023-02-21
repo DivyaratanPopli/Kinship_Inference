@@ -66,10 +66,10 @@ You can run KINgaroo from the terminal by typing:
 -cont: Name of individual from contaminating population in [-d]<br>
 -r: Enter 1 to estimate long ROH, 0 to skip (by default 1)<br>
 -p: p_0 estimate given by user (by default: Estimated from the data)<br>
--N: Total number of chromosome pairs. Default=22
--n: You can optionally specify the noisy windows that should be filtered out in a file with list of window indexes (0-based).
--s: Enter 0 if your bamfiles are already indexed and sorted to skip these operations. By default, the bamfiles will be indexed and sorted.
- 
+-N: Total number of chromosome pairs. Default=22<br>
+-n: You can optionally specify the noisy windows that should be filtered out in a file with list of window indexes (0-based)<br>
+-s: Enter 0 if your bamfiles are already indexed and sorted to skip these operations. By default, the bamfiles will be indexed and sorted<br>
+
 # Running KIN
 ```
 KIN [-h] -I  -O  -T  [-r] [-c] [-t] [-p] [-i]
