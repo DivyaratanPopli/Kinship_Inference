@@ -68,7 +68,8 @@ You can run KINgaroo from the terminal by typing:
 -p: p_0 estimate given by user (by default: Estimated from the data)<br>
 -N: Total number of chromosome pairs. Default=22
 -n: You can optionally specify the noisy windows that should be filtered out in a file with list of window indexes (0-based).
-
+-s: Enter 0 if your bamfiles are already indexed and sorted to skip these operations. By default, the bamfiles will be indexed and sorted.
+ 
 # Running KIN
 ```
 KIN [-h] -I  -O  -T  [-r] [-c] [-t] [-p] [-i]
