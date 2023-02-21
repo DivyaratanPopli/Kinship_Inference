@@ -88,22 +88,27 @@ def create_lib_chrm(libraries,totalch):
     return lib_chrm_all
 
 
-def bam_filter(rawbams, splitbams, bedfiles, hapProbs, lib_chrm):
+def bam_filter(rawbams, splitbams, bedfiles, hapProbs, lib_chrm, sort1):
 
     lib=lib_chrm[0]
     chrm=int(lib_chrm[1])
-    print("sorting library %s chromosome %s...\n" %(lib,chrm))
-    bamsplit_chr=splitbams+'%s_chrm%s.bam' %(lib,chrm)
 
+    if str(sort1)=='1':
+        print("sorting library %s chromosome %s...\n" %(lib,chrm))
+        bamsplit_chr=splitbams+'%s_chrm%s.bam' %(lib,chrm)
+    elif str(sort1)=='0':
+        bamsplit_chr=splitbams+'%s_chrm%s.sorted.bam' %(lib,chrm)
     bamf=rawbams + lib + '.bam'
     command = 'samtools view -b %s %s -o %s' %(bamf, chrm, bamsplit_chr)
     process = subprocess.Popen(command.split(), stdout=subprocess.PIPE)
     output, error = process.communicate()
 
     bamsorted=splitbams+'%s_chrm%s.sorted.bam' %(lib,chrm)
-
-    pysam.sort("-o", bamsorted, bamsplit_chr)
-    pysam.index(bamsorted)
+    if str(sort1)=='1':
+        pysam.sort("-o", bamsorted, bamsplit_chr)
+        pysam.index(bamsorted)
+    elif str(sort1)=='0':
+        pysam.index(bamsplit_chr)
 
     #input file generation
     bedfile=bedfiles + 'bedfile_chrm%s.bed' %(chrm)
@@ -122,9 +127,9 @@ def parallel_indexes(rawbams, libraries, cores):
     pool.join()
 
 
-def parallel_bamfilter(rawbams, splitbams, bedfiles, hapProbs, lib_chrm_all, cores):
+def parallel_bamfilter(rawbams, splitbams, bedfiles, hapProbs, lib_chrm_all, cores, sort1):
     pool = mp.Pool(cores)
-    [pool.apply_async(bam_filter, args=(rawbams, splitbams, bedfiles, hapProbs, lib_chrm)) for lib_chrm in lib_chrm_all]
+    [pool.apply_async(bam_filter, args=(rawbams, splitbams, bedfiles, hapProbs, lib_chrm, sort1)) for lib_chrm in lib_chrm_all]
     pool.close()
     pool.join()
     print("Finished indexing, sorting and splitting bamfiles...")
@@ -334,17 +339,17 @@ def run_hmm(diff, total, chrm1, hbdf, likf, libraries, p1, cores):
     pool.join()
 
 
-def pipeline1(targetsfile, bedfile, cores, rawbams, interval, splitbams, bedfiles, hapProbs, hmm_param, hbdf, likf, chrmf):
+def pipeline1(targetsfile, bedfile, cores, rawbams, interval, splitbams, bedfiles, hapProbs, hmm_param, hbdf, likf, chrmf, sort1):
 
     libraries, listf = prep_function(targetsfile, splitbams, bedfiles, hapProbs, hmm_param, hbdf, likf)
 
     split_bed(bedfile=bedfile, totalch=chrmf, bedfiles=bedfiles)
 
     lib_chrm_all=create_lib_chrm(libraries=libraries, totalch=chrmf)
+    if str(sort1)=='1':
+        parallel_indexes(rawbams=rawbams, libraries=libraries, cores=cores)
 
-    parallel_indexes(rawbams=rawbams, libraries=libraries, cores=cores)
-
-    parallel_bamfilter(rawbams=rawbams, splitbams=splitbams, bedfiles=bedfiles, hapProbs=hapProbs, lib_chrm_all=lib_chrm_all, cores=cores)
+    parallel_bamfilter(rawbams=rawbams, splitbams=splitbams, bedfiles=bedfiles, hapProbs=hapProbs, lib_chrm_all=lib_chrm_all, cores=cores, sort1=sort1)
 
     dwins,twins,id_dwins,id_twins, chrmlist = parallel_mergedchrm(libraries=libraries, totalch=chrmf, interval=interval, cores=cores)
 

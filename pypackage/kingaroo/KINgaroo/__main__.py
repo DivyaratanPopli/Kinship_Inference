@@ -64,6 +64,9 @@ def cli():
     parser.add_argument('-N', '--number_of_chromosomes',
                         type=int, metavar='',
                         help='Enter the total number of chromosomes. Default=22')
+    parser.add_argument('-s', '--sort_index',
+                        type=int, metavar='',
+                        help='Enter 1 if you need to sort and index the bamfiles. Enter 0 to skip this step (by default:1).')
     return parser.parse_args()
 
 def main():
@@ -106,6 +109,10 @@ def main():
     else:
         n_chrm=args.number_of_chromosomes
     CHRM=list(range(1, int(n_chrm)+1))
+    if args.sort_index is None:
+        sort1 = 1
+    else:
+        sort1 = args.sort_index
 
     if testin==1:
         hel.test_input(bedfile=args.bedfile, rawbams=bamfiles_dir, targetsfile=args.target_location)
@@ -121,7 +128,8 @@ def main():
                                                                                      hmm_param = C.hmm_param,
                                                                                      hbdf = C.hbdf,
                                                                                      likf = C.likf,
-                                                                                     chrmf=CHRM)
+                                                                                     chrmf=CHRM,
+                                                                                     sort1=sort1)
 
 
         if args.contam_parameter==0:
