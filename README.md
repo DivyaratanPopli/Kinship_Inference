@@ -17,10 +17,12 @@ the list of these dependencies with the versions that we used:
 - numba (version 0.55.1)
 - pysam (version 0.19.0)
 - pybedtools (version 0.9.0)
+- samtools (version 1.15)
+- bcftools (version 1.15)
 
-We recommend using a conda environment with all these dependencies:
+We recommend using a conda environment with all these dependencies. You can use the kin-3.1.3-environment.yml file to create such an environment. 
 ```
-conda create -n test1 python=3.8 scipy=1.8.0 numpy=1.21.1 pandas=1.3.1 numba=0.55.1 pysam=0.19.0 pybedtools=0.9.0
+conda env create -f kin-3.1.3-environment.yml
 ```
 # Installation
 After downloading or cloning pypackage from this repository, you can install KINgaroo
