@@ -297,12 +297,17 @@ def contamAll(diff, total, cfile, p_c):
             print("Something is wrong in contamination correction, there are nan values.")
 
 
+def get_length(x):
+    try:
+        return len(x)
+    except TypeError:
+        return 1
 
 def data2p(diff_cor, total_cor, id_diff_cor, id_total_cor, libraries, listf, hmm_param, thresh, outdiff, outtotal, id_outdiff, id_outtotal, badwins):
     #print("diffs",diff_cor[[175,255]])
     #print("total",total_cor[total_cor<-1])
     print("Estimating p_0...")
-    if len(badwins)==0:
+    if get_length(badwins)==0:
         rem_wins=getHighDiv(alld=diff_cor, allt=total_cor)
     else:
         rem_wins=np.array(badwins).astype(int)
