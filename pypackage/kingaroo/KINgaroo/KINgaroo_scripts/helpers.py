@@ -311,6 +311,9 @@ def data2p(diff_cor, total_cor, id_diff_cor, id_total_cor, libraries, listf, hmm
         rem_wins=getHighDiv(alld=diff_cor, allt=total_cor)
     else:
         rem_wins=np.array(badwins).astype(int)
+
+    if get_length(badwins)==1:
+        rem_wins=np.array([[rem_wins]])
     np.savetxt(fname='filtered_windows.txt', X=rem_wins, delimiter=',')
     diff_cor[rem_wins,:] = 0
     total_cor[rem_wins,:] = 0
