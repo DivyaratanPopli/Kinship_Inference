@@ -20,7 +20,7 @@ the list of these dependencies with the versions that we used:
 - samtools (version 1.15)
 - bcftools (version 1.15)
 
-We recommend using a conda environment with all these dependencies. You can use the kin-3.1.3-environment.yml file to create such an environment. 
+We recommend using a conda environment with all these dependencies. You can use the kin-3.1.3-environment.yml file to create such an environment.
 ```
 conda env create -f kin-3.1.3-environment.yml
 ```
@@ -101,9 +101,8 @@ The output file has following columns:<br>
 -IBD Length: Total number of windows in IBD<br>
 -IBD Number: Total number of IBD segments<br>
 
-We distinguish between the columns 'Second Guess' and 'Within Degree Second Guess' as well as between 'Log Likelihood Ratio'<br>
-and 'Within Degree Log Likelihood Ratio'. This becomes important in case of classification to siblings or parent-child,<br> where we want tomiss assignment know how certain we are that the pair is first degree relative as indicated by 'Log Likelihood Ratio', but
-we also want to know the certainty associated with classification as parent-child compared to siblings </br>or vice-versa.</p>
+We distinguish between the columns 'Second Guess' and 'Within Degree Second Guess' as well as between 'Log Likelihood Ratio' and 'Within Degree Log Likelihood Ratio'. This becomes important in case of classification to siblings or parent-child,<br> where we want tomiss assignment know how certain we are that the pair is first degree relative as indicated by 'Log Likelihood Ratio', but
+we also want to know the certainty associated with classification as parent-child compared to siblings or vice-versa.<br>
 
 # Interpreting results
 
