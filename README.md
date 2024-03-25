@@ -103,7 +103,7 @@ The output file has the following columns:
 We distinguish between the columns 'Second Guess' and 'Within Degree Second Guess' as well as between 'Log Likelihood Ratio' and 'Within Degree Log Likelihood Ratio'. This becomes important in the case of classification to siblings or parent-child, where we want to know how certain we are that the pair is first degree relative as indicated by 'Log Likelihood Ratio', but
 we also want to know the certainty associated with classification as parent-child compared to siblings or vice-versa.
 
-# Interpreting results
+## Interpreting results
 
 We recommend users to filter out the results with lower than 1.0 Log Likelihood Ratio, as these results may not be reliable. Similarly, to differentiate between siblings/parent-child, use results with Within Degree Log Likelihood Ratio >1. We provide following additional files (in the folder for KINgaroo) that may be informative to users:
 
@@ -112,10 +112,10 @@ We recommend users to filter out the results with lower than 1.0 Log Likelihood 
 
 In the folder with KIN results, likfiles/[sample_pair].csv shows an array of log likelihoods corresponding to the different cases of relatedness (order: 'Unrelated','5th Degree','4th Degree','3rd Degree','Grandparent-Grandchild','Half-siblings','Avuncular','Siblings', 'Parent-Child','Identical']). It may be useful to look at this array for a pair of individuals to see the log likelihood ratio for any two relatedness cases. For very low-coverage data, all log likelihood values will look similar.
 
-# Subsetting individuals for estimation of p_0
+## Subsetting individuals for estimation of p_0
 
 In many cases the user may have samples that are very low coverage or highly contaminated, and the user would like to exclude these samples while estimating p_0 (background diversity in the population). To do this run kingaroo with target file (-T) containing only the samples that you want to use in estimation of p_0. From this run you will get output file hmm_parameters/p_0.txt containing p_0 and filtered_windows.txt containing list of windows with lot of noise. Now you can run kingaroo in another folder with the target file (-T) containing all the samples that you want to include for relatedness analysis using options -p_0 [the value in "hmm_parameters/p_0.txt"] -n [location of "filtered_windows.txt"]. Then run kin with the option -p [the value in hmm_parameters/p_0.txt].
 
-# Limitations
+## Limitations
 
 This software assumes one single population. If there is structure in your dataset, apply KIN and KINgaroo to sub-populations independently. The current implementation requires atleast 3 samples, and not more than around 150 samples.
