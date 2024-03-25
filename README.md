@@ -47,27 +47,27 @@ You can run KINgaroo from the terminal by typing:
 
 Here optional inputs are shown in [].
 
-- -h: Help
-- -test: Check if input files are in the correct format
-- -bam: Path to directory containing bamfiles with chromosomes (represented by 1,2,..,X,Y)
-- -bed: Path to tab-separated .bed file containing chromosome (1,2,..,X,..), reference, and alternate alleles at all available positions. In the bed file, provide position and position+1 in the 2nd and 3rd columns ([see example file](example_files/bedfile.bed)).
-- -T: Path to file ([see example file](example_files/targets.txt)) containing a list of all bamfiles (without extension .bam) to be used in the analysis
-- -cnt: We provide three options for contamination correction:
+- h: Help
+- test: Check if input files are in the correct format
+- bam: Path to directory containing bamfiles with chromosomes (represented by 1,2,..,X,Y)
+- bed: Path to tab-separated .bed file containing chromosome (1,2,..,X,..), reference, and alternate alleles at all available positions. In the bed file, provide position and position+1 in the 2nd and 3rd columns ([see example file](example_files/bedfile.bed)).
+- T: Path to file ([see example file](example_files/targets.txt)) containing a list of all bamfiles (without extension .bam) to be used in the analysis
+- cnt: We provide three options for contamination correction:
     - 0: No contamination correction
     - 1: Contamination correction using divergence between the target population and contaminating population. Please enter the path to an indexed compressed vcf file [-d] with an individual each from target [-tar] and contaminating populations [-cont]. Also required for this step: path to contamination estimates file [-cest]
     - 0 < cnt < 1: Contamination correction using divergence value entered here (0 < cnt < 1). Also required for this step: path to contamination estimates file [-cest]
-- -c: Number of cores (by default: all available cores)
-- -i: Size of genomic windows in int, Options:10000000, 1000000 (by default we use 10000000)
-- -t: Minimum number of nonzero windows for a library to be included in the estimation for p_0 (by default:10)
-- -cest: File with contamination estimates with 2 tab-separated columns: name, contamination
-- -d: Compressed and indexed vcf file for the calculation of divergence between the target and contaminating populations. Please make sure that your vcf file has genotypes [GT] represented in one of the following formats: X|Y (for phased files), X/Y (for unphased files), X (for pseudohaploids). Here X,Y are 0/1 for ancestral/derived allele
-- -tar: Name of individual from the target population in [-d]
-- -cont: Name of individual from the contaminating population in [-d]
-- -r: Enter 1 to estimate long ROH, 0 to skip (by default 1)
-- -p: p_0 estimate given by the user (by default: Estimated from the data)
-- -N: Total number of chromosome pairs. Default=22
-- -n: You can optionally specify the noisy windows that should be filtered out in a file with a list of window indexes (0-based)
-- -s: Enter 0 if your bamfiles are already indexed and sorted to skip these operations. By default, the bamfiles will be indexed and sorted
+- c: Number of cores (by default: all available cores)
+- i: Size of genomic windows in int, Options:10000000, 1000000 (by default we use 10000000)
+- t: Minimum number of nonzero windows for a library to be included in the estimation for p_0 (by default:10)
+- cest: File with contamination estimates with 2 tab-separated columns: name, contamination
+- d: Compressed and indexed vcf file for the calculation of divergence between the target and contaminating populations. Please make sure that your vcf file has genotypes [GT] represented in one of the following formats: X|Y (for phased files), X/Y (for unphased files), X (for pseudohaploids). Here X,Y are 0/1 for ancestral/derived allele
+- tar: Name of individual from the target population in [-d]
+- cont: Name of individual from the contaminating population in [-d]
+- r: Enter 1 to estimate long ROH, 0 to skip (by default 1)
+- p: p_0 estimate given by the user (by default: Estimated from the data)
+- N: Total number of chromosome pairs. Default=22
+- n: You can optionally specify the noisy windows that should be filtered out in a file with a list of window indexes (0-based)
+- s: Enter 0 if your bamfiles are already indexed and sorted to skip these operations. By default, the bamfiles will be indexed and sorted
 
 ## Running KIN
 
@@ -75,13 +75,13 @@ Here optional inputs are shown in [].
 KIN [-h] -I  -O  -T  [-r] [-c] [-t] [-p] [-i]
 ```
 
-- -h: Help
-- -I: Path to the folder where you ran KINgaroo
-- -O: Output location for KIN
-- -r: Location of the directory containing ROH estimates (by default: same as -I)
-- -c: Cores (by default: all available cores)
-- -t: Minimum number of sites in a window from which ROH estimates are reliable used (by default: 10)
-- -p: p_0 estimate given by the user (by default: Estimated from the data)
+- h: Help
+- I: Path to the folder where you ran KINgaroo
+- O: Output location for KIN
+- r: Location of the directory containing ROH estimates (by default: same as -I)
+- c: Cores (by default: all available cores)
+- t: Minimum number of sites in a window from which ROH estimates are reliable used (by default: 10)
+- p: p_0 estimate given by the user (by default: Estimated from the data)
 
 ## Output
 
