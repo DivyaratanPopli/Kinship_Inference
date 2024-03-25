@@ -115,3 +115,7 @@ In the folder with KIN results, likfiles/[sample_pair].csv shows an array of log
 # Subsetting individuals for estimation of p_0
 
 In many cases the user may have samples that are very low coverage or highly contaminated, and the user would like to exclude these samples while estimating p_0 (background diversity in the population). To do this run kingaroo with target file (-T) containing only the samples that you want to use in estimation of p_0. From this run you will get output file hmm_parameters/p_0.txt containing p_0 and filtered_windows.txt containing list of windows with lot of noise. Now you can run kingaroo in another folder with the target file (-T) containing all the samples that you want to include for relatedness analysis using options -p_0 [the value in "hmm_parameters/p_0.txt"] -n [location of "filtered_windows.txt"]. Then run kin with the option -p [the value in hmm_parameters/p_0.txt].
+
+# Limitations
+
+This software assumes one single population. If there is structure in your dataset, apply KIN and KINgaroo to sub-populations independently. The current implementation requires atleast 3 samples, and not more than around 150 samples.
