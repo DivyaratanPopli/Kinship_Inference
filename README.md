@@ -71,46 +71,44 @@ Here optional inputs are shown in [].
 
 ## Running KIN
 
-
-
-# Running KIN
 ```
 KIN [-h] -I  -O  -T  [-r] [-c] [-t] [-p] [-i]
 ```
--h: Help<br>
--I: Path to the folder where you ran KINgaroo<br>
--O: Output location for KIN<br>
--r: Location of directory containing ROH estimates (by default: same as -I)<br>
--c: Cores (by default: all available cores)<br>
--t: Minimum number of sites in a window from which ROH estimates are reliable used (by default: 10)<br>
--p: p_0 estimate given by user (by default: Estimated from the data)<br>
 
+- -h: Help
+- -I: Path to the folder where you ran KINgaroo
+- -O: Output location for KIN
+- -r: Location of the directory containing ROH estimates (by default: same as -I)
+- -c: Cores (by default: all available cores)
+- -t: Minimum number of sites in a window from which ROH estimates are reliable used (by default: 10)
+- -p: p_0 estimate given by the user (by default: Estimated from the data)
 
-# Output
+## Output
 
-The final results are available in the file KIN_results.csv ([see example file](example_files/KIN_results.csv))<br>
-The output file has following columns:<br>
--Pair: Name of all pairs<br>
--Relatedness: Most likely relation<br>
--Second Guess: Second most likely relation (outside the degree of the most likely relation)<br>
--Log Likelihood Ratio: Log likelihood ratio for above mentioned relations<br>
--Within Degree Second Guess: Second most likely relation within the relatedness degree of most likely relation<br>
--Within Degree Log Likelihood Ratio:Log likelihood ratio for within-degree relations<br>
--k0: Proportion of genome with no IBD sharing<br>
--k1: Proportion of genome with one chromosome in IBD<br>
--k2: Proportion of genome with both chromosomes in IBD<br>
--IBD Length: Total number of windows in IBD<br>
--IBD Number: Total number of IBD segments<br>
+The final results are available in the file `KIN_results.csv` ([see example file](example_files/KIN_results.csv))
 
-We distinguish between the columns 'Second Guess' and 'Within Degree Second Guess' as well as between 'Log Likelihood Ratio' and 'Within Degree Log Likelihood Ratio'. This becomes important in case of classification to siblings or parent-child,<br> where we want tomiss assignment know how certain we are that the pair is first degree relative as indicated by 'Log Likelihood Ratio', but
+The output file has the following columns:
+- Pair: Name of all pairs
+- Relatedness: Most likely relation
+- Second Guess: Second most likely relation (outside the degree of the most likely relation)
+- Log Likelihood Ratio: Log likelihood ratio for the above-mentioned relations
+- Within Degree Second Guess: Second most likely relation within the relatedness degree of the most likely relation
+- Within Degree Log Likelihood Ratio: Log likelihood ratio for within-degree relations
+- k0: Proportion of genome with no IBD sharing
+- k1: Proportion of genome with one chromosome in IBD
+- k2: Proportion of genome with both chromosomes in IBD
+- IBD Length: Total number of windows in IBD
+- IBD Number: Total number of IBD segments
+
+We distinguish between the columns 'Second Guess' and 'Within Degree Second Guess' as well as between 'Log Likelihood Ratio' and 'Within Degree Log Likelihood Ratio'. This becomes important in the case of classification to siblings or parent-child, where we want to know how certain we are that the pair is first degree relative as indicated by 'Log Likelihood Ratio', but
 we also want to know the certainty associated with classification as parent-child compared to siblings or vice-versa.
 
 # Interpreting results
 
 We recommend users to filter out the results with lower than 1.0 Log Likelihood Ratio, as these results may not be reliable. Similarly, to differentiate between siblings/parent-child, use results with Within Degree Log Likelihood Ratio >1. We provide following additional files (in the folder for KINgaroo) that may be informative to users:
 
--hmm_parameters/p_0.txt : It has one float value representing average pairwise difference for unrelated individuals. While comparing to other methods like READ, one can compare p_0 to corresponding measure for background diversity.<br>
--hbd_results/pw_[sample_name].csv : For each genomic window, it shows in columns the chromosome, number of overlapping sites, and probability of seeing no ROH in the window.
+- hmm_parameters/p_0.txt : It has one float value representing average pairwise difference for unrelated individuals. While comparing to other methods like READ, one can compare p_0 to corresponding measure for background diversity.<br>
+- hbd_results/pw_[sample_name].csv : For each genomic window, it shows in columns the chromosome, number of overlapping sites, and probability of seeing no ROH in the window.
 
 In the folder with KIN results, likfiles/[sample_pair].csv shows an array of log likelihoods corresponding to the different cases of relatedness (order: 'Unrelated','5th Degree','4th Degree','3rd Degree','Grandparent-Grandchild','Half-siblings','Avuncular','Siblings', 'Parent-Child','Identical']). It may be useful to look at this array for a pair of individuals to see the log likelihood ratio for any two relatedness cases. For very low-coverage data, all log likelihood values will look similar.
 
