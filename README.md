@@ -1,15 +1,12 @@
-KIN is a Hidden-Markov-Model-based approach to identify identity-by-descent fragments and to
-estimate degree of relatedness from ancient DNA data. KIN can accurately determine up to
-3rd-degree relatives and differentiate between sibling and parent-child relationships with
-as little as 0.05x coverage.
+# KIN and KINgaroo
 
-KINgaroo is a software to generate input files for KIN from bamfiles. Optionally,
-KINgaroo incorporates an adjustment for contamination, and an additional model to estimate the
-location of long runs of homozygosity. This helps KIN to improve classification accuracy.
+KIN is a Hidden-Markov-Model-based approach to identify identity-by-descent fragments and to estimate the degree of relatedness from ancient DNA data. KIN can accurately determine up to 3rd-degree relatives and differentiate between sibling and parent-child relationships with as little as 0.05x coverage.
 
-# Conda Environment
-KIN and KINgaroo require Python 3.8+ and rely on a number of non-standard libraries. Here is
-the list of these dependencies with the versions that we used:
+KINgaroo is a software to generate input files for KIN from bamfiles. Optionally, KINgaroo incorporates an adjustment for contamination and an additional model to estimate the location of long runs of homozygosity. This helps KIN to improve classification accuracy.
+
+## Conda Environment
+
+KIN and KINgaroo require Python 3.8+ and rely on a number of non-standard libraries. Here is the list of these dependencies with the versions that we used:
 
 - scipy (version 1.8.0)
 - numpy (version 1.21.1)
@@ -20,26 +17,30 @@ the list of these dependencies with the versions that we used:
 - samtools (version 1.15)
 - bcftools (version 1.15)
 
-We recommend using a conda environment with all these dependencies. You can use the kin-3.1.3-environment.yml file in pypackage folder to create such an environment.
+We recommend using a conda environment with all these dependencies. You can use the `kin-3.1.3-environment.yml` file in the `pypackage` folder to create such an environment:
+
+
 ```
 conda env create -f kin-3.1.3-environment.yml
 ```
-# Installation
-After downloading or cloning this repository, you will find the folders kin and kingaroo in the folder pypackage. You can install KINgaroo from the terminal:
+## Installation
+
+After downloading or cloning this repository, you will find the folders `kin` and `kingaroo` in the `pypackage` folder. You can install KINgaroo from the terminal:
+
 ```
 pip3 install _path_to_kingaroo
 ```
 Similarly, install KIN:
+
 ```
 pip3 install _path_to_kin
 ```
 
-# Running KINgaroo
+## Running KINgaroo
 
 **IMPORTANT: Please make sure that your input bamfiles are filtered (remove duplicates, and apply standard filters for quality control). Unfiltered duplicates may affect the results.**
 
 You can run KINgaroo from the terminal by typing:
-
 ```
   KINgaroo [-h] -bam  -bed  -T  -cnt  [-c] [-i] [-t] [-cest] [-d] [-tar] [-cont] [-r] [-p]
 ```
@@ -47,26 +48,29 @@ You can run KINgaroo from the terminal by typing:
 Here optional inputs are shown in [].
 
 - -h: Help
-- -test: Check if input files are in correct format
-- -bam: Path to directory containing bamfiles with chromosomes (represented by 1, 2, ..., X, Y)
-- -bed: Path to tab-separated .bed file containing chromosome (1, 2, ..., X, ...) reference and alternate alleles at all available positions. In bed file, provide position and position+1 in 2nd and 3rd columns ([see example file](example_files/bedfile.bed)).
-- -T: Path to file ([see example file](example_files/targets.txt)) containing a list of all bamfiles (without extension .bam) to be used in the analysis.
+- -test: Check if input files are in the correct format
+- -bam: Path to directory containing bamfiles with chromosomes (represented by 1,2,..,X,Y)
+- -bed: Path to tab-separated .bed file containing chromosome (1,2,..,X,..), reference, and alternate alleles at all available positions. In the bed file, provide position and position+1 in the 2nd and 3rd columns ([see example file](example_files/bedfile.bed)).
+- -T: Path to file ([see example file](example_files/targets.txt)) containing a list of all bamfiles (without extension .bam) to be used in the analysis
 - -cnt: We provide three options for contamination correction:
-  - 0: No contamination correction
-  - 1: Contamination correction using divergence between the target population and contaminating population. Please enter the path to an indexed compressed vcf file [-d] with an individual each from target [-tar] and contaminating populations [-cont]. Also required for this step: the path to contamination estimates file [-cest].
-  - 0 < cnt < 1: Contamination correction using the divergence value entered here (0 < cnt < 1). Also required for this step: the path to contamination estimates file [-cest].
-- -c: Number of cores (by default: all available cores).
-- -i: Size of genomic windows in int, Options: 10000000, 1000000 (by default we use 10000000).
-- -t: Minimum number of nonzero windows for a library to be included in estimation for p_0 (by default: 10).
-- -cest: File with contamination estimates with 2 tab-separated columns: name, contamination.
-- -d: Compressed and indexed vcf file for calculation of divergence between target and contaminating populations. Please make sure that your vcf file has genotypes [GT] represented in one of the following formats: X|Y (for phased files), X/Y (for unphased files), X (for pseudohaploids). Here X, Y are 0/1 for ancestral/derived allele.
-- -tar: Name of individual from the target population in [-d].
-- -cont: Name of individual from contaminating population in [-d].
-- -r: Enter 1 to estimate long ROH, 0 to skip (by default 1).
-- -p: p_0 estimate given by the user (by default: Estimated from the data).
-- -N: Total number of chromosome pairs. Default=22.
-- -n: You can optionally specify the noisy windows that should be filtered out in a file with a list of window indexes (0-based).
-- -s: Enter 0 if your bamfiles are already indexed and sorted to skip these operations. By default, the bamfiles will be indexed and sorted.
+    - 0: No contamination correction
+    - 1: Contamination correction using divergence between the target population and contaminating population. Please enter the path to an indexed compressed vcf file [-d] with an individual each from target [-tar] and contaminating populations [-cont]. Also required for this step: path to contamination estimates file [-cest]
+    - 0 < cnt < 1: Contamination correction using divergence value entered here (0 < cnt < 1). Also required for this step: path to contamination estimates file [-cest]
+- -c: Number of cores (by default: all available cores)
+- -i: Size of genomic windows in int, Options:10000000, 1000000 (by default we use 10000000)
+- -t: Minimum number of nonzero windows for a library to be included in the estimation for p_0 (by default:10)
+- -cest: File with contamination estimates with 2 tab-separated columns: name, contamination
+- -d: Compressed and indexed vcf file for the calculation of divergence between the target and contaminating populations. Please make sure that your vcf file has genotypes [GT] represented in one of the following formats: X|Y (for phased files), X/Y (for unphased files), X (for pseudohaploids). Here X,Y are 0/1 for ancestral/derived allele
+- -tar: Name of individual from the target population in [-d]
+- -cont: Name of individual from the contaminating population in [-d]
+- -r: Enter 1 to estimate long ROH, 0 to skip (by default 1)
+- -p: p_0 estimate given by the user (by default: Estimated from the data)
+- -N: Total number of chromosome pairs. Default=22
+- -n: You can optionally specify the noisy windows that should be filtered out in a file with a list of window indexes (0-based)
+- -s: Enter 0 if your bamfiles are already indexed and sorted to skip these operations. By default, the bamfiles will be indexed and sorted
+
+## Running KIN
+
 
 
 # Running KIN
