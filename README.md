@@ -20,17 +20,16 @@ the list of these dependencies with the versions that we used:
 - samtools (version 1.15)
 - bcftools (version 1.15)
 
-We recommend using a conda environment with all these dependencies. You can use the kin-3.1.3-environment.yml file to create such an environment.
+We recommend using a conda environment with all these dependencies. You can use the kin-3.1.3-environment.yml file in pypackage folder to create such an environment.
 ```
 conda env create -f kin-3.1.3-environment.yml
 ```
 # Installation
-After downloading or cloning pypackage from this repository, you can install KINgaroo
-by typing from the terminal which should install all necessary dependencies:
+After downloading or cloning this repository, you will find the folders kin and kingaroo in the folder pypackage. You can install KINgaroo from the terminal:
 ```
 pip3 install _path_to_kingaroo
 ```
-Similarly, install kin:
+Similarly, install KIN:
 ```
 pip3 install _path_to_kin
 ```
@@ -47,7 +46,7 @@ You can run KINgaroo from the terminal by typing:
 -h: Help<br>
 -test: Check if input files are in correct format<br>
 -bam: Path to directory containing bamfiles with chromosomes (represented by 1,2,..,X,Y) <br>
--bed: Path to tab-separated .bed file containing chromosome (1,2,..,X,..), reference and alternate alleles at all<br> &nbsp;&nbsp;&nbsp;&nbsp;available positions ([see example file](example_files/bedfile.bed))<br>
+-bed: Path to tab-separated .bed file containing chromosome (1,2,..,X,..), reference and alternate alleles at all<br> &nbsp;&nbsp;&nbsp;&nbsp;available positions. In bed file, provide position and position+1 in 2nd and 3rd columns ([see example file](example_files/bedfile.bed)).<br>
 -T: Path to file ([see example file](example_files/targets.txt))containing list of all bamfiles (without extension .bam) to be used in the analysis<br>
 -cnt: We provide three options for contamination correction:<br>
   &nbsp;&nbsp;&nbsp;&nbsp;0: No contamination correction<br>
@@ -115,4 +114,4 @@ In the folder with KIN results, likfiles/[sample_pair].csv shows an array of log
 
 # Subsetting individuals for estimation of p_0
 
-In many cases the user may have samples that are very low coverage or highly contaminated, and the user would like to exclude these samples while estimating p_0 (background diversity in the population). To do this run kingaroo with target file (-T) containing only the samples that you want to use in estimation of p_0. From this run you will get output file "hmm_parameters/p_0.txt" containing p_0 and "filtered_windows.txt" containing list of windows with lot of noise. Now you can run kingaroo in another folder with the target file (-T) containing all the samples that you want to include for relatedness analysis using options -p_0 [the value in "hmm_parameters/p_0.txt"] -n [location of "filtered_windows.txt"]. Then run kin with the option -p [the value in hmm_parameters/p_0.txt].
+In many cases the user may have samples that are very low coverage or highly contaminated, and the user would like to exclude these samples while estimating p_0 (background diversity in the population). To do this run kingaroo with target file (-T) containing only the samples that you want to use in estimation of p_0. From this run you will get output file hmm_parameters/p_0.txt containing p_0 and filtered_windows.txt containing list of windows with lot of noise. Now you can run kingaroo in another folder with the target file (-T) containing all the samples that you want to include for relatedness analysis using options -p_0 [the value in "hmm_parameters/p_0.txt"] -n [location of "filtered_windows.txt"]. Then run kin with the option -p [the value in hmm_parameters/p_0.txt].
