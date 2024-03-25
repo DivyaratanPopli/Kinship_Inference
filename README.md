@@ -37,39 +37,37 @@ pip3 install _path_to_kin
 # Running KINgaroo
 
 **IMPORTANT: Please make sure that your input bamfiles are filtered (remove duplicates, and apply standard filters for quality control). Unfiltered duplicates may affect the results.**
+
 You can run KINgaroo from the terminal by typing:
+
 ```
   KINgaroo [-h] -bam  -bed  -T  -cnt  [-c] [-i] [-t] [-cest] [-d] [-tar] [-cont] [-r] [-p]
 ```
-<p>Here optional inputs are shown in [].
 
--h:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Help<br>
--test:&nbsp;&nbsp;&nbsp;Check if input files are in correct format<br>
--bam: Path to directory containing bamfiles with chromosomes (represented by 1,2,..,X,Y) <br>
--bed: Path to tab-separated .bed file containing chromosome (1,2,..,X,..), reference and alternate alleles at all<br> &nbsp;&nbsp;&nbsp;&nbsp;available positions. In bed file, provide position and position+1 in 2nd and 3rd columns ([see example file](example_files/bedfile.bed)).<br>
--T: Path to file ([see example file](example_files/targets.txt))containing list of all bamfiles (without extension .bam) to be used in the analysis<br>
--cnt: We provide three options for contamination correction:<br>
-  &nbsp;&nbsp;&nbsp;&nbsp;0: No contamination correction<br>
-  &nbsp;&nbsp;&nbsp;&nbsp;1: Contamination correction using divergence between the target population and contaminating population. Please<br>
-     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;enter path to an indexed compressed vcf file [-d] with an individual each from<br>
-     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;target [-tar] and contaminating populations [-cont]. Also required for this step: path<br>
-     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;to contamination estimates file [-cest]<br>
-  &nbsp;&nbsp;&nbsp;&nbsp;0<cnt<1: Contamination correction using divergence value entered here (0<cnt<1). Also required for this step: path<br>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;to contamination estimates file [-cest] <br>
--c: Number of cores (by default: all available cores)<br>
--i: Size of genomic windows in int, Options:10000000, 1000000 (by default we use 10000000)<br>
--t: Minimum number of nonzero windows for a library to be included in estimation for p_0 (by default:10)<br>
--cest: File with contamination estimates with 2 tab-separated columns: name,contamination<br>
--d: Compressed and indexed vcf file for calculation of divergence between target and contaminating populations. Please make sure that your vcf file<br>
- &nbsp;&nbsp;&nbsp;&nbsp;has genotypes [GT] represented in one of the following formats: X|Y (for phased files), X/Y (for unphased files),X (for pseudohaploids).<br>
- &nbsp;&nbsp;&nbsp;&nbsp;Here X,Y are 0/1 for ancestral/derived allele<br>
--tar: Name of individual from target population in [-d]<br>
--cont: Name of individual from contaminating population in [-d]<br>
--r: Enter 1 to estimate long ROH, 0 to skip (by default 1)<br>
--p: p_0 estimate given by user (by default: Estimated from the data)<br>
--N: Total number of chromosome pairs. Default=22<br>
--n: You can optionally specify the noisy windows that should be filtered out in a file with list of window indexes (0-based)<br>
--s: Enter 0 if your bamfiles are already indexed and sorted to skip these operations. By default, the bamfiles will be indexed and sorted<br>
+Here optional inputs are shown in [].
+
+- -h: Help
+- -test: Check if input files are in correct format
+- -bam: Path to directory containing bamfiles with chromosomes (represented by 1, 2, ..., X, Y)
+- -bed: Path to tab-separated .bed file containing chromosome (1, 2, ..., X, ...) reference and alternate alleles at all available positions. In bed file, provide position and position+1 in 2nd and 3rd columns ([see example file](example_files/bedfile.bed)).
+- -T: Path to file ([see example file](example_files/targets.txt)) containing a list of all bamfiles (without extension .bam) to be used in the analysis.
+- -cnt: We provide three options for contamination correction:
+  - 0: No contamination correction
+  - 1: Contamination correction using divergence between the target population and contaminating population. Please enter the path to an indexed compressed vcf file [-d] with an individual each from target [-tar] and contaminating populations [-cont]. Also required for this step: the path to contamination estimates file [-cest].
+  - 0 < cnt < 1: Contamination correction using the divergence value entered here (0 < cnt < 1). Also required for this step: the path to contamination estimates file [-cest].
+- -c: Number of cores (by default: all available cores).
+- -i: Size of genomic windows in int, Options: 10000000, 1000000 (by default we use 10000000).
+- -t: Minimum number of nonzero windows for a library to be included in estimation for p_0 (by default: 10).
+- -cest: File with contamination estimates with 2 tab-separated columns: name, contamination.
+- -d: Compressed and indexed vcf file for calculation of divergence between target and contaminating populations. Please make sure that your vcf file has genotypes [GT] represented in one of the following formats: X|Y (for phased files), X/Y (for unphased files), X (for pseudohaploids). Here X, Y are 0/1 for ancestral/derived allele.
+- -tar: Name of individual from the target population in [-d].
+- -cont: Name of individual from contaminating population in [-d].
+- -r: Enter 1 to estimate long ROH, 0 to skip (by default 1).
+- -p: p_0 estimate given by the user (by default: Estimated from the data).
+- -N: Total number of chromosome pairs. Default=22.
+- -n: You can optionally specify the noisy windows that should be filtered out in a file with a list of window indexes (0-based).
+- -s: Enter 0 if your bamfiles are already indexed and sorted to skip these operations. By default, the bamfiles will be indexed and sorted.
+
 
 # Running KIN
 ```
