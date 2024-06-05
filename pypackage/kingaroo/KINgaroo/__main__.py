@@ -17,55 +17,55 @@ def cli():
     parser = argparse.ArgumentParser(description="Input generation pipeline for KIN")
 
     parser.add_argument('-bam', '--bamfiles_location',
-                        type=str, metavar='',  required=True,
+                        type=str, required=True,
                         help='bamfiles directory')
     parser.add_argument('-bed', '--bedfile',
-                        type=str, metavar='',  required=True,
+                        type=str, required=True,
                         help='path to bedfile')
     parser.add_argument('-T', '--target_location',
-                        type=str, metavar='', required=True,
+                        type=str, required=True,
                         help='file with bamfile names that should be used without extension')
     parser.add_argument('-cnt', '--contam_parameter',
-                        type=float, metavar='', required=True,
+                        type=float, required=True,
                         help='Enter 0 for no contamination correction. Enter 1 for contamination correction with divergence calculated from vcf.gz. Enter divergence (between 0 and 1) if known.')
     parser.add_argument('-c', '--cores',
-                        type=int, metavar='',
+                        type=int,
                         help='Number of cores available')
     parser.add_argument('-i', '--interval',
-                        type=int, metavar='',
+                        type=int,
                         help='Length of a genomic window in bases. Options:1000000, 10000000 (by default 10000000)')
     parser.add_argument('-t', '--threshold',
-                        type=int, metavar='',
+                        type=int,
                         help='p_0 is estimated with all libraries that have atleast t number of informative windows (by default t=10)')
     parser.add_argument('-cest', '--contamination_estimates',
-                        type=str, metavar='',
+                        type=str,
                         help='tab-separated contamination estimates file with columns: name,contamination')
     parser.add_argument('-d', '--divergence_file',
-                        type=str, metavar='',
+                        type=str,
                         help='indexed compressed vcf file with an individual from target and contaminating populations each. Diploid Genotypes (GT) should be represented')
     parser.add_argument('-tar', '--target_ind',
-                        type=str, metavar='',
+                        type=str,
                         help='Name of target individual in divergence_vcf file')
     parser.add_argument('-cont', '--contaminating_ind',
-                        type=str, metavar='',
+                        type=str,
                         help='Name of contaminating individual in divergence_vcf file')
     parser.add_argument('-r', '--roh',
-                        type=int, metavar='',
+                        type=int,
                         help='Enter 1 if you need ROH estimates. Enter 0 if you already have the positions of ROH tracts (by default:1).')
     parser.add_argument('-p', '--diversity_parameter_p_0',
-                        type=float, metavar='',
+                        type=float,
                         help='Enter p_0 estimate for input to ROH-HMM, if quality of samples is not good enough to estimate p_0.')
     parser.add_argument('-n', '--noisy_wins',
-                        type=str, metavar='',
+                        type=str,
                         help='You can optionally specify the noisy windows that should be filtered out in a file with list of window indexes (0-based).')
     parser.add_argument('-test', '--test_input',
-                        type=int, metavar='',
+                        type=int,
                         help='Enter 1 to test your input files')
     parser.add_argument('-N', '--number_of_chromosomes',
-                        type=int, metavar='',
+                        type=int,
                         help='Enter the total number of chromosomes. Default=22')
     parser.add_argument('-s', '--sort_index',
-                        type=int, metavar='',
+                        type=int,
                         help='Enter 1 if you need to sort and index the bamfiles. Enter 0 to skip this step (by default:1).')
     return parser.parse_args()
 
