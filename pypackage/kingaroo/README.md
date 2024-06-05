@@ -1,3 +1,5 @@
+[![](https://anaconda.org/bioconda/kin/badges/downloads.svg)](https://anaconda.org/bioconda/kin)
+
 KINgaroo is a software to generate input files for KIN from processed bamfiles. Optionally,
 KINgaroo incorporates an adjustment for contamination, and an additional model to estimate the
 location of long runs of homozygosity. This helps KIN to improve classification accuracy.
