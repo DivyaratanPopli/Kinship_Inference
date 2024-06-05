@@ -17,22 +17,22 @@ def cli():
     parser = argparse.ArgumentParser(description="Relatedness and IBD estimates")
 
     parser.add_argument('-I', '--input_location',
-                        type=str, metavar='',  required=True,
+                        type=str, required=True,
                         help='input files location')
     parser.add_argument('-O', '--output_location',
-                        type=str, metavar='', required=True,
+                        type=str, required=True,
                         help='Output files location')
     parser.add_argument('-r', '--ROH_file_location',
-                        type=str, metavar='',
+                        type=str,
                         help='ROH files location')
     parser.add_argument('-c', '--cores',
-                        type=int, metavar='',
+                        type=int,
                         help='Number of cores available')
     parser.add_argument('-t', '--threshold',
-                        type=int, metavar='',
+                        type=int,
                         help='Minimum number of sites in a window for ROH implementation')
     parser.add_argument('-p', '--diversity_parameter_p_0',
-                        type=float, metavar='',
+                        type=float, metavar='p_0',
                         help='Input p_0 parameter, if you do not want to calculate it from given samples (Keep it same as that for KINgaroo)')
 
     return parser.parse_args()

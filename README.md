@@ -1,5 +1,7 @@
 # KIN and KINgaroo
 
+[![](https://anaconda.org/bioconda/kin/badges/downloads.svg)](https://anaconda.org/bioconda/kin)
+
 KIN is a Hidden-Markov-Model-based approach to identify identity-by-descent fragments and to estimate the degree of relatedness from ancient DNA data. KIN can accurately determine up to 3rd-degree relatives and differentiate between sibling and parent-child relationships with as little as 0.05x coverage.
 
 KINgaroo is a software to generate input files for KIN from bamfiles. Optionally, KINgaroo incorporates an adjustment for contamination and an additional model to estimate the location of long runs of homozygosity. This helps KIN to improve classification accuracy.
