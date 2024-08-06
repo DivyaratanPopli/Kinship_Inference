@@ -1,3 +1,5 @@
+[![Anaconda-Server Badge](https://anaconda.org/bioconda/kin/badges/version.svg)](https://anaconda.org/bioconda/kin)
+
 KIN is a Hidden-Markov-Model-based approach to identify identity-by-descent fragments and to
 estimate degree of relatedness from ancient DNA data. KIN can accurately determine up to
 3rd-degree relatives and differentiate between sibling and parent-child relationships with
@@ -7,7 +9,19 @@ KINgaroo is a software to generate input files for KIN from bamfiles. Optionally
 KINgaroo incorporates an adjustment for contamination, and an additional model to estimate the
 location of long runs of homozygosity. This helps KIN to improve classification accuracy.
 
-# Conda Environment
+# Installation
+## Conda
+
+You can use conda to install both KIN and KINgaroo with the following command:
+```
+conda install bioconda::kin
+```
+This will install both KIN and KINgaroo, and add them to your environment under `kin` and `kingaroo` respectively.
+
+## Manual installation
+Alternatively, you can use pip within a conda enviroment to install KIN and KINgaroo manually.
+
+### Conda Environment
 KIN and KINgaroo require Python 3.8+ and rely on a number of non-standard libraries. Here is
 the list of these dependencies with the versions that we used:
 
@@ -22,7 +36,7 @@ We recommend using a conda environment with all these dependencies:
 ```
 conda create -n test1 python=3.8 scipy=1.8.0 numpy=1.21.1 pandas=1.3.1 numba=0.55.1 pysam=0.19.0 pybedtools=0.9.0
 ```
-# Installation
+### pip installation
 After downloading or cloning pypackage from this repository, you can install KINgaroo
 by typing from the terminal which should install all necessary dependencies:
 ```
